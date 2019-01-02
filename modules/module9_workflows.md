@@ -1,0 +1,577 @@
+% R bootcamp, Module 9: Workflows, managing projects and good practices
+% August 2018, UC Berkeley
+% Chris Paciorek
+
+
+
+# Tips for avoiding bugs
+
+- Plan out your code in advance, including all special cases/possibilities.
+- When doing software development, write tests for your code early in
+the process. 
+- Build up code in pieces, testing along the way. Make big changes in
+small steps, sequentially checking to see if the code has broken on
+test case(s).
+- Code in a modular fashion, making good use of functions, so that you
+don't need to debug the same code multiple times. Smaller functions
+are easier to debug, easier to understand, and can be combined in
+a modular fashion (like the UNIX utilities)
+- Use core R functionality and algorithms already coded. Figure out
+if a functionality already exists in (or can be adapted from) an R
+package (or potentially in a C/Fortran library/package): code that
+is part of standard mathematical/numerical packages will probably
+be more efficient and bug-free than anything you would write.
+- Remove objects you don't need, to avoid accidentally using values
+from an old object via the scoping rules.
+- Be careful that the conditions of *if* statements and the sequences
+of *for* loops are robust when they involve evaluating R code.
+- Don't hard code numbers - use variables (e.g., number of iterations,
+parameter values in simulations), even if you don't expect to change
+the value, as this makes the code more readable and reduces bugs when
+you use the same number multiple times: 
+- Check that inputs to and outputs from functions (either functions
+you call or functions you write) are valid and use `warning()`
+and `stop()` to give a warning or stop execution when something
+unexpected happens.
+- Use `try()` with functions that may fail 
+in cases where you don't want overall execution to fail because a
+single piece of the execution fails.
+- Write code for clarity and accuracy first; then worry about efficiency.
+Write an initial version of the code in the simplest way, without
+trying to be efficient (e.g., you might use \emph{for} loops even
+if you're coding in R); then make a second version that employs efficiency
+tricks and check that both produce the same output.
+
+# Common syntax errors and bugs
+  - Parenthesis mis-matches
+  - `[...]` vs. `[[...]]`
+  - `==` vs. `=` 
+  - Comparing real numbers exactly using `==` is dangerous. Suppose you generate `x = 0.333333` in some fashion with some code and then check: `x == 1/3`. This will produce FALSE.
+  - Vectors vs. single values: 
+    + `||` vs. `|` and `&&` vs `&`
+    + You expect a single value but your code gives you a vector
+    + You want to compare an entire vector but your code just compares the first value (e.g., in an `if` statement) -- consider using `identical()` or `all.equal()`
+  - Silent type conversion when you don't want it, or lack of coercion where you're expecting it
+ - Using the wrong function or variable name
+ - Giving unnamed arguments to a function in the wrong order 
+ - Forgetting to define a variable in the environment of a function and having the function, via R's scoping rules, get that variable as a global variable from one of the enclosing environments. At best the types are not compatible and you get an error; at worst, you use a garbage value and the bug is hard to trace. In some cases your code may work fine when you develop the code (if the variable exists in the enclosing environment), but then may not work when you restart R if the variable no longer exists or is different.
+
+
+```r
+library(codetools)
+f <- function() {y <- 3; print(x + y)}
+findGlobals(f)
+```
+
+```
+## [1] "<-"    "{"     "+"     "print" "x"
+```
+
+- R (usually helpfully) drops matrix and array dimensions that are extraneous; which can sometimes confuse later code that expects an object of a certain dimension. The `[` operator takes an additional optional argument that can avoid dropping dimensions.
+
+
+```r
+mat <- matrix(1:4, 2, 2)[1, ]
+dim(mat); print(mat)
+```
+
+```
+## NULL
+```
+
+```
+## [1] 1 3
+```
+
+```r
+colSums(mat)
+```
+
+```
+## Error in base::colSums(x, na.rm = na.rm, dims = dims, ...): 'x' must be an array of at least two dimensions
+```
+
+```r
+mat <- matrix(1:4, 2, 2)[1, , drop = FALSE]
+colSums(mat)
+```
+
+```
+## [1] 1 3
+```
+
+# Debugging
+
+As a scripting language, R essentially has a debugger working automatically.
+But there is an official debugger and other tools that greatly help in figuring
+out problems.
+
+Let's briefly see these in action. I'll demo this in a very basic way, but hopefully this
+will give you an idea of the power of these tools.
+
+
+```r
+buggyFun <- function(myDF) {
+   print(names(myDF))
+   myDF$id <- seq_len(nrow(myDF))
+   sums <- rowSums(myDF)
+   return(sums)
+}
+
+buggyFun(air)
+```
+
+```
+##  [1] "Year"              "Month"             "DayofMonth"       
+##  [4] "DayOfWeek"         "DepTime"           "CRSDepTime"       
+##  [7] "ArrTime"           "CRSArrTime"        "UniqueCarrier"    
+## [10] "FlightNum"         "TailNum"           "ActualElapsedTime"
+## [13] "CRSElapsedTime"    "AirTime"           "ArrDelay"         
+## [16] "DepDelay"          "Origin"            "Dest"             
+## [19] "Distance"          "TaxiIn"            "TaxiOut"          
+## [22] "Cancelled"         "CancellationCode"  "Diverted"         
+## [25] "CarrierDelay"      "WeatherDelay"      "NASDelay"         
+## [28] "SecurityDelay"     "LateAircraftDelay"
+```
+
+```
+## Error in base::rowSums(x, na.rm = na.rm, dims = dims, ...): 'x' must be numeric
+```
+
+```r
+if(FALSE) {
+  traceback()
+  debug(buggyFun)
+  buggyFun(air)
+
+  undebug(buggyFun)
+  options(error = recover)
+  buggyFun(air)
+}
+```
+
+1) We can use ``debug()`` to step through a function line by line
+
+2) After an error occurs, we can use ``traceback()`` to look at the *call stack*
+
+3) More helpfully, if we set ``options(error = recover)`` before running code, we can go into the function in which the error occurred
+
+4) We can insert ``browser()`` inside a function and R will stop there and allow us to proceed with debugging statements
+
+5) You can temporarily insert code into a function (including built-in functions) with ``trace(fxnName, edit = TRUE)``
+
+# Testing
+
+Testing should be performed on multiple levels and begun as early as possible
+in the development process.  For programs that accept input either from a user
+or file, it is important that the code validates the input is what
+it expects to receive. Tests that ensure individual code elements (e.g., functions,
+classes, and class methods) behave correctly are called *unit tests*.
+Writing unit tests early in the process of implementing new functionality
+helps you think about what you want a piece of code to do, rather than just how
+it does it. This practice improves code quality by focusing your attention
+on use cases rather than getting lost in implementation details.
+
+The *testthat* package is very helpful for setting up tests. Also, *RUnit* is a testing framework for R that helps automate test setup, creation,
+execution, and reporting.  For more information, see Bioconductor's [unit testing guidelines](http://www.bioconductor.org/developers/unitTesting-guidelines/).
+
+# Timing your code
+
+First, a cautionary note...
+
+> premature optimization is the root of all evil
+>
+> --- Donald Knuth, 1974
+
+There are a few tools in R for timing your code.
+
+
+```r
+system.time(mean(rnorm(1e7)))
+```
+
+```
+##    user  system elapsed 
+##   0.800   0.024   0.825
+```
+
+```r
+library(rbenchmark)
+x <- rnorm(1e7)
+benchmark(ifelse(x < 0, x, 0),
+                   x[x < 0] <- 0, replications = 5,
+                   columns = c('replications', 'elapsed'))
+```
+
+```
+##   replications elapsed
+## 1            5   3.246
+## 2            5   0.198
+```
+
+# Profiling your code
+
+For more advanced assessment of bottlenecks in your code, consider `Rprof()`. Actually, the output
+from *Rprof* can be hard to decipher, so you may want to use the *proftools* package functions,
+which make use of *Rprof* under the hood. 
+
+Here's a function that does the linear algebra to implement a linear regression, assuming `x`
+is the matrix of predictors, including a column for the intercept.
+
+
+
+```r
+lr_slow <- function(y, x) {
+  xtx <- t(x) %*% x
+  xty <- t(x) %*% y
+  inv <- solve(xtx)   ## explicit matrix inverse is slow and generally a bad idea numerically
+  return(inv %*% xty)
+}                   
+
+lr_medium <- function(y, x) {
+  xtx <- crossprod(x)
+  xty <- crossprod(x, y)
+  inv <- solve(xtx)   ## explicit matrix inverse is slow and generally a bad idea numerically
+  return(inv %*% xty)
+}                   
+
+lr_fast <- function(y, x) {
+  xtx <- crossprod(x)
+  xty <- crossprod(x, y)
+  U <- chol(xtx)
+  tmp <- backsolve(U, xty, transpose = TRUE)
+  return(backsolve(U, tmp))
+}                   
+```
+
+Now let's try these two functions with profiling turned on.
+
+
+
+```r
+## generate random observations and random matrix of predictors
+y <- rnorm(5000)
+x <- matrix(rnorm(5000*1000), nrow = 5000)
+
+library(proftools)
+
+pd1 <- profileExpr(lr_slow(y, x))
+hotPaths(pd1)
+```
+
+```
+##  path                  total.pct self.pct
+##  lr_slow               54.29      0.00   
+##  . %*% (<text>:2)      28.57     28.57   
+##  . t (<text>:3)        11.43      0.00   
+##  . . standardGeneric   11.43      0.00   
+##  . . . t               11.43      0.00   
+##  . . . . t.default     11.43     11.43   
+##  . solve (<text>:4)    10.00      0.00   
+##  . . standardGeneric   10.00      0.00   
+##  . . . solve           10.00      0.00   
+##  . . . . solve.default 10.00     10.00   
+##  . t (<text>:2)         4.29      0.00   
+##  . . standardGeneric    4.29      0.00   
+##  . . . t                4.29      0.00   
+##  . . . . t.default      4.29      4.29   
+##  lazyLoadDBfetch       45.71      0.00   
+##  . <Anonymous>         45.71      0.00   
+##  . . lazyLoadDBfetch   45.71     45.71
+```
+
+```r
+hotPaths(pd1, value = 'time')
+```
+
+```
+##  path                  total.time self.time
+##  lr_slow               0.76       0.00     
+##  . %*% (<text>:2)      0.40       0.40     
+##  . t (<text>:3)        0.16       0.00     
+##  . . standardGeneric   0.16       0.00     
+##  . . . t               0.16       0.00     
+##  . . . . t.default     0.16       0.16     
+##  . solve (<text>:4)    0.14       0.00     
+##  . . standardGeneric   0.14       0.00     
+##  . . . solve           0.14       0.00     
+##  . . . . solve.default 0.14       0.14     
+##  . t (<text>:2)        0.06       0.00     
+##  . . standardGeneric   0.06       0.00     
+##  . . . t               0.06       0.00     
+##  . . . . t.default     0.06       0.06     
+##  lazyLoadDBfetch       0.64       0.00     
+##  . <Anonymous>         0.64       0.00     
+##  . . lazyLoadDBfetch   0.64       0.64
+```
+
+```r
+pd1 <- profileExpr(lr_medium(y, x))
+hotPaths(pd1)
+```
+
+```
+##  path                   total.pct self.pct
+##  lr_medium              100.00     0.00   
+##  . crossprod (<text>:9)  58.82     0.00   
+##  . . crossprod           58.82     0.00   
+##  . . . base::crossprod   58.82    58.82   
+##  . solve (<text>:11)     41.18     0.00   
+##  . . standardGeneric     41.18     0.00   
+##  . . . solve             41.18     0.00   
+##  . . . . solve.default   41.18    41.18
+```
+
+```r
+hotPaths(pd1, value = 'time')
+```
+
+```
+##  path                   total.time self.time
+##  lr_medium              0.34       0.00     
+##  . crossprod (<text>:9) 0.20       0.00     
+##  . . crossprod          0.20       0.00     
+##  . . . base::crossprod  0.20       0.20     
+##  . solve (<text>:11)    0.14       0.00     
+##  . . standardGeneric    0.14       0.00     
+##  . . . solve            0.14       0.00     
+##  . . . . solve.default  0.14       0.14
+```
+
+```r
+pd3 <- profileExpr(lr_fast(y, x))
+hotPaths(pd3)
+```
+
+```
+##  path                    total.pct self.pct
+##  lr_fast                 100.00     0.00   
+##  . crossprod (<text>:16)  90.91     0.00   
+##  . . crossprod            90.91     0.00   
+##  . . . base::crossprod    90.91    90.91   
+##  . chol (<text>:18)        9.09     0.00   
+##  . . standardGeneric       9.09     0.00   
+##  . . . chol                9.09     0.00   
+##  . . . . chol.default      9.09     9.09
+```
+
+```r
+hotPaths(pd3, value = 'time')
+```
+
+```
+##  path                    total.time self.time
+##  lr_fast                 0.22       0.00     
+##  . crossprod (<text>:16) 0.20       0.00     
+##  . . crossprod           0.20       0.00     
+##  . . . base::crossprod   0.20       0.20     
+##  . chol (<text>:18)      0.02       0.00     
+##  . . standardGeneric     0.02       0.00     
+##  . . . chol              0.02       0.00     
+##  . . . . chol.default    0.02       0.02
+```
+
+You might also check out *profvis* for an alternative to displaying profiling information
+generated by *Rprof*.
+
+# Memory use
+
+You should know how much memory (RAM) the computer you are using has and keep in mind how big your objects are and how much memory you code might use. All objects in R are stored in RAM unlike, e.g., SAS or a database.
+
+If in total, the jobs on a machine approach the physical RAM, the machine will start to use the hard disk as 'virtual memory'. This is called paging or swapping, and once this happens you're often toast (i.e., your code may take essentially forever to finish).
+
+You can assess memory use with ``top`` or ``ps`` in Linux/Mac or the Task Manager in Windows.
+
+Often it's a good idea to roughly estimate how much memory an object will take up even before creating it in R. You can do this with some simple arithmetic. Every real number takes 8 bytes (integers and logicals take less; character strings are complicated), so an object with, say, 1 million rows and 10 columns, all numbers, would take roughly 8 * 1000000 * 10 bytes or 800 Mb.
+
+
+```r
+x <- rnorm(1e7)
+object.size(x)
+```
+
+```
+## 80000040 bytes
+```
+
+```r
+1e7*8/1e6  # direct calculation of Mb
+```
+
+```
+## [1] 80
+```
+
+```r
+print(object.size(x), units = 'auto')
+```
+
+```
+## 76.3 Mb
+```
+
+```r
+x <- rnorm(1e8)
+gc()
+```
+
+```
+##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
+## Ncells   1518162  81.1    2637877  140.9   2637877  140.9
+## Vcells 111270362 849.0  180429712 1376.6 149866341 1143.4
+```
+
+```r
+rm(x)
+gc()
+```
+
+```
+##            used (Mb) gc trigger   (Mb)  max used   (Mb)
+## Ncells  1518171 81.1    2637877  140.9   2637877  140.9
+## Vcells 11270389 86.0  144343769 1101.3 149866341 1143.4
+```
+
+# Scripting
+
+* Keep your code in script (i.e., text) files.
+* Keep your files modular and focused.
+* Write functions to reuse code.
+* Learn a powerful, general purpose text editor
+
+If you use a good editor (such as RStudio's built-in editor, emacs with ESS, Aquamacs), it's easier to write and understand your code.
+
+With such editors, you can generally then execute lines or blocks of code easily.
+
+To run all the code in an entire file, do `source('myCodeFile.R')`.
+
+# Batch jobs / background execution
+
+To run code as a background job in a Linux/Mac context:
+
+```r
+R CMD BATCH --no-save myCodeFile.R myOutput.Rout &
+```
+
+Then you don't need to leave RStudio or R or a terminal window open. Your job will run by itself. If you are logged into a remote machine, you can log out and come back later.
+
+IMPORTANT: make sure to write any needed output to a file (e.g. .Rda files, CSV files, text output from print() or cat()).
+
+# Good coding practices: functions
+
+Use functions whenever possible. In particular try to write functions rather than carry out your work using blocks of code. Why? Functions allow us to
+reuse blocks of code easily for later use and for recreating an analysis
+(reproducible research). It's more transparent than sourcing a file
+of code because the inputs and outputs are specified formally, so
+you don't have to read through the code to figure out what it does.
+
+
+Good use of functions includes:
+
+- Write reusable code for core functionality and keep a single copy
+of the code (w/ backups of course) so you only need to change it in one place
+- Smaller functions are easier to debug, easier to understand, and can
+be combined in a modular fashion (like the UNIX utilities)
+
+Functions should: 
+
+ - be modular (having a single task); 
+ - have meaningful name; and
+ - have a comment describing their purpose, inputs and outputs (see the
+help file for any standard R function for how this is done in that context).
+
+# Good coding practices: syntax
+
+For an example that demonstrates some of these ideas, see [goodCode.R](goodCode.R).
+And for a counterexample, see [badCode.R](badCode.R).
+
+  - Header information: put metainfo on the code into the first few lines
+of the file as comments. Include who, when, what, how the code fits
+within a larger program (if appropriate), possibly the versions of
+R and key packages that you wrote this for
+  - Indentation: do this systematically (your editor can help here). This
+helps you and others to read and understand the code and can help
+in detecting errors in your code because it can expose lack of symmetry.
+  - Whitespace: use a lot of it. Some places where it is good to have
+it are (1) around operators (assignment and arithmetic), (2) between
+function arguments and list elements, (3) between matrix/array indices,
+in particular for missing indices. 
+  - Use blank lines to separate blocks of code and comments to say what
+the block does
+  - Split long lines at meaningful places.
+  - Use parentheses for clarity even if not needed for order of operations.
+For example, `a/y*x` will work but is not easy to read and
+you can easily induce a bug if you forget the order of operations.
+  - Documentation - add lots of comments (but don't belabor the obvious). Remember that in a few months, you may not follow your own code any better than a stranger. Some key things to document: 
+    - summarizing a block of code, 
+    - explaining a very complicated piece of code 
+    - explaining arbitrary constant values.
+  - break code into separate files (<2000-3000
+lines per file) with meaningful file names and related functions grouped
+within a file.
+  - Choose a consistent naming style for objects and functions: e.g. *numIts* (lowerCamelCase) vs. *NumIts* (UpperCamelCase) vs. *num.its* vs. *num\_its*
+    + I'd suggest avoiding periods in names since periods are used for object-oriented programming in R and many other languages
+  - Try to have the names be informative without being overly long.
+  - Try to avoid using the names of standard R functions for your objects, but R will generally be fairly smart about things.
+
+```r
+c <- 7
+c(3,5)
+```
+
+```
+## [1] 3 5
+```
+
+```r
+c
+```
+
+```
+## [1] 7
+```
+
+```r
+rm(c)
+c
+```
+
+```
+## function (...)  .Primitive("c")
+```
+- Use active names for functions (e.g., *calc_loglik*, *calcLogLik*)
+
+# Reproducible research
+
+> An article about computational science in a scientific
+publication is **not the scholarship itself**, it is merely
+**advertising** of the scholarship. The actual scholarship is the
+complete software development environment and the
+complete set of instructions which generated the figures.
+
+> --- Jonathan Buckheit and David Donoho, WaveLab and Reproducible Research (1995)
+
+Here are some useful articles talking about reproducibility.
+
+- [Wilson et at., Best practices for scientific computing, ArXiv:1210:0530](http://arxiv.org/abs/1210.0530)
+- [Gentzkow and Shapiro tutorial for social scientists](https://web.stanford.edu/~gentzkow/research/CodeAndData.pdf)
+
+
+# Some ideas for improving reproducibility
+
+  * Never change a dataset manually, including in pre-processing and post-processing. Always have a script that operates on the data (or results/output). 
+  * Always have version numbers for datasets.
+  * Note when and where you download, and ideally download via a script as well (e.g., *wget* and *curl* are UNIX tools for automated downloading).
+  * Produce figures (e.g., from R) via a script and not by point-and-click.
+  * When making figures, use `save()` or `save.image()` to save all the inputs needed to recreate a figure, with the code for making the figure in a script file.
+  * If feasible, include your code for doing analyses and making figures in the relevant document reporting the work by using one of the following tools
+    * *R Markdown*
+    * *Latex* with *knitr* 
+    * *Jupyter* (formerly *IPython Notebook*)
+  * Always set the random number seed so someone else can duplicate your exact numbers.
+  * Use version control tools such as Git! 
+
+# Breakout
+
+Please fill out the feedback survey.
+[ http://bit.ly/Rbootcamp2018]( http://bit.ly/Rbootcamp2018)

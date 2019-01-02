@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Matrices and Arrays</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Matrices and Arrays</h1>
+
+<p>Let&#39;s review matrices</p>
+
+<ul>
+<li>Matrices are two-dimensional collections of values of the same type</li>
+<li>We can have numeric, integer, character, or logical matrices, character matrices.</li>
+<li>You can&#39;t mix types within a matrix</li>
+</ul>
+
+<pre><code class="r">mat &lt;- matrix(rnorm(12), nrow = 3, ncol = 4)
+mat
+</code></pre>
+
+<pre><code>##            [,1]       [,2]       [,3]       [,4]
+## [1,] -1.7228439 -0.7207214 -0.2877622  0.5133103
+## [2,]  0.2321758  0.8871828  1.2808443 -0.5546136
+## [3,]  1.5920781  2.5924839 -1.6912609  0.0142042
+</code></pre>
+
+<pre><code class="r"># vectorized calcs work with matrices too
+mat*4
+</code></pre>
+
+<pre><code>##           [,1]      [,2]      [,3]       [,4]
+## [1,] -6.891376 -2.882886 -1.151049  2.0532412
+## [2,]  0.928703  3.548731  5.123377 -2.2184545
+## [3,]  6.368312 10.369936 -6.765044  0.0568168
+</code></pre>
+
+<pre><code class="r">mat &lt;- cbind(mat, 1:3)
+mat
+</code></pre>
+
+<pre><code>##            [,1]       [,2]       [,3]       [,4] [,5]
+## [1,] -1.7228439 -0.7207214 -0.2877622  0.5133103    1
+## [2,]  0.2321758  0.8871828  1.2808443 -0.5546136    2
+## [3,]  1.5920781  2.5924839 -1.6912609  0.0142042    3
+</code></pre>
+
+<p>Arrays are like matrices but can have more or fewer than two dimensions.</p>
+
+<pre><code class="r">arr &lt;- array(rnorm(12), c(2, 3, 4))
+arr
+</code></pre>
+
+<pre><code>## , , 1
+## 
+##            [,1]       [,2]        [,3]
+## [1,] -0.9071718 -0.9638432 -0.04292199
+## [2,]  0.3912341  1.4366121 -0.49244939
+## 
+## , , 2
+## 
+##            [,1]        [,2]        [,3]
+## [1,] -0.8790961 -0.09792996 -0.03015456
+## [2,] -0.1004457  1.13332547 -0.54939557
+## 
+## , , 3
+## 
+##            [,1]       [,2]        [,3]
+## [1,] -0.9071718 -0.9638432 -0.04292199
+## [2,]  0.3912341  1.4366121 -0.49244939
+## 
+## , , 4
+## 
+##            [,1]        [,2]        [,3]
+## [1,] -0.8790961 -0.09792996 -0.03015456
+## [2,] -0.1004457  1.13332547 -0.54939557
+</code></pre>
+
+<h1>Attributes</h1>
+
+<p>Objects have <em>attributes</em>.</p>
+
+<pre><code class="r">attributes(mat)
+</code></pre>
+
+<pre><code>## $dim
+## [1] 3 5
+</code></pre>
+
+<pre><code class="r">rownames(mat) &lt;- c(&#39;first&#39;, &#39;middle&#39;, &#39;last&#39;)
+mat
+</code></pre>
+
+<pre><code>##              [,1]       [,2]       [,3]       [,4] [,5]
+## first  -1.7228439 -0.7207214 -0.2877622  0.5133103    1
+## middle  0.2321758  0.8871828  1.2808443 -0.5546136    2
+## last    1.5920781  2.5924839 -1.6912609  0.0142042    3
+</code></pre>
+
+<pre><code class="r">attributes(mat)
+</code></pre>
+
+<pre><code>## $dim
+## [1] 3 5
+## 
+## $dimnames
+## $dimnames[[1]]
+## [1] &quot;first&quot;  &quot;middle&quot; &quot;last&quot;  
+## 
+## $dimnames[[2]]
+## NULL
+</code></pre>
+
+<pre><code class="r">names(attributes(air))
+</code></pre>
+
+<pre><code>## [1] &quot;names&quot;     &quot;class&quot;     &quot;row.names&quot;
+</code></pre>
+
+<pre><code class="r">attributes(air)$names
+</code></pre>
+
+<pre><code>##  [1] &quot;Year&quot;              &quot;Month&quot;             &quot;DayOfMonth&quot;       
+##  [4] &quot;DayOfWeek&quot;         &quot;DepTime&quot;           &quot;CRSDepTime&quot;       
+##  [7] &quot;ArrTime&quot;           &quot;CRSArrTime&quot;        &quot;UniqueCarrier&quot;    
+## [10] &quot;FlightNum&quot;         &quot;TailNum&quot;           &quot;ActualElapsedTime&quot;
+## [13] &quot;CRSElapsedTime&quot;    &quot;AirTime&quot;           &quot;ArrDelay&quot;         
+## [16] &quot;DepDelay&quot;          &quot;Origin&quot;            &quot;Dest&quot;             
+## [19] &quot;Distance&quot;          &quot;TaxiIn&quot;            &quot;TaxiOut&quot;          
+## [22] &quot;Cancelled&quot;         &quot;CancellationCode&quot;  &quot;Diverted&quot;         
+## [25] &quot;CarrierDelay&quot;      &quot;WeatherDelay&quot;      &quot;NASDelay&quot;         
+## [28] &quot;SecurityDelay&quot;     &quot;LateAircraftDelay&quot;
+</code></pre>
+
+<pre><code class="r">attributes(air)$row.names[1:10]
+</code></pre>
+
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10
+</code></pre>
+
+<p>Now let&#39;s do a bit of manipulation and see if you can infer how R represents matrices internally.</p>
+
+<pre><code class="r">mat[4]
+</code></pre>
+
+<pre><code>## [1] -0.7207214
+</code></pre>
+
+<pre><code class="r">attributes(mat) &lt;- NULL
+mat
+</code></pre>
+
+<pre><code>##  [1] -1.7228439  0.2321758  1.5920781 -0.7207214  0.8871828  2.5924839
+##  [7] -0.2877622  1.2808443 -1.6912609  0.5133103 -0.5546136  0.0142042
+## [13]  1.0000000  2.0000000  3.0000000
+</code></pre>
+
+<pre><code class="r">is.matrix(mat)
+</code></pre>
+
+<pre><code>## [1] FALSE
+</code></pre>
+
+<p><strong>Question</strong>: What can you infer about what a matrix is in R?</p>
+
+<p><strong>Question</strong>: What kind of object are the attributes themselves? How do I check?</p>
+
+<h1>Matrices are stored column-major</h1>
+
+<p>This is like Fortran, MATLAB and Julia but not like C or Python(numpy). </p>
+
+<pre><code class="r">mat &lt;- matrix(1:12, 3, 4)
+mat
+</code></pre>
+
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    4    7   10
+## [2,]    2    5    8   11
+## [3,]    3    6    9   12
+</code></pre>
+
+<pre><code class="r">c(mat)
+</code></pre>
+
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12
+</code></pre>
+
+<p>You can go smoothly back and forth between a matrix (or an array) and a vector:</p>
+
+<pre><code class="r">identical(mat, matrix(c(mat), 3, 4))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">identical(mat, matrix(c(mat), 3, 4, byrow = TRUE))
+</code></pre>
+
+<pre><code>## [1] FALSE
+</code></pre>
+
+<p>This is a common cause of bugs!</p>
+
+<h1>Missing values and other special values</h1>
+
+<p>Since it was designed by statisticians, R handles missing values very well relative to other languages.</p>
+
+<ul>
+<li><code>NA</code> is a missing value</li>
+</ul>
+
+<pre><code class="r">vec &lt;- rnorm(12)
+vec[c(3, 5)] &lt;- NA
+vec
+</code></pre>
+
+<pre><code>##  [1]  2.3025243 -0.2552535         NA -0.6053567         NA  0.9591721
+##  [7]  1.2998584  0.7039802  0.7709010 -0.1919022 -0.3071393  0.9991563
+</code></pre>
+
+<pre><code class="r">length(vec)
+</code></pre>
+
+<pre><code>## [1] 12
+</code></pre>
+
+<pre><code class="r">sum(vec)
+</code></pre>
+
+<pre><code>## [1] NA
+</code></pre>
+
+<pre><code class="r">sum(vec, na.rm = TRUE)
+</code></pre>
+
+<pre><code>## [1] 5.67594
+</code></pre>
+
+<pre><code class="r">hist(vec)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt=""/></p>
+
+<pre><code class="r">is.na(vec)
+</code></pre>
+
+<pre><code>##  [1] FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+## [12] FALSE
+</code></pre>
+
+<p>Be careful because many R functions won&#39;t warn you that they are ignoring the missing values.</p>
+
+<ul>
+<li>To infinity and beyond</li>
+</ul>
+
+<pre><code class="r">big &lt;- 1e500 
+big
+</code></pre>
+
+<pre><code>## [1] Inf
+</code></pre>
+
+<pre><code class="r">big + 7
+</code></pre>
+
+<pre><code>## [1] Inf
+</code></pre>
+
+<ul>
+<li><code>NaN</code> stands for Not a Number</li>
+</ul>
+
+<pre><code class="r">sqrt(-5)
+</code></pre>
+
+<pre><code>## Warning in sqrt(-5): NaNs produced
+</code></pre>
+
+<pre><code>## [1] NaN
+</code></pre>
+
+<pre><code class="r">big - big
+</code></pre>
+
+<pre><code>## [1] NaN
+</code></pre>
+
+<pre><code class="r">1/0
+</code></pre>
+
+<pre><code>## [1] Inf
+</code></pre>
+
+<ul>
+<li><code>NULL</code></li>
+</ul>
+
+<pre><code class="r">vec &lt;- c(vec, NULL) 
+vec
+</code></pre>
+
+<pre><code>##  [1]  2.3025243 -0.2552535         NA -0.6053567         NA  0.9591721
+##  [7]  1.2998584  0.7039802  0.7709010 -0.1919022 -0.3071393  0.9991563
+</code></pre>
+
+<pre><code class="r">length(vec)
+</code></pre>
+
+<pre><code>## [1] 12
+</code></pre>
+
+<pre><code class="r">a &lt;- NULL
+a + 7
+</code></pre>
+
+<pre><code>## numeric(0)
+</code></pre>
+
+<pre><code class="r">a[3, 4]
+</code></pre>
+
+<pre><code>## NULL
+</code></pre>
+
+<pre><code class="r">is.null(a)
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">myList &lt;- list(a = 7, b = 5)
+myList$a &lt;- NULL  # works for data frames too
+myList
+</code></pre>
+
+<pre><code>## $b
+## [1] 5
+</code></pre>
+
+<p><code>NA</code> can hold a place but <code>NULL</code> cannot.
+<code>NULL</code> is useful for having a function argument default to &#39;nothing&#39;. See <code>help(crossprod)</code>, which can compute either \(X^{\top}X\) or \(X^{\top}Y\).  </p>
+
+<h1>Logical vectors</h1>
+
+<pre><code class="r">answers &lt;- c(TRUE, TRUE, FALSE, FALSE)
+update &lt;- c(TRUE, FALSE, TRUE, FALSE)
+
+answers &amp; update
+</code></pre>
+
+<pre><code>## [1]  TRUE FALSE FALSE FALSE
+</code></pre>
+
+<pre><code class="r">answers | update
+</code></pre>
+
+<pre><code>## [1]  TRUE  TRUE  TRUE FALSE
+</code></pre>
+
+<pre><code class="r"># note the vectorized boolean arithmetic
+
+# what am I doing here?
+sum(answers)
+</code></pre>
+
+<pre><code>## [1] 2
+</code></pre>
+
+<pre><code class="r">mean(answers)
+</code></pre>
+
+<pre><code>## [1] 0.5
+</code></pre>
+
+<pre><code class="r">answers + update
+</code></pre>
+
+<pre><code>## [1] 2 1 1 0
+</code></pre>
+
+<p><strong>Question</strong>: What do you think R is doing to do arithmetic on logical vectors?</p>
+
+<p>Tricks with logicals&hellip;</p>
+
+<pre><code class="r">identical(answers &amp; update, as.logical(answers * update))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">identical(answers | update, as.logical(answers + update))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<h1>Data frames</h1>
+
+<p>A review from Module 1&hellip;</p>
+
+<ul>
+<li>Data frames are combinations of vectors of the same length, but can be of different types</li>
+<li>Data frames are what is used for standard rectangular (record by field) datasets, similar to a spreadsheet</li>
+<li>Data frames are a functionality that both sets R aside from some languages (e.g., Matlab) and provides functionality similar to some statistical packages (e.g., Stata, SAS)</li>
+</ul>
+
+<pre><code class="r">air &lt;- read.csv(&#39;../data/airline.csv&#39;)
+class(air)
+</code></pre>
+
+<pre><code>## [1] &quot;data.frame&quot;
+</code></pre>
+
+<pre><code class="r">head(air)
+</code></pre>
+
+<pre><code>##   Year Month DayOfMonth DayOfWeek DepTime CRSDepTime ArrTime CRSArrTime
+## 1 2005     1          1         6    1211       1216    1451       1502
+## 2 2005     1          2         7    1209       1216    1447       1502
+## 3 2005     1          3         1    1213       1216    1454       1502
+## 4 2005     1          4         2      NA       1216      NA       1502
+## 5 2005     1          5         3    1211       1216    1504       1502
+## 6 2005     1          6         4    1214       1215    1506       1505
+##   UniqueCarrier FlightNum TailNum ActualElapsedTime CRSElapsedTime AirTime
+## 1            UA       548  N341UA               100            106      81
+## 2            UA       548  N398UA                98            106      79
+## 3            UA       548  N303UA               101            106      83
+## 4            UA       548  000000                NA            106      NA
+## 5            UA       548  N917UA               113            106      85
+## 6            UA       548  N924UA               112            110      95
+##   ArrDelay DepDelay Origin Dest Distance TaxiIn TaxiOut Cancelled
+## 1      -11       -5    SFO  SLC      599      2      17         0
+## 2      -15       -7    SFO  SLC      599      2      17         0
+## 3       -8       -3    SFO  SLC      599      3      15         0
+## 4       NA       NA    SFO  SLC      599      0       0         1
+## 5        2       -5    SFO  SLC      599      6      22         0
+## 6        1       -1    SFO  SLC      599      6      11         0
+##   CancellationCode Diverted CarrierDelay WeatherDelay NASDelay
+## 1                         0            0            0        0
+## 2                         0            0            0        0
+## 3                         0            0            0        0
+## 4                A        0            0            0        0
+## 5                         0            0            0        0
+## 6                         0            0            0        0
+##   SecurityDelay LateAircraftDelay
+## 1             0                 0
+## 2             0                 0
+## 3             0                 0
+## 4             0                 0
+## 5             0                 0
+## 6             0                 0
+</code></pre>
+
+<pre><code class="r">str(air)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    539895 obs. of  29 variables:
+##  $ Year             : int  2005 2005 2005 2005 2005 2005 2005 2005 2005 2005 ...
+##  $ Month            : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ DayOfMonth       : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ DayOfWeek        : int  6 7 1 2 3 4 5 6 7 1 ...
+##  $ DepTime          : int  1211 1209 1213 NA 1211 1214 1330 1213 1206 1338 ...
+##  $ CRSDepTime       : int  1216 1216 1216 1216 1216 1215 1215 1215 1215 1215 ...
+##  $ ArrTime          : int  1451 1447 1454 NA 1504 1506 1620 1448 1443 1610 ...
+##  $ CRSArrTime       : int  1502 1502 1502 1502 1502 1505 1505 1505 1505 1505 ...
+##  $ UniqueCarrier    : Factor w/ 21 levels &quot;AA&quot;,&quot;AS&quot;,&quot;B6&quot;,..: 17 17 17 17 17 17 17 17 17 17 ...
+##  $ FlightNum        : int  548 548 548 548 548 548 548 548 548 548 ...
+##  $ TailNum          : Factor w/ 3983 levels &quot;&quot;,&quot;0&quot;,&quot;000000&quot;,..: 1033 1387 756 3 3777 3812 3840 1065 1387 3834 ...
+##  $ ActualElapsedTime: int  100 98 101 NA 113 112 110 95 97 92 ...
+##  $ CRSElapsedTime   : int  106 106 106 106 106 110 110 110 110 110 ...
+##  $ AirTime          : int  81 79 83 NA 85 95 85 72 77 78 ...
+##  $ ArrDelay         : int  -11 -15 -8 NA 2 1 75 -17 -22 65 ...
+##  $ DepDelay         : int  -5 -7 -3 NA -5 -1 75 -2 -9 83 ...
+##  $ Origin           : Factor w/ 1 level &quot;SFO&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Dest             : Factor w/ 82 levels &quot;ABQ&quot;,&quot;ACV&quot;,&quot;ANC&quot;,..: 76 76 76 76 76 76 76 76 76 76 ...
+##  $ Distance         : int  599 599 599 599 599 599 599 599 599 599 ...
+##  $ TaxiIn           : int  2 2 3 0 6 6 6 3 3 3 ...
+##  $ TaxiOut          : int  17 17 15 0 22 11 19 20 17 11 ...
+##  $ Cancelled        : int  0 0 0 1 0 0 0 0 0 0 ...
+##  $ CancellationCode : Factor w/ 5 levels &quot;&quot;,&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,..: 1 1 1 2 1 1 1 1 1 1 ...
+##  $ Diverted         : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CarrierDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ WeatherDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ NASDelay         : int  0 0 0 0 0 0 3 0 0 0 ...
+##  $ SecurityDelay    : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ LateAircraftDelay: int  0 0 0 0 0 0 72 0 0 65 ...
+</code></pre>
+
+<h1>Data frames are (special) lists!</h1>
+
+<pre><code class="r">is.list(air)
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<pre><code class="r">length(air)
+</code></pre>
+
+<pre><code>## [1] 29
+</code></pre>
+
+<pre><code class="r">air[[3]][1:5]
+</code></pre>
+
+<pre><code>## [1] 1 2 3 4 5
+</code></pre>
+
+<pre><code class="r">lapply(air, class) 
+</code></pre>
+
+<pre><code>## $Year
+## [1] &quot;integer&quot;
+## 
+## $Month
+## [1] &quot;integer&quot;
+## 
+## $DayOfMonth
+## [1] &quot;integer&quot;
+## 
+## $DayOfWeek
+## [1] &quot;integer&quot;
+## 
+## $DepTime
+## [1] &quot;integer&quot;
+## 
+## $CRSDepTime
+## [1] &quot;integer&quot;
+## 
+## $ArrTime
+## [1] &quot;integer&quot;
+## 
+## $CRSArrTime
+## [1] &quot;integer&quot;
+## 
+## $UniqueCarrier
+## [1] &quot;factor&quot;
+## 
+## $FlightNum
+## [1] &quot;integer&quot;
+## 
+## $TailNum
+## [1] &quot;factor&quot;
+## 
+## $ActualElapsedTime
+## [1] &quot;integer&quot;
+## 
+## $CRSElapsedTime
+## [1] &quot;integer&quot;
+## 
+## $AirTime
+## [1] &quot;integer&quot;
+## 
+## $ArrDelay
+## [1] &quot;integer&quot;
+## 
+## $DepDelay
+## [1] &quot;integer&quot;
+## 
+## $Origin
+## [1] &quot;factor&quot;
+## 
+## $Dest
+## [1] &quot;factor&quot;
+## 
+## $Distance
+## [1] &quot;integer&quot;
+## 
+## $TaxiIn
+## [1] &quot;integer&quot;
+## 
+## $TaxiOut
+## [1] &quot;integer&quot;
+## 
+## $Cancelled
+## [1] &quot;integer&quot;
+## 
+## $CancellationCode
+## [1] &quot;factor&quot;
+## 
+## $Diverted
+## [1] &quot;integer&quot;
+## 
+## $CarrierDelay
+## [1] &quot;integer&quot;
+## 
+## $WeatherDelay
+## [1] &quot;integer&quot;
+## 
+## $NASDelay
+## [1] &quot;integer&quot;
+## 
+## $SecurityDelay
+## [1] &quot;integer&quot;
+## 
+## $LateAircraftDelay
+## [1] &quot;integer&quot;
+</code></pre>
+
+<p><code>lapply()</code> is a function used on lists; it works here to apply the <code>class()</code> function to each element of the list, which in this case is each field/column.</p>
+
+<h1>But lists are also vectors!</h1>
+
+<pre><code class="r">length(air)
+</code></pre>
+
+<pre><code>## [1] 29
+</code></pre>
+
+<pre><code class="r">someFields &lt;- air[c(3,5)]
+head(someFields)
+</code></pre>
+
+<pre><code>##   DayOfMonth DepTime
+## 1          1    1211
+## 2          2    1209
+## 3          3    1213
+## 4          4      NA
+## 5          5    1211
+## 6          6    1214
+</code></pre>
+
+<pre><code class="r">identical(air[c(3,5)], air[ , c(3,5)])
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<p>In general the placement of commas in R is crucial, but here, two different operations give the same result because of the underlying structure of data frames.</p>
+
+<h1>Factors</h1>
+
+<ul>
+<li>A factor is a special data type in R used for categorical data. In some cases it works like magic and in others it is incredibly frustrating. </li>
+</ul>
+
+<pre><code class="r">class(air$Dest)
+</code></pre>
+
+<pre><code>## [1] &quot;factor&quot;
+</code></pre>
+
+<pre><code class="r">head(air$Dest) # What order are the factors in?
+</code></pre>
+
+<pre><code>## [1] SLC SLC SLC SLC SLC SLC
+## 82 Levels: ABQ ACV ANC ASE ATL AUS BFL BIL BOI BOS BUR BWI BZN CEC ... TWF
+</code></pre>
+
+<pre><code class="r">levels(air[[&quot;Dest&quot;]])  # note alternate way to get the variable
+</code></pre>
+
+<pre><code>##  [1] &quot;ABQ&quot; &quot;ACV&quot; &quot;ANC&quot; &quot;ASE&quot; &quot;ATL&quot; &quot;AUS&quot; &quot;BFL&quot; &quot;BIL&quot; &quot;BOI&quot; &quot;BOS&quot; &quot;BUR&quot;
+## [12] &quot;BWI&quot; &quot;BZN&quot; &quot;CEC&quot; &quot;CIC&quot; &quot;CLE&quot; &quot;CLT&quot; &quot;COS&quot; &quot;CVG&quot; &quot;DEN&quot; &quot;DFW&quot; &quot;DRO&quot;
+## [23] &quot;DTW&quot; &quot;EGE&quot; &quot;ELP&quot; &quot;EUG&quot; &quot;EWR&quot; &quot;FAT&quot; &quot;FCA&quot; &quot;GJT&quot; &quot;HNL&quot; &quot;IAD&quot; &quot;IAH&quot;
+## [34] &quot;IDA&quot; &quot;IND&quot; &quot;JFK&quot; &quot;KOA&quot; &quot;LAS&quot; &quot;LAX&quot; &quot;LGB&quot; &quot;LIH&quot; &quot;LMT&quot; &quot;MCO&quot; &quot;MDW&quot;
+## [45] &quot;MEM&quot; &quot;MFR&quot; &quot;MIA&quot; &quot;MKE&quot; &quot;MOD&quot; &quot;MRY&quot; &quot;MSO&quot; &quot;MSP&quot; &quot;MSY&quot; &quot;OAK&quot; &quot;OGG&quot;
+## [56] &quot;ONT&quot; &quot;ORD&quot; &quot;OTH&quot; &quot;PDX&quot; &quot;PHL&quot; &quot;PHX&quot; &quot;PIH&quot; &quot;PIT&quot; &quot;PMD&quot; &quot;PSC&quot; &quot;PSP&quot;
+## [67] &quot;RDD&quot; &quot;RDM&quot; &quot;RNO&quot; &quot;SAN&quot; &quot;SAT&quot; &quot;SBA&quot; &quot;SBP&quot; &quot;SEA&quot; &quot;SJC&quot; &quot;SLC&quot; &quot;SMF&quot;
+## [78] &quot;SMX&quot; &quot;SNA&quot; &quot;STL&quot; &quot;TUS&quot; &quot;TWF&quot;
+</code></pre>
+
+<pre><code class="r">summary(air$Dest)
+</code></pre>
+
+<pre><code>##   ABQ   ACV   ANC   ASE   ATL   AUS   BFL   BIL   BOI   BOS   BUR   BWI 
+##  2467 10402   613   166 13374  1705  3824    13  8338 10191  9052  1890 
+##   BZN   CEC   CIC   CLE   CLT   COS   CVG   DEN   DFW   DRO   DTW   EGE 
+##    43  2192  5102  1930  5313  1859  3957 20545 15694     2  4554    16 
+##   ELP   EUG   EWR   FAT   FCA   GJT   HNL   IAD   IAH   IDA   IND   JFK 
+##     1  8928 11741 10587    12     3 11644 11778 10582     2   752 24047 
+##   KOA   LAS   LAX   LGB   LIH   LMT   MCO   MDW   MEM   MFR   MIA   MKE 
+##  2741 24210 44265   209  2460   348  1593  2490   993 10829  4381   115 
+##   MOD   MRY   MSO   MSP   MSY   OAK   OGG   ONT   ORD   OTH   PDX   PHL 
+##  6334 10011    12  7935   251     1  4610  4409 22984   354 12707  9390 
+##   PHX   PIH   PIT   PMD   PSC   PSP   RDD   RDM   RNO   SAN   SAT   SBA 
+## 16313     2  1850  1119     1  5792  7382  4111  9114 18114  1367 12651 
+##   SBP   SEA   SJC   SLC   SMF   SMX   SNA   STL   TUS   TWF 
+##  6945 22283     2 15925 10806    13 15180  2797  1164    13
+</code></pre>
+
+<ul>
+<li>What if we don&#39;t like the order these are in? Factor order is important for all kinds of things like plotting, analysis of variance, regression output, and more</li>
+</ul>
+
+<h1>Ordering the Factor</h1>
+
+<ul>
+<li>Ordered factors simply have an additional attribute explaining the order of the levels of a factor</li>
+<li>This is a useful shortcut when we want to preserve some of the meaning provided by the order</li>
+<li>Think ordinal data</li>
+</ul>
+
+<pre><code class="r"># first let&#39;s do some pre-processing to get set up for the example
+air$DepDelayCens &lt;- air$DepDelay
+air$DepDelayCens[air$DepDelayCens &gt; 60] &lt;- 60
+air$DepDelayCens[air$DepDelayCens &lt; 0] &lt;- 0
+air$DayOfWeek &lt;- as.factor(air$DayOfWeek)
+air$DayOfWeekSun &lt;- ordered(air$DayOfWeek, 
+     levels = levels(air$DayOfWeek)[c(7,1,2,3,4,5,6)])
+
+# alternative coding
+# air &lt;- within(air, 
+#     DayOfWeekSun &lt;- ordered(DayOfWeek, 
+#        levels = levels(DayOfWeek)[c(7,1,2,3,4,5,6)])
+#)
+
+head(air$DayOfWeekSun)
+</code></pre>
+
+<pre><code>## [1] 6 7 1 2 3 4
+## Levels: 7 &lt; 1 &lt; 2 &lt; 3 &lt; 4 &lt; 5 &lt; 6
+</code></pre>
+
+<pre><code class="r">levels(air$DayOfWeekSun)
+</code></pre>
+
+<pre><code>## [1] &quot;7&quot; &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; &quot;5&quot; &quot;6&quot;
+</code></pre>
+
+<pre><code class="r">levels(air$DayOfWeekSun) &lt;- c(&quot;Sun&quot;,&quot;Mon&quot;,&quot;Tue&quot;,&quot;Wed&quot;,&quot;Thu&quot;,&quot;Fri&quot;,&quot;Sat&quot;)
+boxplot(DepDelayCens ~ DayOfWeekSun, data = air)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt=""/></p>
+
+<p><strong>Challenge</strong>: Try to decipher what I just did with that complicated single line of code starting with <code>within</code>.</p>
+
+<h1>Reclassifying Factors</h1>
+
+<ul>
+<li>Turning factors into other data types can be tricky. All factors have an underlying numeric structure.</li>
+</ul>
+
+<pre><code class="r">students &lt;- factor(c(&#39;basic&#39;,&#39;proficient&#39;,&#39;advanced&#39;,&#39;basic&#39;, 
+      &#39;advanced&#39;, &#39;minimal&#39;))
+levels(students)
+</code></pre>
+
+<pre><code>## [1] &quot;advanced&quot;   &quot;basic&quot;      &quot;minimal&quot;    &quot;proficient&quot;
+</code></pre>
+
+<pre><code class="r">unclass(students)
+</code></pre>
+
+<pre><code>## [1] 2 4 1 2 1 3
+## attr(,&quot;levels&quot;)
+## [1] &quot;advanced&quot;   &quot;basic&quot;      &quot;minimal&quot;    &quot;proficient&quot;
+</code></pre>
+
+<ul>
+<li>Hmmm, what happened?</li>
+<li>Be careful! The best way to convert a factor is to convert it to a character first.</li>
+</ul>
+
+<pre><code class="r">students &lt;- factor(c(&#39;basic&#39;,&#39;proficient&#39;,&#39;advanced&#39;,&#39;basic&#39;, 
+      &#39;advanced&#39;, &#39;minimal&#39;))
+score = c(minimal = 3, basic = 1, advanced = 13, proficient = 7) # a named vector
+score[&quot;advanced&quot;]  # look up by name
+</code></pre>
+
+<pre><code>## advanced 
+##       13
+</code></pre>
+
+<pre><code class="r">students[3]
+</code></pre>
+
+<pre><code>## [1] advanced
+## Levels: advanced basic minimal proficient
+</code></pre>
+
+<pre><code class="r">score[students[3]]
+</code></pre>
+
+<pre><code>## minimal 
+##       3
+</code></pre>
+
+<pre><code class="r">score[as.character(students[3])]
+</code></pre>
+
+<pre><code>## advanced 
+##       13
+</code></pre>
+
+<p>What went wrong and how did we fix it?  Notice how easily this could be a big bug in your code.</p>
+
+<h1>Subsetting</h1>
+
+<p>There are many ways to select subsets in R. The syntax below is useful for vectors, matrices, data frames, arrays and lists.</p>
+
+<pre><code class="r">vec &lt;- rnorm(20)
+mat &lt;- matrix(vec, 4, 5)
+rownames(mat) &lt;- letters[1:4]
+mat
+</code></pre>
+
+<pre><code>##         [,1]       [,2]        [,3]        [,4]       [,5]
+## a  0.9388063 -0.1578055 -0.63870678 -1.48048466 -0.3953748
+## b -1.2129332 -0.6416316 -1.49569066  0.02969633 -0.3237404
+## c  1.3533546 -0.5549230 -0.07178203  1.55374227  1.7648537
+## d -0.5986032  0.1630123  0.21077843  1.58435976 -0.4144714
+</code></pre>
+
+<p>1) by direct indexing</p>
+
+<pre><code class="r">vec[c(3, 5, 12:14)]
+</code></pre>
+
+<pre><code>## [1]  1.35335459 -0.15780554  0.21077843 -1.48048466  0.02969633
+</code></pre>
+
+<pre><code class="r">vec[-c(3,5)]
+</code></pre>
+
+<pre><code>##  [1]  0.93880627 -1.21293324 -0.59860321 -0.64163157 -0.55492299
+##  [6]  0.16301234 -0.63870678 -1.49569066 -0.07178203  0.21077843
+## [11] -1.48048466  0.02969633  1.55374227  1.58435976 -0.39537483
+## [16] -0.32374035  1.76485365 -0.41447143
+</code></pre>
+
+<pre><code class="r">mat[c(2,4), 5]
+</code></pre>
+
+<pre><code>##          b          d 
+## -0.3237404 -0.4144714
+</code></pre>
+
+<pre><code class="r">rowInd &lt;- c(1, 3, 4)
+colInd &lt;- c(2, 2, 1)
+elemInd &lt;- cbind(rowInd, colInd)
+elemInd
+</code></pre>
+
+<pre><code>##      rowInd colInd
+## [1,]      1      2
+## [2,]      3      2
+## [3,]      4      1
+</code></pre>
+
+<pre><code class="r">mat[elemInd]
+</code></pre>
+
+<pre><code>## [1] -0.1578055 -0.5549230 -0.5986032
+</code></pre>
+
+<p>Note the last usage where we give it a 2-column matrix of indices</p>
+
+<p>2) by a vector of logicals</p>
+
+<pre><code class="r">cond &lt;- vec &gt; 0
+vec[cond]
+</code></pre>
+
+<pre><code>## [1] 0.93880627 1.35335459 0.16301234 0.21077843 0.02969633 1.55374227
+## [7] 1.58435976 1.76485365
+</code></pre>
+
+<pre><code class="r">air[air$DepDelay &gt; 60*12 &amp; !is.na(air$DepDelay), ]
+</code></pre>
+
+<pre><code>##        Year Month DayOfMonth DayOfWeek DepTime CRSDepTime ArrTime
+## 71351  2005     7         23         6     633       1545    1212
+## 80042  2005     8         20         6    2237       1030     122
+## 115794 2005    11          2         3    1009        630    1526
+## 168750 2006     4         11         2    1001       1543    1505
+## 258029 2006    12         28         4    2232        845     216
+## 258288 2006    12         14         4    1118       2156    1908
+## 290635 2007     3         22         4     729       1545    1257
+## 333067 2007     7         16         1    1200       2021    1522
+## 337213 2007     7         16         1     858       1410    1805
+## 372929 2007    10         28         7    2155        835      37
+## 396990 2007    12         31         1     745       1225    1318
+## 415550 2008     2          9         6    1003       1605    1302
+## 449626 2008     5         10         6     735       1820    1005
+## 454313 2008     5         15         4    2243        850      50
+##        CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
+## 71351        2113            NW       354  N586NW               219
+## 80042        1301            TZ      4603  N561TZ               345
+## 115794       1207            NW       368  N552NW               197
+## 168750       2112            NW       354  N541US               184
+## 258029       1205            HA        11  N587HA               344
+## 258288        527            NW       346  N539US               290
+## 290635       2115            NW       354  N504US               208
+## 333067       2359            UA       595  N535UA               262
+## 337213       2245            AA       194  N5EVAA               367
+## 372929       1045            HA        11  N585HA               162
+## 396990       1809            NW       360  N525US               213
+## 415550       1946            UA        77  N667UA               299
+## 449626       2041            UA        39  N669UA               330
+## 454313       1055            HA        11  N596HA               307
+##        CRSElapsedTime AirTime ArrDelay DepDelay Origin Dest Distance
+## 71351             208     184      899      888    SFO  MSP     1589
+## 80042             331     323      741      727    SFO  LIH     2447
+## 115794            217     175     1639     1659    SFO  MSP     1589
+## 168750            209     165     1073     1098    SFO  MSP     1589
+## 258029            320     189      851      827    SFO  HNL     2398
+## 258288            271     228      821      802    SFO  DTW     2079
+## 290635            210     188      942      944    SFO  MSP     1589
+## 333067            278     235      923      939    SFO  ANC     2018
+## 337213            335     323     1160     1128    SFO  BOS     2704
+## 372929            130     123      832      800    SFO  HNL     2398
+## 396990            224     191     1149     1160    SFO  MSP     1589
+## 415550            341     272     1036     1078    SFO  HNL     2398
+## 449626            321     299      804      795    SFO  OGG     2338
+## 454313            305     286      835      833    SFO  HNL     2398
+##        TaxiIn TaxiOut Cancelled CancellationCode Diverted CarrierDelay
+## 71351      13      22         0                         0          888
+## 80042       5      17         0                         0          652
+## 115794      3      19         0                         0         1639
+## 168750      5      14         0                         0         1048
+## 258029      8      27         0                         0          827
+## 258288     33      29         0                         0          802
+## 290635      4      16         0                         0          884
+## 333067      4      23         0                         0          844
+## 337213     25      19         0                         0          993
+## 372929      6      33         0                         0          800
+## 396990      9      13         0                         0         1106
+## 415550      2      25         0                         0          710
+## 449626      6      25         0                         0          795
+## 454313      7      14         0                         0          835
+##        WeatherDelay NASDelay SecurityDelay LateAircraftDelay DepDelayCens
+## 71351             0       11             0                 0           60
+## 80042             0       14             0                75           60
+## 115794            0        0             0                 0           60
+## 168750            6        0             0                19           60
+## 258029            0        0             0                24           60
+## 258288            0       19             0                 0           60
+## 290635            0        0             0                58           60
+## 333067            0        0             0                79           60
+## 337213            0       32             0               135           60
+## 372929            0        0             0                32           60
+## 396990            0        0             0                43           60
+## 415550            0        0             0               326           60
+## 449626            0        9             0                 0           60
+## 454313            0        0             0                 0           60
+##        DayOfWeekSun
+## 71351           Sat
+## 80042           Sat
+## 115794          Wed
+## 168750          Tue
+## 258029          Thu
+## 258288          Thu
+## 290635          Thu
+## 333067          Mon
+## 337213          Mon
+## 372929          Sun
+## 396990          Mon
+## 415550          Sat
+## 449626          Sat
+## 454313          Thu
+</code></pre>
+
+<p>What happened in the last subsetting operation?</p>
+
+<p>3) by a vector of names</p>
+
+<pre><code class="r">mat[c(&#39;a&#39;, &#39;d&#39;, &#39;a&#39;), ]
+</code></pre>
+
+<pre><code>##         [,1]       [,2]       [,3]      [,4]       [,5]
+## a  0.9388063 -0.1578055 -0.6387068 -1.480485 -0.3953748
+## d -0.5986032  0.1630123  0.2107784  1.584360 -0.4144714
+## a  0.9388063 -0.1578055 -0.6387068 -1.480485 -0.3953748
+</code></pre>
+
+<p>4) using <em>subset()</em></p>
+
+<pre><code class="r">subset(air, DepDelay &gt; 60*12)
+</code></pre>
+
+<pre><code>##        Year Month DayOfMonth DayOfWeek DepTime CRSDepTime ArrTime
+## 71351  2005     7         23         6     633       1545    1212
+## 80042  2005     8         20         6    2237       1030     122
+## 115794 2005    11          2         3    1009        630    1526
+## 168750 2006     4         11         2    1001       1543    1505
+## 258029 2006    12         28         4    2232        845     216
+## 258288 2006    12         14         4    1118       2156    1908
+## 290635 2007     3         22         4     729       1545    1257
+## 333067 2007     7         16         1    1200       2021    1522
+## 337213 2007     7         16         1     858       1410    1805
+## 372929 2007    10         28         7    2155        835      37
+## 396990 2007    12         31         1     745       1225    1318
+## 415550 2008     2          9         6    1003       1605    1302
+## 449626 2008     5         10         6     735       1820    1005
+## 454313 2008     5         15         4    2243        850      50
+##        CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
+## 71351        2113            NW       354  N586NW               219
+## 80042        1301            TZ      4603  N561TZ               345
+## 115794       1207            NW       368  N552NW               197
+## 168750       2112            NW       354  N541US               184
+## 258029       1205            HA        11  N587HA               344
+## 258288        527            NW       346  N539US               290
+## 290635       2115            NW       354  N504US               208
+## 333067       2359            UA       595  N535UA               262
+## 337213       2245            AA       194  N5EVAA               367
+## 372929       1045            HA        11  N585HA               162
+## 396990       1809            NW       360  N525US               213
+## 415550       1946            UA        77  N667UA               299
+## 449626       2041            UA        39  N669UA               330
+## 454313       1055            HA        11  N596HA               307
+##        CRSElapsedTime AirTime ArrDelay DepDelay Origin Dest Distance
+## 71351             208     184      899      888    SFO  MSP     1589
+## 80042             331     323      741      727    SFO  LIH     2447
+## 115794            217     175     1639     1659    SFO  MSP     1589
+## 168750            209     165     1073     1098    SFO  MSP     1589
+## 258029            320     189      851      827    SFO  HNL     2398
+## 258288            271     228      821      802    SFO  DTW     2079
+## 290635            210     188      942      944    SFO  MSP     1589
+## 333067            278     235      923      939    SFO  ANC     2018
+## 337213            335     323     1160     1128    SFO  BOS     2704
+## 372929            130     123      832      800    SFO  HNL     2398
+## 396990            224     191     1149     1160    SFO  MSP     1589
+## 415550            341     272     1036     1078    SFO  HNL     2398
+## 449626            321     299      804      795    SFO  OGG     2338
+## 454313            305     286      835      833    SFO  HNL     2398
+##        TaxiIn TaxiOut Cancelled CancellationCode Diverted CarrierDelay
+## 71351      13      22         0                         0          888
+## 80042       5      17         0                         0          652
+## 115794      3      19         0                         0         1639
+## 168750      5      14         0                         0         1048
+## 258029      8      27         0                         0          827
+## 258288     33      29         0                         0          802
+## 290635      4      16         0                         0          884
+## 333067      4      23         0                         0          844
+## 337213     25      19         0                         0          993
+## 372929      6      33         0                         0          800
+## 396990      9      13         0                         0         1106
+## 415550      2      25         0                         0          710
+## 449626      6      25         0                         0          795
+## 454313      7      14         0                         0          835
+##        WeatherDelay NASDelay SecurityDelay LateAircraftDelay DepDelayCens
+## 71351             0       11             0                 0           60
+## 80042             0       14             0                75           60
+## 115794            0        0             0                 0           60
+## 168750            6        0             0                19           60
+## 258029            0        0             0                24           60
+## 258288            0       19             0                 0           60
+## 290635            0        0             0                58           60
+## 333067            0        0             0                79           60
+## 337213            0       32             0               135           60
+## 372929            0        0             0                32           60
+## 396990            0        0             0                43           60
+## 415550            0        0             0               326           60
+## 449626            0        9             0                 0           60
+## 454313            0        0             0                 0           60
+##        DayOfWeekSun
+## 71351           Sat
+## 80042           Sat
+## 115794          Wed
+## 168750          Tue
+## 258029          Thu
+## 258288          Thu
+## 290635          Thu
+## 333067          Mon
+## 337213          Mon
+## 372929          Sun
+## 396990          Mon
+## 415550          Sat
+## 449626          Sat
+## 454313          Thu
+</code></pre>
+
+<p>5) using <em>dplyr</em> tools such as <em>filter()</em> and <em>select()</em> &ndash; more in Module 5</p>
+
+<h1>Assignment into subsets</h1>
+
+<p>We can assign into subsets by using similar syntax, as we saw with vectors.</p>
+
+<pre><code class="r">vec[c(3, 5, 12:14)] &lt;- 1:5
+mat[2, 3:5] &lt;- rnorm(3)
+mat[mat[,1] &gt; 0, ] &lt;- -Inf
+</code></pre>
+
+<h1>Strings</h1>
+
+<p>R has lots of functionality for character strings. Usually these are stored as vectors of strings, each with arbitrary length.</p>
+
+<pre><code class="r">chars &lt;- c(&#39;hi&#39;, &#39;hallo&#39;, &quot;mother&#39;s&quot;, &#39;father\&#39;s&#39;, &quot;He said, \&quot;hi\&quot;&quot; )
+length(chars)
+</code></pre>
+
+<pre><code>## [1] 5
+</code></pre>
+
+<pre><code class="r">nchar(chars)
+</code></pre>
+
+<pre><code>## [1]  2  5  8  8 13
+</code></pre>
+
+<pre><code class="r">paste(&quot;bill&quot;, &quot;clinton&quot;, sep = &quot; &quot;)  # paste together a set of strings
+</code></pre>
+
+<pre><code>## [1] &quot;bill clinton&quot;
+</code></pre>
+
+<pre><code class="r">paste(chars, collapse = &#39; &#39;)  # paste together things from a vector
+</code></pre>
+
+<pre><code>## [1] &quot;hi hallo mother&#39;s father&#39;s He said, \&quot;hi\&quot;&quot;
+</code></pre>
+
+<pre><code class="r">strsplit(&quot;This is the R bootcamp&quot;, split = &quot; &quot;)
+</code></pre>
+
+<pre><code>## [[1]]
+## [1] &quot;This&quot;     &quot;is&quot;       &quot;the&quot;      &quot;R&quot;        &quot;bootcamp&quot;
+</code></pre>
+
+<pre><code class="r">substring(chars, 2, 3)
+</code></pre>
+
+<pre><code>## [1] &quot;i&quot;  &quot;al&quot; &quot;ot&quot; &quot;at&quot; &quot;e &quot;
+</code></pre>
+
+<pre><code class="r">chars2 &lt;- chars
+substring(chars2, 2, 3) &lt;- &quot;ZZ&quot;
+chars2
+</code></pre>
+
+<pre><code>## [1] &quot;hZ&quot;              &quot;hZZlo&quot;           &quot;mZZher&#39;s&quot;        &quot;fZZher&#39;s&quot;       
+## [5] &quot;HZZsaid, \&quot;hi\&quot;&quot;
+</code></pre>
+
+<p>We can search for patterns in character vectors and replace patterns (both vectorized!)</p>
+
+<pre><code class="r">grep(&quot;ther&quot;, chars)
+</code></pre>
+
+<pre><code>## [1] 3 4
+</code></pre>
+
+<pre><code class="r">gsub(&quot;hi&quot;, &quot;Hi&quot;, chars)
+</code></pre>
+
+<pre><code>## [1] &quot;Hi&quot;              &quot;hallo&quot;           &quot;mother&#39;s&quot;        &quot;father&#39;s&quot;       
+## [5] &quot;He said, \&quot;Hi\&quot;&quot;
+</code></pre>
+
+<h1>Regular expressions (regex or regexp)</h1>
+
+<p>Some of you may be familiar with using <em>regular expressions</em>, which is functionality for doing sophisticated pattern matching and replacement with strings. <em>Python</em> and <em>Perl</em> are both used extensively for such text manipulation. </p>
+
+<p>R has a full set of regular expression capabilities available through the <em>grep()</em>, <em>gregexpr()</em>, and <em>gsub()</em> functions (among others - many R functions will work with regular expressions). A particularly nice way to make use of this functionality is to use the <em>stringr</em> package, which is more user-friendly than directly using the core R functions.</p>
+
+<p>You can basically do any regular expression/string manipulations in R, though the syntax may be a bit clunky at times.</p>
+
+<h1>More details on reading data into R</h1>
+
+<p>Remember that you&#39;ll need to know the current working directory so that you know where R is looking for files.</p>
+
+<p>The workhorse for reading into a data frame is <em>read.table()</em>, which allows any separator (CSV, tab-delimited, etc.). <em>read.csv()</em> is a special case of <em>read.table()</em> for CSV files.</p>
+
+<p>You&#39;ve already seen a bit of this, but let&#39;s work through a more involved example, so you can see some of the steps and tricks involved in reading data into R.</p>
+
+<pre><code class="r">rta &lt;- read.table(&quot;../data/RTAData.csv&quot;, sep = &quot;,&quot;, head = TRUE)
+rta[1:5, 1:5]
+</code></pre>
+
+<pre><code>##               time X40010 X40015 X40020 X40025
+## 1 2010-03-01 14:58    821    209    828    258
+## 2 2010-03-01 15:01    804    209    804    248
+## 3 2010-03-01 15:04    892    212    801    237
+## 4 2010-03-01 15:07    857    214    821    243
+## 5 2010-03-01 15:10    849    222    834    252
+</code></pre>
+
+<pre><code class="r">dim(rta)
+</code></pre>
+
+<pre><code>## [1] 120822     62
+</code></pre>
+
+<pre><code class="r"># great, we&#39;re all set, right?
+# Not so fast...
+unlist(lapply(rta, class))[1:5]
+</code></pre>
+
+<pre><code>##     time   X40010   X40015   X40020   X40025 
+## &quot;factor&quot; &quot;factor&quot; &quot;factor&quot; &quot;factor&quot; &quot;factor&quot;
+</code></pre>
+
+<pre><code class="r"># ?read.table
+rta2 &lt;- read.table(&quot;../data/RTAData.csv&quot;, sep = &quot;,&quot;, 
+  head = TRUE, stringsAsFactors = FALSE)
+rta2[3,3]
+</code></pre>
+
+<pre><code>## [1] &quot;212&quot;
+</code></pre>
+
+<pre><code class="r">unlist(lapply(rta2, class))[1:5]
+</code></pre>
+
+<pre><code>##        time      X40010      X40015      X40020      X40025 
+## &quot;character&quot; &quot;character&quot; &quot;character&quot; &quot;character&quot; &quot;character&quot;
+</code></pre>
+
+<pre><code class="r"># let&#39;s delve more deeply
+levels(rta[ , 2])[c(1:5, 3041:3044)]
+</code></pre>
+
+<pre><code>## [1] &quot;&quot;     &quot;1000&quot; &quot;1001&quot; &quot;1002&quot; &quot;1003&quot; &quot;997&quot;  &quot;998&quot;  &quot;999&quot;  &quot;x&quot;
+</code></pre>
+
+<pre><code class="r">rta3 &lt;- read.table(&quot;../data/RTAData.csv&quot;, sep = &quot;,&quot;, head = TRUE, 
+      stringsAsFactors = FALSE, na.strings = c(&#39;NA&#39;, &#39;x&#39;))
+unlist(lapply(rta3, class))[1:5]
+</code></pre>
+
+<pre><code>##        time      X40010      X40015      X40020      X40025 
+## &quot;character&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;
+</code></pre>
+
+<pre><code class="r"># checking...
+missing &lt;- which(rta[ , 2] == &quot;&quot;)
+missing[1:5]
+</code></pre>
+
+<pre><code>## [1] 1167 1168 1169 1170 1171
+</code></pre>
+
+<pre><code class="r">rta3[head(missing), ]
+</code></pre>
+
+<pre><code>##                  time X40010 X40015 X40020 X40025 X40030 X40035 X40040
+## 1167 2010-03-04 01:16     NA     NA     NA     NA     NA     NA     NA
+## 1168 2010-03-04 01:19     NA     NA     NA     NA     NA     NA     NA
+## 1169 2010-03-04 01:22     NA     NA     NA     NA     NA     NA     NA
+## 1170 2010-03-04 01:25     NA     NA     NA     NA     NA     NA     NA
+## 1171 2010-03-04 01:28     NA     NA     NA     NA     NA     NA     NA
+## 1172 2010-03-04 01:31     NA     NA     NA     NA     NA     NA     NA
+##      X40045 X40050 X40055 X40060 X40065 X40070 X40075 X40080 X40085 X40090
+## 1167     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1168     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1169     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1170     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1171     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1172     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+##      X40092 X40095 X40100 X40105 X40110 X40115 X40120 X40125 X40130 X40135
+## 1167     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1168     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1169     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1170     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1171     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1172     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+##      X40140 X40145 X40150 X41010 X41015 X41020 X41025 X41030 X41035 X41040
+## 1167     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1168     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1169     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1170     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1171     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1172     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+##      X41045 X41050 X41055 X41060 X41065 X41070 X41075 X41080 X41085 X41090
+## 1167     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1168     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1169     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1170     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1171     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1172     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+##      X41095 X41100 X41105 X41110 X41115 X41120 X41125 X41130 X41135 X41140
+## 1167     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1168     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1169     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1170     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1171     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+## 1172     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+##      X41145 X41150 X41155 X41160
+## 1167     NA     NA     NA     NA
+## 1168     NA     NA     NA     NA
+## 1169     NA     NA     NA     NA
+## 1170     NA     NA     NA     NA
+## 1171     NA     NA     NA     NA
+## 1172     NA     NA     NA     NA
+</code></pre>
+
+<p>It&#39;s good to first look at your data in plain text format outside of R and then to check it after you&#39;ve read it into R.</p>
+
+<h1>Other ways to read data into R</h1>
+
+<p>The <em>read.table()</em> family of functions just skims the surface of things&hellip;</p>
+
+<p>1) You can also read in a file as vector of characters, one character string per line of the file with <em>readLines()</em>, and then post-process it. 
+2) You can read fixed width format (constant number of characters per field) with <em>read.fwf()</em>.
+3) <em>read_csv()</em> (and <em>read_lines()</em>, <em>read_fwf()</em>, etc.) in the <em>readr</em> package is a faster, more helpful drop-in replacement for <em>read.csv()</em> that plays well with <em>dplyr</em> (see Module 5).
+4) the <em>data.table</em> package is great for reading and manipulating large datasets (orders of gigabytes or 10s of gigabytes).</p>
+
+<h1>Breakout</h1>
+
+<h3>Basics</h3>
+
+<p>1) Extract the 5th row from the airline dataset.</p>
+
+<p>2) Extract the last row from the airline dataset.</p>
+
+<p>3) Count the number of NAs in the departure delay field of the airline dataset.</p>
+
+<p>4) Set all of the extreme delays (more than 300 minutes) to NA.</p>
+
+<p>5) Consider the first row of the airline dataset, which has UA flight number 548. How do I create a string &ldquo;UA-548&rdquo; using <code>air$UniqueCarrier[1]</code> and <code>air$FlightNum[1]</code>? </p>
+
+<h3>Using the ideas</h3>
+
+<p>6) Create a character string using <code>paste()</code> that tells the user how many rows there are in the data frame - do this programmatically such that it would work for any data frame regardless of how many rows it has. The result should look like this: &ldquo;There are 56,234,234 rows in the dataset&rdquo;</p>
+
+<p>7) If you didn&#39;t do it this way already, extract the last row from the airline dataset without typing the number &#39;539895&#39;.</p>
+
+<p>8) Create a boolean vector indicating if flight on the carrier WN (Southwest) and distance is less than 1000 miles and calculate the proportion of all the flights these represent.</p>
+
+<p>9) Use that vector to create a new data frame that is a subset of the original data frame.</p>
+
+<p>10) Consider the attributes of the <em>air</em> dataset. What kind of R object is the set of attributes?</p>
+
+<h3>Advanced</h3>
+
+<p>11) Make the destination variable a factor variable and reorder the levels by the number of arrivals from SFO at the destinations. Now create a boxplot of departure delay by destination for January, 2005.</p>
+
+<p>12) Create row names for the data frame based on concatenating the Year, Month, DayOfMonth, UniqueCarrier and FlightNum fields. You may run into a problem with the data that you need to resolve before you&#39;re able to do this&hellip;</p>
+
+</body>
+
+</html>
