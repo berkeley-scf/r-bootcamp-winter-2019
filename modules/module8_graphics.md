@@ -6,7 +6,7 @@
 
 # By way of introduction...
 
-* 3 main facilities for producing graphics in R: **base**, **`lattice`**, and **`ggplot2`**
+* 3 main facilities for producing graphics in R: **base**, **`ggplot2`**, and **`lattice`**
 * In practice, these facilities are grouped into two camps: "basic" and "advanced"
 * A better formulation: quick/dirty v. involved/fancy
 
@@ -130,7 +130,7 @@ points(x = 1984, y = usa_gold_medals$count[usa_gold_medals$Year == 1984],
 
 ![](figure/unnamed-chunk-5-2.png)
 
-## Other plot types
+# Other plot types in base graphics
 
 These are just a few other types of plots you can make in base graphics.
 
@@ -166,7 +166,7 @@ mosaicplot(Year~Medal, medal_counts)
 
 ![](figure/unnamed-chunk-6-5.png)
 
-## Object-oriented plots
+# Object-oriented plots
 * Base graphics often recognizes the object type and will implement specific plot methods
 * lattice and ggplot2 generally **don't** exhibit this sort of behavior
 
@@ -188,22 +188,17 @@ plot(medal_lm, which=1:2)
 ![ ](figure/unnamed-chunk-7-2.png)![ ](figure/unnamed-chunk-7-3.png)
 
 
-## Pros/cons of base graphics
-* Good for exploratory data analysis and sanity checks
-* Syntax is inconsistent across functions: some take x,y while others take formulas
-* Defaults plotting parameters are ugly and it can be difficult to customize
+# Pros/cons of base graphics, ggplot2, and lattice
 
-# `lattice` and `ggplot2`
+Base graphics is
 
-`lattice` is
+a) good for exploratory data analysis and sanity checks
 
-a) faster (though only noticeable over many and large plots)
+b) inconsistent in syntax across functions: some take x,y while others take formulas
 
-b) simpler (at first)
+c) defaults plotting parameters are ugly and it can be difficult to customize
 
-c) better at trellis graphs
-
-d) able to do 3d graphs
+d) that said, one can do essentially anything in base graphics with some work
 
 `ggplot2` is
 
@@ -215,96 +210,17 @@ c) better at grouping
 
 d) able to interface with maps
 
-# Basic usage: `lattice`
+`lattice` is
 
-The general call for `lattice` graphics looks something like this:
+a) faster than ggplot2 (though only noticeable over many and large plots)
 
+b) simpler than ggplot2 (at first)
 
-```r
-# NOT run
-graph_type(formula, data = , [options])
-```
+c) better at trellis graphs than ggplot2
 
-The most common graph types:
+d) able to do 3d graphs
 
-* `xyplot`: generic scatterplot
-* `barchart`: bar plots
-* `bwplot`: box-and-whisker plots
-* `histogram`: histograms or kernel density plots
-* `cloud`: 3D scatterplot
-
-The specifics of the **formula** differ for each graph type, but the general format is straightforward
-
-
-```r
-~y            # Show the distribution of y
-
-y~x           # Show the relationship between x and y
-
-y~x|A         # Show the relationship between x and y conditional on the values of A
-
-y~x|A*B       # Show the relationship between x and y conditional on the combinations of A and B
-
-z~y*x         # Show the 3D relationship between x, y, and z
-```
-
-Let's recreate some of the plots we made above using lattice. wlattice overlap with the options for base graphics.
-
-
-```r
-xyplot(Gold~Year, data = medal_counts_wide, main = "Gold Medal Counts")
-```
-
-![](figure/unnamed-chunk-10-1.png)
-
-```r
-xyplot(count~Year, data = usa_gold_medals, type = "l", main = "USA Gold Medals")
-```
-
-![](figure/unnamed-chunk-10-2.png)
-
-```r
-# Boxplot
-bwplot(Year~Gold, data = medal_counts_wide, main = "Gold Medal Counts")
-```
-
-![](figure/unnamed-chunk-10-3.png)
-
-```r
-# Flip the coordinates so year increases on the x-axis
-# Explicitly turn Year into a factor
-bwplot(Gold~factor(Year), data = medal_counts_wide, main = "Gold Medal Counts",
-                  horizontal = FALSE)
-```
-
-![](figure/unnamed-chunk-10-4.png)
-
-```r
-# Histogram
-histogram(~Gold, medal_counts_wide, type="count", main = "Gold Medal Counts")
-```
-
-![](figure/unnamed-chunk-10-5.png)
-
-```r
-# Density plot
-densityplot(~Gold, medal_counts_wide, main = "Gold Medal Counts")
-```
-
-![](figure/unnamed-chunk-10-6.png)
-
-```r
-# Bar chart
-barchart(count~factor(Year), data = usa_gold_medals, width = 4,
-                     main = "USA Gold Medals", horizontal = FALSE)
-```
-
-![](figure/unnamed-chunk-10-7.png)
-
-## Pros/cons of `lattice`
-* `lattice` is useful for comparing cross-sectional variation in **trellis plots**
-* Plots are generated in a single function call: you can't go back and add more once it's created
-* Becoming a proficient user of lattice requires learning a huge array of graph-specific formulas and options
+We'll focus on ggplot2 as it is very powerful, very widely-used and allows one to produce very nice-looking graphics without a lot of coding.
 
 
 # Basic usage: `ggplot2`
@@ -332,15 +248,15 @@ p <- ggplot(data = medal_counts_wide, aes(x = Year, y = Gold)) +
 p
 ```
 
-![ ](figure/unnamed-chunk-13-1.png)
+![ ](figure/unnamed-chunk-10-1.png)
 
 ```r
 p + geom_point(aes(x = Year, y = Silver), color = "gray") + ylab("Medals")
 ```
 
-![ ](figure/unnamed-chunk-13-2.png)
+![ ](figure/unnamed-chunk-10-2.png)
 
-## Grammar of Graphics
+# Grammar of Graphics
 
 `ggplot2` syntax is very different from base graphics and lattice. It's built on the **grammar of graphics**.
 The basic idea is that the visualization of all data requires four items:
@@ -362,14 +278,14 @@ ggplot(medal_counts_wide, aes(x = Year, y = Gold)) + geom_point() +
                           ggtitle("Gold Medal Counts")
 ```
 
-![](figure/unnamed-chunk-14-1.png)
+![](figure/unnamed-chunk-11-1.png)
 
 ```r
 ggplot(usa_gold_medals, aes(x = Year, y = count)) + geom_line() +
                         ggtitle("USA Gold Medals")
 ```
 
-![](figure/unnamed-chunk-14-2.png)
+![](figure/unnamed-chunk-11-2.png)
 
 ```r
 # Boxplots
@@ -377,7 +293,7 @@ ggplot(medal_counts_wide, aes(x = factor(Year), y = Gold)) +
                           geom_boxplot() + ggtitle("Gold Medal Counts")
 ```
 
-![](figure/unnamed-chunk-14-3.png)
+![](figure/unnamed-chunk-11-3.png)
 
 ```r
 # Histogram
@@ -385,7 +301,7 @@ ggplot(medal_counts_wide, aes(x = Gold)) + geom_histogram() +
                           ggtitle("Gold Medal Counts")
 ```
 
-![](figure/unnamed-chunk-14-4.png)
+![](figure/unnamed-chunk-11-4.png)
 
 ```r
 # Density plot
@@ -393,17 +309,17 @@ ggplot(medal_counts_wide, aes(x = Gold)) + geom_density() +
                           ggtitle("Gold Medal Counts")
 ```
 
-![](figure/unnamed-chunk-14-5.png)
+![](figure/unnamed-chunk-11-5.png)
 
 ```r
 # Bar chart
 ggplot(usa_gold_medals, aes(x = Year, y = count)) + geom_bar(stat = "identity")
 ```
 
-![](figure/unnamed-chunk-14-6.png)
+![](figure/unnamed-chunk-11-6.png)
 
 
-## `ggplot2` and tidy data
+# `ggplot2` and tidy data
 
 * `ggplot2` plays nice with `dplyr` and pipes. If you want to manipulate your data specifically for one plot but not save the new dataset, you can call your `dplyr` chain and pipe it directly into a `ggplot` call.
 
@@ -416,7 +332,7 @@ medal_counts %>%
   ggplot(aes(x = Year, y = count)) + geom_line()
 ```
 
-![](figure/unnamed-chunk-15-1.png)
+![](figure/unnamed-chunk-12-1.png)
 
 * Base graphics/lattice and `ggplot2` have one big difference: `ggplot2` **requires** your data to be in tidy format. For base graphics, it can actually be helpful *not* to have your data in tidy format.
 The difference is that `ggplot` treats `Medal` as an aesthetic parameter that differentiates kinds of statistics, whereas base graphics treats each (year, medal) pair as a set of inputs to the plot.
@@ -432,7 +348,7 @@ ggplot(data = usa_all_medals, aes(x = Year, y = count)) +
             geom_line(aes(color = Medal))
 ```
 
-![](figure/unnamed-chunk-16-1.png)
+![](figure/unnamed-chunk-13-1.png)
 
 
 ```r
@@ -448,10 +364,10 @@ legend("right", legend = c("Gold", "Silver", "Bronze"),
                 fill = c("green", "blue", "red"))
 ```
 
-![](figure/unnamed-chunk-17-1.png)
+![](figure/unnamed-chunk-14-1.png)
 
 
-## Pros/cons of `ggplot2`
+# Pros/cons of `ggplot2`
 
 * Allows you to add features in "layers"
 * Automatically adjusts spacing and sizing as you add more layers
@@ -459,49 +375,36 @@ legend("right", legend = c("Gold", "Silver", "Bronze"),
 * Syntax is different from base R -- there is a learning curve
 * Plots are actually objects. You can assign them to a variable and do things with it (more on this later)
 
-# Comparing `lattice` and `ggplot2`
+# An overview of syntax for various `ggplot2` plots
 
-* Density Plots
-* Scatter Plots
-* Line Plots
-* Bar plots
-* Box plots
-* Trellis Plots
-* Contour Plots
-* Tile/Image Plots
-* 3D Plots (`lattice`)
-
-# `lattice` v. `ggplot2`: Densities
+Densities:
 
 
 ```r
 ggplot(data = usa_gold_medals, aes(x = count)) + geom_density() # ggplot2
-densityplot(~count, data = usa_gold_medals) # lattice
 ```
 
-![ ](figure/unnamed-chunk-18-1.png)![ ](figure/unnamed-chunk-18-2.png)
+![ ](figure/unnamed-chunk-15-1.png)
 
-# `lattice` v. `ggplot2`: X-Y scatter plots
+X-Y scatter plots:
 
 
 ```r
 ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() # ggplot2
-xyplot(count~Year, data = usa_gold_medals) # lattice
 ```
 
-![ ](figure/unnamed-chunk-19-1.png)![ ](figure/unnamed-chunk-19-2.png)
+![ ](figure/unnamed-chunk-16-1.png)
 
-# `lattice` v. `ggplot2`: X-Y line plots
+X-Y line plots: 
 
 
 ```r
 ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_line() # ggplot2
-xyplot(count~Year, data = usa_gold_medals, type = "l") # lattice
 ```
 
-![ ](figure/unnamed-chunk-20-1.png)![ ](figure/unnamed-chunk-20-2.png)
+![ ](figure/unnamed-chunk-17-1.png)
 
-# `lattice` v. `ggplot2`: bar plots
+bar plots:
 
 
 ```r
@@ -516,24 +419,22 @@ median_gold_medals <- medal_counts %>%
 
 ggplot(data = median_gold_medals[1:15, ], aes(x = NOC, y = med)) +
             geom_bar(stat="identity") # ggplot2
-barchart(med~NOC, data = median_gold_medals[1:15, ]) # lattice
 ```
 
-![ ](figure/unnamed-chunk-21-1.png)![ ](figure/unnamed-chunk-21-2.png)
+![ ](figure/unnamed-chunk-18-1.png)
 
-# `lattice` v. `ggplot2`: boxplots
+boxplots:
 
 
 ```r
 # Notice that here, you must explicitly convert numeric years to factors
 ggplot(data = medal_counts_wide, aes(x = factor(Year), y = Gold)) +
             geom_boxplot() # ggplot2
-bwplot(Gold~factor(Year), data = medal_counts_wide, horizontal = FALSE) # lattice
 ```
 
-![ ](figure/unnamed-chunk-22-1.png)![ ](figure/unnamed-chunk-22-2.png)
+![ ](figure/unnamed-chunk-19-1.png)
 
-# `lattice` v. `ggplot2`: "trellis" plots
+"trellis" plots:
 
 ```r
 # Subset the data to North America countries for easier viewing
@@ -545,12 +446,11 @@ northern_hem <- medal_counts_wide %>%
 
 ggplot(data = northern_hem, aes(x = Year, y = Gold)) + geom_point() +
             facet_wrap(~NOC) # ggplot2
-xyplot(Gold~Year|NOC, data = northern_hem) # lattice
 ```
 
-![ ](figure/unnamed-chunk-23-1.png)![ ](figure/unnamed-chunk-23-2.png)
+![ ](figure/unnamed-chunk-20-1.png)
 
-# `lattice` v. `ggplot2`: contour plots
+contour plots:
 
 
 ```r
@@ -592,108 +492,26 @@ names(volcano3d) <- c("xvar", "yvar", "zvar") # Rename volcano3d columns
 
 ggplot(data = volcano3d, aes(x = xvar, y = yvar, z = zvar)) +
             geom_contour() # ggplot2
-contourplot(zvar~xvar + yvar, data = volcano3d) # lattice
 ```
 
-![ ](figure/unnamed-chunk-24-1.png)![ ](figure/unnamed-chunk-24-2.png)
+![ ](figure/unnamed-chunk-21-1.png)
 
-# `lattice` v. `ggplot2`: tile/image/level plots
+tile/image/level plots:
 
 
 ```r
 ggplot(data = volcano3d, aes(x = xvar, y = yvar, z = zvar)) +
             geom_tile(aes(fill = zvar)) # ggplot2
-levelplot(zvar~xvar + yvar, data = volcano3d) # lattice
 ```
 
-![ ](figure/unnamed-chunk-25-1.png)![ ](figure/unnamed-chunk-25-2.png)
+![ ](figure/unnamed-chunk-22-1.png)
 
-# `lattice`: 3D plots
-
-```r
-# Create a subset of the dataset containing only data for France
-cloud(Gold~Bronze*Silver, data = northern_hem)
-```
-
-![ ](figure/unnamed-chunk-26-1.png)
-
-```r
-cloud(Gold~Bronze*Silver|NOC, data = northern_hem)
-```
-
-![ ](figure/unnamed-chunk-26-2.png)
-
-# `lattice` v. `ggplot2`: options
-
-Main difference to keep in mind: `lattice` options behave similarly to base plot, `ggplot` handles options in additional layers.
-
-### Labels
-
-
-```r
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
-  xlab(label = "Year") +
-  ylab(label = "Number of Gold Medals Won") +
-  ggtitle(label = "Cool Graph") # ggplot2
-
-xyplot(count~Year, data = usa_gold_medals,
-       xlab = "Year", ylab = "Number of Gold Medals Won",
-       main = "Cool Graph") # lattice
-```
-
-![ ](figure/unnamed-chunk-27-1.png)![ ](figure/unnamed-chunk-27-2.png)
-
-### Axis and point scales
-
-
-```r
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point() # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(size=3) # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(size=1) # ggplot2
-```
-
-![ ](figure/unnamed-chunk-28-1.png)![ ](figure/unnamed-chunk-28-2.png)![ ](figure/unnamed-chunk-28-3.png)
-
-
-```r
-xyplot(count~Year, data = usa_gold_medals) # lattice
-xyplot(count~Year, data = usa_gold_medals, cex = 2) # lattice
-xyplot(count~Year, data = usa_gold_medals, cex = .5) # lattice
-```
-
-![ ](figure/unnamed-chunk-29-1.png)![ ](figure/unnamed-chunk-29-2.png)![ ](figure/unnamed-chunk-29-3.png)
-
-### Graphical parameters
-
-
-#### Colors
-
-```r
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(color = colors()[11]) # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(color = "red") # ggplot2
-```
-
-![ ](figure/unnamed-chunk-30-1.png)![ ](figure/unnamed-chunk-30-2.png)
-
-
-```r
-xyplot(count~Year, data = usa_gold_medals, col = colors()[11]) #lattice
-xyplot(count~Year, data = usa_gold_medals, col = "red") #lattice
-```
-
-![ ](figure/unnamed-chunk-31-1.png)![ ](figure/unnamed-chunk-31-2.png)
-
-#### Anatomy of `aes()`
+# Anatomy of `aes()`
 
 
 ```r
 # NOT run
-ggplot(data = , aes(x = , y = , color = , linetype = , shape = , size=))
+ggplot(data = , aes(x = , y = , color = , linetype = , shape = , size = ))
 ```
 
 These four aesthetic parameters (`color`, `linetype`, `shape`, `size`) can be used to show variation in *kind* (categories) and variation in *degree* (numeric).
@@ -708,7 +526,8 @@ ggplot(data = usa_all_medals, aes(x = Year, y = count)) +
             geom_line(aes(color = Medal))
 ```
 
-![ ](figure/unnamed-chunk-33-1.png)
+![ ](figure/unnamed-chunk-24-1.png)
+
 Note what happens when we specify the color parameter outside of the aesthetic operator. `ggplot2` views these specifications as invalid graphical parameters.
 
 
@@ -735,56 +554,9 @@ ggplot(data = usa_all_medals, aes(x = Year, y = count)) +
             geom_point(color = "red")
 ```
 
-![ ](figure/unnamed-chunk-34-1.png)
+![ ](figure/unnamed-chunk-25-1.png)
 
-#### Point Styles and Widths
-
-
-```r
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(shape = 3) # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(shape = "w") # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_point(shape = "$", size=5) # ggplot2
-```
-
-![ ](figure/unnamed-chunk-35-1.png)![ ](figure/unnamed-chunk-35-2.png)![ ](figure/unnamed-chunk-35-3.png)
-
-
-```r
-xyplot(count~Year, data = usa_gold_medals, pch = 3) # lattice
-xyplot(count~Year, data = usa_gold_medals, pch = "w") # lattice
-xyplot(count~Year, data = usa_gold_medals, pch = "$", cex = 2) # lattice
-```
-
-![ ](figure/unnamed-chunk-36-1.png)![ ](figure/unnamed-chunk-36-2.png)![ ](figure/unnamed-chunk-36-3.png)
-
-#### Line Styles and Widths
-
-
-```r
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_line(linetype = 1) # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_line(linetype = 2) # ggplot2
-ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
-            geom_line(linetype = 5, size = 2) # ggplot2
-```
-
-![ ](figure/unnamed-chunk-37-1.png)![ ](figure/unnamed-chunk-37-2.png)![ ](figure/unnamed-chunk-37-3.png)
-
-
-```r
-xyplot(count~Year, data = usa_gold_medals, type = "l", lty = 1) # lattice
-xyplot(count~Year, data = usa_gold_medals, type = "l", lty = 2) # lattice
-xyplot(count~Year, data = usa_gold_medals, type = "l",
-                   lty = 3, lwd = 3) # lattice
-```
-
-![ ](figure/unnamed-chunk-38-1.png)![ ](figure/unnamed-chunk-38-2.png)![ ](figure/unnamed-chunk-38-3.png)
-
-#### Using aesthetics to highlight features
+# Using aesthetics to highlight features
 
 Differences in kind
 
@@ -796,7 +568,7 @@ ggplot(data = northern_hem, aes(x = Year, y = Gold)) +
             geom_point(aes(shape = NOC, color = NOC))
 ```
 
-![ ](figure/unnamed-chunk-39-1.png)![ ](figure/unnamed-chunk-39-2.png)
+![ ](figure/unnamed-chunk-26-1.png)![ ](figure/unnamed-chunk-26-2.png)
 
 Differences in degree
 
@@ -808,7 +580,7 @@ ggplot(data = northern_hem, aes(x = Year, y = Silver)) +
             geom_point(aes(size = Gold))
 ```
 
-![ ](figure/unnamed-chunk-40-1.png)![ ](figure/unnamed-chunk-40-2.png)
+![ ](figure/unnamed-chunk-27-1.png)![ ](figure/unnamed-chunk-27-2.png)
 
 Multiple non-coordinate aesthetics (differences in kind using color, degree using point size)
 
@@ -818,7 +590,76 @@ ggplot(data = northern_hem, aes(x = Year, y = Silver)) +
             geom_point(aes(size = Gold, color = NOC))
 ```
 
-![ ](figure/unnamed-chunk-41-1.png)
+![ ](figure/unnamed-chunk-28-1.png)
+
+# Changing options in ggplot2
+
+`ggplot` handles options in additional layers.
+
+### Labels
+
+
+```r
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
+  xlab(label = "Year") +
+  ylab(label = "Number of Gold Medals Won") +
+  ggtitle(label = "Cool Graph") # ggplot2
+```
+
+![ ](figure/unnamed-chunk-29-1.png)
+
+### Axis and point scales
+
+
+```r
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point() # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(size=3) # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(size=1) # ggplot2
+```
+
+![ ](figure/unnamed-chunk-30-1.png)![ ](figure/unnamed-chunk-30-2.png)![ ](figure/unnamed-chunk-30-3.png)
+
+### Colors
+
+```r
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(color = colors()[11]) # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(color = "red") # ggplot2
+```
+
+![ ](figure/unnamed-chunk-31-1.png)![ ](figure/unnamed-chunk-31-2.png)
+
+### Point Styles and Widths
+
+
+```r
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(shape = 3) # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(shape = "w") # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_point(shape = "$", size=5) # ggplot2
+```
+
+![ ](figure/unnamed-chunk-32-1.png)![ ](figure/unnamed-chunk-32-2.png)![ ](figure/unnamed-chunk-32-3.png)
+
+### Line Styles and Widths
+
+
+```r
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_line(linetype = 1) # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_line(linetype = 2) # ggplot2
+ggplot(data = usa_gold_medals, aes(x = Year, y = count)) +
+            geom_line(linetype = 5, size = 2) # ggplot2
+```
+
+![ ](figure/unnamed-chunk-33-1.png)![ ](figure/unnamed-chunk-33-2.png)![ ](figure/unnamed-chunk-33-3.png)
 
 # Fitted lines and curves with `ggplot2`
 
@@ -827,7 +668,7 @@ ggplot(data = northern_hem, aes(x = Year, y = Silver)) +
 ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point()
 ```
 
-![ ](figure/unnamed-chunk-42-1.png)
+![ ](figure/unnamed-chunk-34-1.png)
 
 ```r
 # Add linear model (lm) smoother
@@ -835,7 +676,7 @@ ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
   geom_smooth(method = "lm")
 ```
 
-![ ](figure/unnamed-chunk-42-2.png)
+![ ](figure/unnamed-chunk-34-2.png)
 
 ```r
 # Add local linear model (loess) smoother, span of 0.75 (more smoothed)
@@ -843,7 +684,7 @@ ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
   geom_smooth(method = "loess", span = .75)
 ```
 
-![ ](figure/unnamed-chunk-42-3.png)
+![ ](figure/unnamed-chunk-34-3.png)
 
 ```r
 # Add local linear model (loess) smoother, span of 0.25 (less smoothed)
@@ -851,7 +692,7 @@ ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
   geom_smooth(method = "loess", span = .25)
 ```
 
-![ ](figure/unnamed-chunk-42-4.png)
+![ ](figure/unnamed-chunk-34-4.png)
 
 ```r
 # Add linear model (lm) smoother, no standard error shading
@@ -859,7 +700,7 @@ ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 ```
 
-![ ](figure/unnamed-chunk-42-5.png)
+![ ](figure/unnamed-chunk-34-5.png)
 
 ```r
 # Add local linear model (loess) smoother, no standard error shading
@@ -867,7 +708,7 @@ ggplot(data = usa_gold_medals, aes(x = Year, y = count)) + geom_point() +
   geom_smooth(method = "loess", se = FALSE)
 ```
 
-![ ](figure/unnamed-chunk-42-6.png)
+![ ](figure/unnamed-chunk-34-6.png)
 
 ```r
 # Add a local linear (loess) smoother for each medal, no standard error shading
@@ -876,11 +717,11 @@ ggplot(data = usa_all_medals, aes(x = Year, y = count)) +
   geom_smooth(aes(color = Medal), method = "loess", se = FALSE)
 ```
 
-![ ](figure/unnamed-chunk-42-7.png)
+![ ](figure/unnamed-chunk-34-7.png)
 
-# `lattice` v. `ggplot2`: Combining Multiple Plots
+# Combining Multiple Plots
 
-* Both `lattice` and `ggplot2` graphs can be combined using the *`grid.arrange()`* function in the **`gridExtra`** package
+* `ggplot2` graphs can be combined using the *`grid.arrange()`* function in the **`gridExtra`** package
 
 
 ```r
@@ -903,7 +744,7 @@ plot3 <- ggplot(data = northern_hem, aes(x = Year, y = Gold)) +
 grid.arrange(plot1, plot2, plot3, nrow=3, ncol = 1)
 ```
 
-![ ](figure/unnamed-chunk-43-1.png)
+![ ](figure/unnamed-chunk-35-1.png)
 
 # `patchwork`: Combining Multiple `ggplot2` plots
 
@@ -935,35 +776,35 @@ plot3 <- ggplot(data = northern_hem, aes(x = Year, y = Gold)) +
 plot1 + plot2 + plot3
 ```
 
-![ ](figure/unnamed-chunk-44-1.png)
+![ ](figure/unnamed-chunk-36-1.png)
 
 ```r
 # stack plots vertically
 plot1 / plot2 / plot3
 ```
 
-![ ](figure/unnamed-chunk-44-2.png)
+![ ](figure/unnamed-chunk-36-2.png)
 
 ```r
 # side-by-side plots with third plot below
 (plot1 | plot2) / plot3
 ```
 
-![ ](figure/unnamed-chunk-44-3.png)
+![ ](figure/unnamed-chunk-36-3.png)
 
 ```r
 # side-by-side plots with a space in between, and a third plot below
 (plot1 | plot_spacer() | plot2) / plot3
 ```
 
-![ ](figure/unnamed-chunk-44-4.png)
+![ ](figure/unnamed-chunk-36-4.png)
 
 ```r
 # stack plots vertically and alter with a single "gg_theme"
 (plot1 / plot2 / plot3) & theme_bw()
 ```
 
-![ ](figure/unnamed-chunk-44-5.png)
+![ ](figure/unnamed-chunk-36-5.png)
 
 Feel free to explore more at [https://github.com/thomasp85/patchwork](https://github.com/thomasp85/patchwork).
 
@@ -994,7 +835,7 @@ plot(x,y)
 dev.off()
 ```
 
-### Exporting with `lattice` v. `ggplot`
+### Exporting with `ggplot`
 
 
 ```r
@@ -1002,19 +843,12 @@ dev.off()
 
 # Assume we saved our plot is an object called example.plot
 
-# lattice
-trellis.device(device = "pdf", filename = "example.pdf")
-print(example.plot)
-dev.off()
-
-# ggplot2
 ggsave(filename = "example.pdf", plot = example.plot, scale = , width = ,
        height = )
 ```
 
-# Breakout
 
-You're welcome to try out either lattice or ggplot for these questions, but in the solutions we'll focus on the ggplot approach.
+# Breakout
 
 For some of these you may want to use a smaller version of the dataset, such as a random subset, `subset <- air[sample(1:nrow(air), 10000, replace = FALSE), ]`.
 
