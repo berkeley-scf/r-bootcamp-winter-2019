@@ -2,7 +2,7 @@ If your version of R is older than 3.3.0, please install the latest version, tho
 
 To install R, see:
 
-  * MacOS: install the R-3.5.1.pkg from https://cran.rstudio.com/bin/macosx/ if you have OS X 10.11 (El Capitan) or higher (or the R-3.3.3.pkg package if you have OS X 10.9 or 10.10)
+  * MacOS: install the R-3.5.2.pkg from https://cran.rstudio.com/bin/macosx/ if you have OS X 10.11 (El Capitan) or higher (or the R-3.3.3.pkg package if you have OS X 10.9 or 10.10)
   * Windows: https://cran.rstudio.com/bin/windows/base/
   * Linux: https://cran.rstudio.com/bin/linux/
 
