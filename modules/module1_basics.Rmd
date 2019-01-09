@@ -1,12 +1,12 @@
 % R bootcamp, Module 1: Basics
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 ```{r chunksetup, include=FALSE, cache=TRUE} 
 # include any code here you don't want to show up in the document,
 # e.g. package and dataset loading
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE)
+air <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # R as a calculator
@@ -49,16 +49,16 @@ We can work with (and store) sequences and repetitions
 mySeq <- 1:6
 mySeq
 
-myOtherSeq <- seq(1.1, 11.1, by = 2)
-myOtherSeq
-length(myOtherSeq)
+years <- seq(1952, 2007, by = 5)
+years
+length(years)
 
-fours <- rep(4, 6)
-fours
+country <- rep("Afghanistan", 12)
+country 
 
 ## This is a comment: here is an example of non-numeric data
-depts <- c('espm', 'pmb', 'stats')
-depts
+countries <- c("Afghanistan", "India", "Pakistan")
+countries
 ```
 
 If we don't assign the output of a command to an object, we haven't saved it for later use.
@@ -94,7 +94,8 @@ devs
 ints <- c(1L, 5L, -3L) # force storage as integer not decimal number
 ## 'L' is for 'long integer' (historical)
 
-idevs <- sample(ints, 100, replace = TRUE)
+nObs <- 1000
+mySample <- sample(1:1000, 100, replace = TRUE)
 
 ## character vector
 chars <- c('hi', 'hallo', "mother's", 'father\'s', 
@@ -120,45 +121,44 @@ vals[-c(1, 3, 6)]
 vals[c(rep(TRUE, 3), rep(FALSE, 2), TRUE)]
 
 #######################################################################
-## IMPORTANT: read in the airline dataset from disk;
+## IMPORTANT: read in the Gapminder dataset from disk;
 ## first make sure your working directory is the 'modules' directory
 getwd()
 ## if the result is not the 'modules' subdirectory of the bootcamp
 ## directory, set the working directly along the lines of this:
 ##
-## setwd('/Users/paciorek/Desktop/r-bootcamp-2018/modules')
+## setwd('/Users/paciorek/Desktop/r-bootcamp-winter-2019/modules')
 ##
 ## replace '/Users/paciorek/Desktop' with whatever directory you put the bootcamp
 ## materials in; e.g. on Windows it might be something like
-## 'C:\\Users\\sarah\\r-bootcamp-2018\\modules'
+## 'C:\\Users\\sarah\\r-bootcamp-winter-2019\\modules'
 ##
 ## If you've done that correctly, then the next command reads
 ## in the dataset from the 'data' directory. In the next
 ## command R finds that directory relative to the current
 ## working directory.
-air <- read.csv(file.path('..', 'data', 'airline.csv'),
-    stringsAsFactors = FALSE)
+gapminder <- read.csv("../data/gapminder-FiveYearData.csv",
+          stringsAsFactors = FALSE)
 #######################################################################
 
-## create a simple vector from the airline dataset
-delay <- air$DepDelay
-delay[1:10]
+## create a simple vector from the Gapminder dataset
+gdp <- gapminder$gdpPercap
+lifeExp[1:10]
 
 ```
 We can substitute values into vectors
 ```{r}
-vals[4] <- -35
-vals[1:2] <- 0
+gdp[4] <- 822.9711
 
 vals <- rnorm(100)
+vals[1:2] <- 0
+
 ## How does R process these next subset operations?
 vals[vals < 0] <- 0
 vals[1:8]
 
-crazymakers <- delay[delay > 300]
-crazymakers[1:10]
-crazymakers <- crazymakers[ !is.na(crazymakers) ]
-crazymakers[1:10]
+wealthy <- gdp[gdp > 100000]
+gdp[1:10]
 ```
 
 # Vectorized calculations and comparisons
@@ -166,20 +166,15 @@ crazymakers[1:10]
 At the core of R is the idea of doing calculations on entire vectors.
 
 ```{r}
-vec1 <- sample(1:5, 10, replace = TRUE)
-vec2 <- sample(1:5, 10, replace = TRUE)
-vec1
-vec2
-vec1 + vec2
-vec1^vec2
+gdpTotal <- gapminder$gdpPercap * gapminder$pop
 
-vec1 >= vec2
-vec1 <= 3
+gdpSubset <- gdp[1:10]
 
-## using 'or'
-vec1 <= 0 | vec1 >= 3
-## using 'and'
-vec1 <= 0 & vec1 >= vec2
+gdpSubset >= 50000
+
+vec1 <- rnorm(5)
+vec2 <- rnorm(5)
+vec1 > vec2
 
 vec1 == vec2
 vec1 != vec2
@@ -187,24 +182,12 @@ vec1 != vec2
 vec1 = vec2
 identical(vec1, vec2)
 
-delayChange <- air$DepDelay - air$ArrDelay ## make up time in flight?
-tmp <- delayChange[1:100]
-tmp >= 15 
+## using 'or'
+gdpSubset >= 100000 | gdpSubset <= 1000
+## using 'and'
+gapminder$gdpPercap[1:10] >= 100000 & gapminder$continent[1:10] == "Asia"
+
 ```
-
-An important related concept is that of recycling
-```{r}
-vec3 <- sample(1:5, 5, replace = TRUE)
-vec4 <- sample(1:5, 3, replace = TRUE)
-vec1
-vec3
-vec4 
-
-vec1 + vec3
-vec1 + vec4
-```
-
-**Question**: Tell me what's going on. What choices were made by the R developers?
 
 # R is a functional language
 
@@ -219,7 +202,9 @@ median(delay)
 
 Functions generally take arguments, some of which are often optional:
 ```{r}
-median(delay, na.rm = TRUE)
+maxYear <- max(gapminder$year)
+lifeExp <- gapminder$lifeExp[gapminder$year == maxYear]
+median(lifeExp)
 ```
 
 * We can embed function calls: 
@@ -248,30 +233,20 @@ Vectors are not the only kinds of R objects.
 
 Vectors of various types (numeric (i.e., decimal/floating point/double), integer, boolean, character), all items must be of the same type
 
-### Matrices
-
-Matrices of various types, all items must be of the same type
-
-```{r}
-mat <- matrix(rnorm(9), nrow = 3)
-t(mat) %*% mat
-dim(mat)
-``` 
-
 ### Data frames
 
 Collections of columns of potentially different types
 
 ```{r}
-head(air)
-dim(air)
-nrow(air)
-names(air)
-class(air)
-is.matrix(air)
-class(air$DepDelay)
-class(air$UniqueCarrier)
-class(air$Diverted)
+head(gapminder)
+dim(gapminder)
+nrow(gapminder)
+names(gapminder)
+class(gapminder)
+is.matrix(gapminder)
+class(gapminder$year)
+class(gapminder$lifeExp)
+class(gapminder$country)
 ```
 
 ### Lists
@@ -293,32 +268,6 @@ names(myList)
 
 Lists can be used as vectors of complicated objects. E.g., suppose you have a linear regression for each value of a stratifying variable. You could have a list of regression fits. Each regression fit will itself be a list, so you'll have a list of lists.
 
-# Other classes of objects      
-
-R has several approaches to object-oriented programming.  These are widely used, albeit a bit klunky. 
-
-The most basic is 'S3' objects. These objects are generally built upon lists.
-
-```{r}
-mod <- lm(air$DepDelay ~ air$Distance)  # illustration ONLY - poorly-specified model!
-class(mod)
-is.list(mod)
-names(mod)
-mod$coefficients
-mod[['coefficients']]
-mod[[1]]
-```
-
-The magic of OOP here is that methods (i.e., functions) can be tailored to work specifically with specific kinds of objects.
-
-```{r}
-summary(air$DepDelay)
-summary(mod)
-```
-
-**Question**: What do you think R is doing behind the scenes?
-
-Consider `summary.lm`.
 
 # Converting between different types of objects
 
@@ -339,35 +288,6 @@ ints[0.999999999]
 ```
 
 
-
-# Managing your objects
-
-R has a number of functions for getting metadata about your objects. Some of this is built in to RStudio.
-
-```{r}
-
-vec1 <- 1:4
-vec2 <- c(1, 2, 3, 4)
-
-length(vec1)
-str(vec1)
-class(vec1)
-typeof(vec1)
-class(vec2)
-typeof(vec2)
-is.vector(vec1)
-is.list(vec1)
-
-is.list(myList)
-is.vector(myList)
-
-is.data.frame(air)
-is.list(air)
-```
-
-**Question**: What have you learned? Does it make sense? 
-
-
 # A bit on plotting
 
 R has several different plotting systems:
@@ -379,25 +299,18 @@ R has several different plotting systems:
 We'll see a little bit of *base* graphics here and then *lattice* and *ggplot2* tomorrow in Module 8.
 
 ```{r basic_plots, fig.cap =""}
-hist(air$DepDelay)
-## make a random subset for quicker plotting:
-set.seed(1)  # make the subset reproducible
-randomRows <- sample(1:nrow(air), 10000, replace = FALSE)
-subset <- air[randomRows, ]
-## censor the outliers to limit plotting range
-subset$DepDelay[subset$DepDelay > 60*3] <- 60*3
-plot(subset$DepDelay ~ subset$Distance)
-boxplot(subset$DepDelay ~ subset$DayOfWeek)
-boxplot(subset$DepDelay ~ subset$UniqueCarrier)
+hist(gapminder$lifeExp)
+plot(gapminder$lifeExp ~ gapminder$gdpPercap)
+boxplot(gapminder$lifeExp ~ gapminder$year)
 ```
 
 # Graphics options
 
 Check out `help(par)` for various [graphics settings](http://xkcd.com/833/); these are set via `par()` or within the specific graphics command (some can be set in either place), e.g.,
 ```{r, parstuff, fig.cap = ""}
-par(pch = 2)
-plot(subset$DepDelay ~ subset$Distance, xlab = 'distance (miles)', 
-   ylab = 'delay (minutes)', log = 'x')
+par(pch = 16)
+plot(gapminder$lifeExp ~ gapminder$gdpPercap, xlab = 'GDP per capita (dollars)',
+   ylab = 'life expectancy (years)', log = 'x')
 ```
 
 # Breakout
@@ -406,33 +319,32 @@ In general, your answers to any questions should involve writing code to manipul
 
 ### Basics
 
-1) Create a variable called 'x' that contains the mean flight delay.
+1) Create a variable called 'x' that contains the mean life expectancy.
 
 2) Use functions in R to round 'x' to two decimal places and to two significant digits.
 
-3) Create a vector of flight distances in units of kilometers rather than miles.
+3) Create a vector of GDP per capita in units of Euros rather than dollars.
 
-4) Create a boolean (TRUE/FALSE) vector indicating whether the departure delay is shorter than the arrival delay.
+4) Create a boolean (TRUE/FALSE) vector indicating whether total country GDP is greater than 1 trillion dollars. When entering 1 trillion, use R's scientific notation.
 
 ### Using the ideas
 
-5) Summarize the difference between the departure and arrival delays. Do flights tend to make up some of the delay time in flight?
+5) Use the boolean vector from problem 4 to produce a new dataset containing the data only from the biggest economies.
 
-6) Plot a histogram of the flight departure delays with negative delays set to zero, censoring delay times at a maximum of 60 minutes. Explore the effect of changing the number of bins in the histogram using the 'breaks' argument.
+6) Plot life expectancy against gdpPercap with gdpPercap values greater than 40000 set to 40000.
 
-7) Subset the data to flights going to Chicago (ORD) and Houston (IAH). Plot delay against scheduled departure time (CRSDepTime). Add a title to the plot. Now plot so that flights to Chicago are in one color and  those to Houston in another, using the 'col' argument. What are some problems with the plot?
+7) Make a histogram of the life expectancy values for the year 2007.  Explore the effect of changing the number of bins in the histogram using the 'breaks' argument.
 
-8) Consider the following regression model.  Figure out how to extract the $R^2$ and residual standard error and store in new R variables. 
+8) Subset the data to those for the year 2007. Plot life expectancy against GDP per capita. Add a title to the plot. Now plot so that data for Asia are in one color and those for all other countries are in another color, usingflights to Chicago are in one color and those for all other continents are in another, using the 'col' argument. 
 
-```{r}
-y <- rnorm(10)
-x <- rnorm(10)
-mod <- lm(y ~ x)
-summ <- summary(mod)
-```
 
 ### Advanced
 
-9) For flights to ORD and IAH, plot departure delay against time in days where day 1 is Jan 1 2005 and the last day is Dec 31 2008. As above, use different colors for the two different destinations.
+9) Consider the following regression model.  Figure out how to extract the $R^2$ and residual standard error and store in new R variables. 
 
-10) Now modify the size of the points. Add a legend. Rotate the numbers on the y-axis so they are printed horizontally. Recall that `help(par)` will provide a lot of information.
+```{r}
+mod <- lm(lifeExp ~ log(gdpPercap), data = gapminder)
+summ <- summary(mod)
+```
+
+10) Take your plot from problem 8. Now modify the size of the points. Add a legend. Rotate the numbers on the y-axis so they are printed horizontally. Recall that `help(par)` will provide a lot of information.

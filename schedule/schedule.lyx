@@ -85,7 +85,7 @@ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
 \begin_body
 
 \begin_layout Title
-R bootcamp - August 2018: Syllabus/schedule
+R bootcamp - January 2019: Syllabus/schedule
 \end_layout
 
 \begin_layout Subsection*
@@ -334,7 +334,7 @@ status open
 
 \end_deeper
 \begin_layout Itemize
-Module 4: Calculations (Sean)
+Module 4: Calculations (Chris)
 \begin_inset Separator latexpar
 \end_inset
 
@@ -453,7 +453,7 @@ Break (15 minutes)
 \end_layout
 
 \begin_layout Itemize
-Module 7: Data analysis (Chris P.) 
+Module 7: Data analysis (Chris) 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -579,7 +579,7 @@ _medium=email
 
 \end_inset
 
- (Chris P.) (60 minutes)
+ (Chris) (60 minutes)
 \begin_inset Separator latexpar
 \end_inset
 
@@ -609,7 +609,7 @@ Break (fill out feedback forms) (20 minutes)
 \end_layout
 
 \begin_layout Itemize
-Module 10: Advanced topics morsels (Chris P.) (60 minutes)
+Module 10: Advanced topics morsels (Chris) (60 minutes)
 \begin_inset Separator latexpar
 \end_inset
 
@@ -643,7 +643,7 @@ parallel processing: foreach, parApply, RNG issues
 
 \end_deeper
 \begin_layout Itemize
-Module 11: Wrapping up (Chris P.) (15 minutes)
+Module 11: Wrapping up (Chris) (15 minutes)
 \begin_inset Separator latexpar
 \end_inset
 

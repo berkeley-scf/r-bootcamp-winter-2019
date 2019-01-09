@@ -1,5 +1,5 @@
 % R bootcamp, Breakout Solutions
-% August 2016, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 ```{r chunksetup, include=FALSE, cache=TRUE} 
@@ -15,7 +15,7 @@ air <- read.csv('../data/airline.csv', stringsAsFactors = FALSE)
 
 ```{r basics1}
 ## 1 ##
-x <- mean(air$DepDelay, na.rm = TRUE)
+x <- mean(gapminder$lifeExp)
 
 ## 2 ##
 # help(round)
@@ -23,57 +23,60 @@ round(x, digits = 2)
 round(x, digits = 0)
 
 ## 3 ##
-kmsPerMile <- 1.60934
-dist_km <- air$Distance * kmsPerMile
-c(dist_km[1], air$Distance[1])
+EurosPerDollar <- 1.1  
+gdpPercap_euro <- gapminder$gdpPercap * EurosPerDollar
+c(gdpPerCap_euro[1], gapminder$gdpPercap[1])
 
 ## 4 ##
-delayWorsening <- air$DepDelay < air$ArrDelay
-head(delayWorsening)
+big <- gapminder$gdpPercap * gapminder$pop > 1e12 
+head(big)
 ```
 
 ```{r using_the_ideas1}
+
 ## 5 ##
-summary(air$ArrDelay - air$DepDelay)
+big <- gapminder$gdpPercap * gapminder$pop > 1e12 
+big_gm <- gm[big, ]
+head(big_gm)
 
 ## 6 ##
-delay <- air$DepDelay
-delay[delay < 0] <- 0  
-delay[delay > 60] <- 60
-hist(delay)
-hist(delay, nclass = 100)
-hist(delay, nclass = 5)
+gdp_cens <- gapminder$gdpPercap
+cens_value <- 40000
+gdp_cens[gdp_cens > cens_value] <- cens_value
+plot(gapminder$lifeExp ~ gdp_cens)
 
 ## 7 ##
-sub <- air[air$Dest == "ORD" | air$Dest == "IAH", ]
-plot(sub$CRSDepTime, sub$DepDelay, main = 'Departure delay by time of day')
-sub$color <- "blue"
-sub$color[sub$Dest == "IAH"] <- "red"
-plot(sub$CRSDepTime, sub$DepDelay, col = sub$color, 
-                     main = 'Departure delay by time of day')
+gm2007 <- gapminder[gapminder$year == 2007, ]
+hist(gm2007$lifeExp)
+hist(gm2007$lifeExp, nclass = 5)
+hist(gm2007$lifeExp, nclass = 25)
 
 ## 8 ##
-y <- rnorm(10)
-x <- rnorm(10)
-mod <- lm(y ~ x)
+gm2007 <- gapminder[gapminder$year == 2007, ]
+plot(gm2007$lifeExp ~ gm2007$gdpPercap, main = 'Life expectancy by GDP')
+gm2007$color <- "blue"
+gm2007$color[gm2007$continent == 'Asia'] <- "red"
+plot(gm2007$lifeExp ~ gm2007$gdpPercap, col = gm2007$color, 
+                     main = 'Life expectancy by GDP, highlighting Asia')
+
+```{r advanced1}
+
+## 9 ##
+mod <- lm(lifeExp ~ log(gdpPercap), data = gapminder)
 summ <- summary(mod)
 r2 <- summ$r.squared
 rse <- summ$sigma
 ```
 
-```{r advanced1}
-## 9 ##
-sub <- air[air$Dest == "ORD" | air$Dest == "IAH", ]
-sub$color <- "blue"
-sub$color[sub$Dest == "IAH"] <- "red"
-daysInMonth <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-cumDays <- c(0, cumsum(daysInMonth))
-sub$julian <- (sub$Year - 2005)*365 + cumDays[sub$Month] + sub$DayofMonth
-plot(sub$julian, sub$DepDelay, col = sub$color)
 
 ## 10 ##
-plot(sub$julian, sub$DepDelay, col = sub$color, cex = 0.4, las = 1)
-legend("topleft", legend = c('IAH', 'ORD'), col = c('red', 'blue'), cex = 0.4,
+gm2007 <- gapminder[gapminder$year == 2007, ]
+gm2007$color <- "blue"
+gm2007$color[gm2007$continent == 'Asia'] <- "red"
+plot(gm2007$lifeExp ~ gm2007$gdpPercap, col = gm2007$color, 
+                     main = 'Life expectancy by GDP, highlighting Asia',
+                     cex = 0.7, las = 1)
+legend("bottomright", legend = c('Asia', 'all other'), col = c('red', 'blue'), cex = 0.7,
   pch = 1)
 ```
 
@@ -99,11 +102,11 @@ write.csv(cpds, file = 'new_cpds.csv', row.names = FALSE, quote = FALSE)
 
 ## 4 ## 
 pdf('test1.pdf')
-hist(air$DepDelay[1:10000])
+hist(gapminder$lifeExp)
 dev.off()
 
 pdf('test2.pdf', height = 2, width = 2)
-hist(air$DepDelay[1:10000])
+hist(gapminder$lifeExp)
 dev.off()
 
 ## 5 ##

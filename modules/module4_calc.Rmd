@@ -1,6 +1,6 @@
 % R bootcamp, Module 4: Calculations
-% August 2018, UC Berkeley
-% Sean Wu (based on materials developed by Chris Paciorek)
+% January 2019, UC Berkeley
+% Chris Paciorek
 
 ```{r chunksetup, include=FALSE} 
 # include any code here you don't want to show up in the document,
@@ -10,6 +10,51 @@ library(fields)
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
 air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE)
 ```
+
+# Reminder: Vectorized calculations and comparisons
+
+At the core of R is the idea of doing calculations on entire vectors.
+
+```{r}
+vec1 <- sample(1:5, 10, replace = TRUE)
+vec2 <- sample(1:5, 10, replace = TRUE)
+vec1
+vec2
+vec1 + vec2
+vec1^vec2
+
+vec1 >= vec2
+vec1 <= 3
+
+## using 'or'
+vec1 <= 0 | vec1 >= 3
+## using 'and'
+vec1 <= 0 & vec1 >= vec2
+
+vec1 == vec2
+vec1 != vec2
+## careful: 
+vec1 = vec2
+identical(vec1, vec2)
+
+delayChange <- air$DepDelay - air$ArrDelay ## make up time in flight?
+tmp <- delayChange[1:100]
+tmp >= 15 
+```
+
+An important related concept is that of recycling
+```{r}
+vec3 <- sample(1:5, 5, replace = TRUE)
+vec4 <- sample(1:5, 3, replace = TRUE)
+vec1
+vec3
+vec4 
+
+vec1 + vec3
+vec1 + vec4
+```
+
+**Question**: Tell me what's going on. What choices were made by the R developers?
 
 # Vectorized calculations
 

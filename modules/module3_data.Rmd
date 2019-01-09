@@ -1,5 +1,5 @@
 % R bootcamp, Module 3: Working with objects and data
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 ```{r chunksetup, include=FALSE} 
@@ -11,7 +11,7 @@ air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE
 
 # Matrices and Arrays
 
-Let's review matrices
+If you need to do numeric calculations on an entire non-vector object (dimension > 1), you generally want to use matrices and arrays, not data frames.
 
 - Matrices are two-dimensional collections of values of the same type
 - We can have numeric, integer, character, or logical matrices, character matrices.

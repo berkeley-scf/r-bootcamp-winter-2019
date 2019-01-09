@@ -1,5 +1,5 @@
 % R Bootcamp, Module 8: Graphics
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % [Nima Hejazi](https://nimahejazi.org) (built off of material by Kellie Ottoboni and Chris Krogslund)
 
 ```{r chunksetup, include=FALSE}

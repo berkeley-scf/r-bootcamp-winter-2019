@@ -1,5 +1,5 @@
 % R bootcamp, Module 10: Advanced topics
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 ```{r chunksetup, include=FALSE} 
@@ -31,6 +31,33 @@ Objects are like lists, but with methods that are specifically associated with p
 Objects have fields, analogous to the components of a list. For S4 and reference classes, the fields of the class are fixed and all objects of the class must contain those fields. 
 
 # Working with S3 classes and methods
+
+R has several approaches to object-oriented programming.  These are widely used, albeit a bit klunky. 
+
+The most basic is 'S3' objects. These objects are generally built upon lists.
+
+```{r}
+mod <- lm(air$DepDelay ~ air$Distance)  # illustration ONLY - poorly-specified model!
+class(mod)
+is.list(mod)
+names(mod)
+mod$coefficients
+mod[['coefficients']]
+mod[[1]]
+```
+
+The magic of OOP here is that methods (i.e., functions) can be tailored to work specifically with specific kinds of objects.
+
+```{r}
+summary(air$DepDelay)
+summary(mod)
+```
+
+**Question**: What do you think R is doing behind the scenes?
+
+Consider `summary.lm`.
+
+# More on working with S3 classes and methods 
 
 ```{r}
 library(methods)
