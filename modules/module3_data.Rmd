@@ -6,7 +6,7 @@
 # include any code here you don't want to show up in the document,
 # e.g. package and dataset loading
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE)
+air <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # Matrices and Arrays
@@ -16,6 +16,7 @@ If you need to do numeric calculations on an entire non-vector object (dimension
 - Matrices are two-dimensional collections of values of the same type
 - We can have numeric, integer, character, or logical matrices, character matrices.
 - You can't mix types within a matrix
+
 ```{r}
 mat <- matrix(rnorm(12), nrow = 3, ncol = 4)
 mat
@@ -24,6 +25,14 @@ mat
 mat*4
 mat <- cbind(mat, 1:3)
 mat
+
+# Let's convert the gapminder dataframe to a matrix:
+gm_mat <- as.matrix(gapminder[ , c('lifeExp', 'gdpPercap')])
+head(gm_mat)
+
+# What do you think will happen?
+gm_mat <- as.matrix(gapminder)
+head(gm_mat)
 ```
 
 Arrays are like matrices but can have more or fewer than two dimensions.
@@ -42,9 +51,9 @@ rownames(mat) <- c('first', 'middle', 'last')
 mat
 attributes(mat)
 
-names(attributes(air))
-attributes(air)$names
-attributes(air)$row.names[1:10]
+names(attributes(gapminder))
+attributes(gapminder)$names
+attributes(gapminder)$row.names[1:10]
 ```
 
 Now let's do a bit of manipulation and see if you can infer how R represents matrices internally.
@@ -129,17 +138,22 @@ myList
 
 # Logical vectors
 ```{r}
-answers <- c(TRUE, TRUE, FALSE, FALSE)
-update <- c(TRUE, FALSE, TRUE, FALSE)
+gm2007 <- gapminder[gapminder$year == 2007, ]
 
-answers & update
-answers | update
+wealthy <- gm2007$gdpPercap > 40000
+healthy <- gm2007$lifeExp > 75
+
+head(wealthy)
+table(wealthy)
+
 # note the vectorized boolean arithmetic
+gm2007[wealthy & healthy, ]
+gm2007[wealthy | healthy, ]
+gm2007[wealthy & !healthy, ]
 
 # what am I doing here?
-sum(answers)
-mean(answers)
-answers + update
+sum(healthy)
+mean(healthy)
 ```
 
 **Question**: What do you think R is doing to do arithmetic on logical vectors?
@@ -147,8 +161,8 @@ answers + update
 Tricks with logicals...
 
 ```{r}
-identical(answers & update, as.logical(answers * update))
-identical(answers | update, as.logical(answers + update))
+identical(healthy & wealthy, as.logical(healthy * wealthy))
+identical(health | wealthy, as.logical(healthy + wealthy))
 ```
 
 # Data frames
@@ -160,19 +174,18 @@ A review from Module 1...
 - Data frames are a functionality that both sets R aside from some languages (e.g., Matlab) and provides functionality similar to some statistical packages (e.g., Stata, SAS)
 
 ```{r}
-air <- read.csv('../data/airline.csv')
-class(air)
-head(air)
-str(air)
+class(gapminder)
+head(gapminder)
+str(gapminder)
 ```
 
 # Data frames are (special) lists!
 
 ```{r}
-is.list(air)
-length(air)
-air[[3]][1:5]
-lapply(air, class) 
+is.list(gapminder)
+length(gapminder)
+gapminder[[3]][1:5]
+lapply(gapminder, class) 
 ```
 
 `lapply()` is a function used on lists; it works here to apply the `class()` function to each element of the list, which in this case is each field/column.
@@ -180,10 +193,10 @@ lapply(air, class)
 # But lists are also vectors!
 
 ```{r}
-length(air)
-someFields <- air[c(3,5)]
+length(gapminder)
+someFields <- gapminder[c(3,5)]
 head(someFields)
-identical(air[c(3,5)], air[ , c(3,5)])
+identical(gapminder[c(3,5)], gapminder[ , c(3,5)])
 ```
 
 In general the placement of commas in R is crucial, but here, two different operations give the same result because of the underlying structure of data frames.
@@ -192,10 +205,10 @@ In general the placement of commas in R is crucial, but here, two different oper
 - A factor is a special data type in R used for categorical data. In some cases it works like magic and in others it is incredibly frustrating. 
 
 ```{r fac}
-class(air$Dest)
-head(air$Dest) # What order are the factors in?
-levels(air[["Dest"]])  # note alternate way to get the variable
-summary(air$Dest)
+class(gapminder$continent)
+head(gapminder$continent) # What order are the factors in?
+levels(gapminder[["continent"]])  # note alternate way to get the variable
+summary(gapminder$continent)
 ```
 
 - What if we don't like the order these are in? Factor order is important for all kinds of things like plotting, analysis of variance, regression output, and more
@@ -205,28 +218,16 @@ summary(air$Dest)
 - This is a useful shortcut when we want to preserve some of the meaning provided by the order
 - Think ordinal data
 
+This example is a bit artificial as 'continent' doesn't really have a natural ordering.
+
 ```{r orderedfac, fig.cap = ""}
-# first let's do some pre-processing to get set up for the example
-air$DepDelayCens <- air$DepDelay
-air$DepDelayCens[air$DepDelayCens > 60] <- 60
-air$DepDelayCens[air$DepDelayCens < 0] <- 0
-air$DayOfWeek <- as.factor(air$DayOfWeek)
-air$DayOfWeekSun <- ordered(air$DayOfWeek, 
-     levels = levels(air$DayOfWeek)[c(7,1,2,3,4,5,6)])
+gapminder$continent2 <- ordered(gapminder$continent, 
+     levels = levels(gapminder$continent)[c(2,1,3,4,5)])
 
-# alternative coding
-# air <- within(air, 
-#     DayOfWeekSun <- ordered(DayOfWeek, 
-#        levels = levels(DayOfWeek)[c(7,1,2,3,4,5,6)])
-#)
-
-head(air$DayOfWeekSun)
-levels(air$DayOfWeekSun)
-levels(air$DayOfWeekSun) <- c("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
-boxplot(DepDelayCens ~ DayOfWeekSun, data = air)
+head(gapminder$continent2)
+levels(gapminder$continent2)
+boxplot(lifeExp ~ continent2, data = gapminder)
 ```
-
-**Challenge**: Try to decipher what I just did with that complicated single line of code starting with `within`.
 
 # Reclassifying Factors
 - Turning factors into other data types can be tricky. All factors have an underlying numeric structure.
@@ -258,7 +259,7 @@ What went wrong and how did we fix it?  Notice how easily this could be a big bu
 There are many ways to select subsets in R. The syntax below is useful for vectors, matrices, data frames, arrays and lists.
 
 ```{r}
-vec <- rnorm(20)
+vec <- gm_2007$lifeExp
 mat <- matrix(vec, 4, 5)
 rownames(mat) <- letters[1:4]
 mat
@@ -268,12 +269,14 @@ mat
 ```{r}
 vec[c(3, 5, 12:14)]
 vec[-c(3,5)]
-mat[c(2,4), 5]
+gapminder[c(2,4), 5]
+gapminder[c(2,4), 'lifeExp']
+
 rowInd <- c(1, 3, 4)
 colInd <- c(2, 2, 1)
 elemInd <- cbind(rowInd, colInd)
 elemInd
-mat[elemInd]
+gapminder[elemInd]
 ```
 
 Note the last usage where we give it a 2-column matrix of indices
@@ -281,9 +284,9 @@ Note the last usage where we give it a 2-column matrix of indices
 2) by a vector of logicals
 
 ```{r}
-cond <- vec > 0
-vec[cond]
-air[air$DepDelay > 60*12 & !is.na(air$DepDelay), ]
+wealthy <- gapminder$gdpPercap > 50000
+gapminder$gdpPercap[wealthy]
+gapminder[wealth, ]
 ```
 
 What happened in the last subsetting operation?
@@ -292,19 +295,21 @@ What happened in the last subsetting operation?
 ```{r}
 mat[c('a', 'd', 'a'), ]
 ```
+
 4) using *subset()*
 
 ```{r}
-subset(air, DepDelay > 60*12)
+subset(gapminder, gdpPercap > 50000)
 ```
 
-5) using *dplyr* tools such as *filter()* and *select()* -- more in Module 5
+5) using *dplyr* tools such as *filter()* and *select()* -- more in Module 6
 
 # Assignment into subsets
 
 We can assign into subsets by using similar syntax, as we saw with vectors.
 
 ```{r}
+vec <- rnorm(20)
 vec[c(3, 5, 12:14)] <- 1:5
 mat[2, 3:5] <- rnorm(3)
 mat[mat[,1] > 0, ] <- -Inf
@@ -322,15 +327,20 @@ paste("bill", "clinton", sep = " ")  # paste together a set of strings
 paste(chars, collapse = ' ')  # paste together things from a vector
 
 strsplit("This is the R bootcamp", split = " ")
-substring(chars, 2, 3)
-chars2 <- chars
-substring(chars2, 2, 3) <- "ZZ"
-chars2
+
+countries <- as.character(gm2007$country)
+substring(countries, 1, 3)
+tmp <- countries
+substring(tmp, 5, 10) <- "______"
+tmp
 ```
 We can search for patterns in character vectors and replace patterns (both vectorized!)
 ```{r}
-grep("ther", chars)
-gsub("hi", "Hi", chars)
+indexes <- grep("Korea", countries)
+indexes
+countries[indexes]
+countries2 <- gsub("Korea Dem. Rep.", "North Korea", countries)
+countries2[indexes]
 ```
 
 # Regular expressions (regex or regexp)
@@ -389,30 +399,28 @@ The *read.table()* family of functions just skims the surface of things...
 
 ### Basics
 
-1) Extract the 5th row from the airline dataset.
+1) Extract the 5th row from the gapminder dataset.
 
-2) Extract the last row from the airline dataset.
+2) Extract the last row from the gapminder dataset.
 
-3) Count the number of NAs in the departure delay field of the airline dataset.
+3) Count the number of gdpPercap values greater than 50000 in the gapminder dataset.
 
-4) Set all of the extreme delays (more than 300 minutes) to NA.
+4) Set all of the gdpPercap values greater than 50000 to NA.
 
-5) Consider the first row of the airline dataset, which has UA flight number 548. How do I create a string "UA-548" using `air$UniqueCarrier[1]` and `air$FlightNum[1]`? 
+5) Consider the first row of the gapminder dataset, which has Afghanistan for 1952. How do I create a string "Afghanistan-1952" using `gapminder$country[1]` and `gapminder$year[1]`? 
 
 ### Using the ideas
 
-6) Create a character string using `paste()` that tells the user how many rows there are in the data frame - do this programmatically such that it would work for any data frame regardless of how many rows it has. The result should look like this: "There are 56,234,234 rows in the dataset"
+6) Create a character string using `paste()` that tells the user how many rows there are in the data frame - do this programmatically such that it would work for any data frame regardless of how many rows it has. The result should look like this: "There are 1704 rows in the dataset"
 
-7) If you didn't do it this way already, extract the last row from the airline dataset without typing the number '539895'.
+7) If you didn't do it this way already, extract the last row from the gapminder dataset without typing the number '1704'.
 
-8) Create a boolean vector indicating if flight on the carrier WN (Southwest) and distance is less than 1000 miles and calculate the proportion of all the flights these represent.
+8) Create a boolean vector indicating if the life expectancy is greater than 75 and the gdpPercap is less than 10000 and calculate the proportion of all the records these represent.
 
 9) Use that vector to create a new data frame that is a subset of the original data frame.
 
-10) Consider the attributes of the *air* dataset. What kind of R object is the set of attributes?
+10) Consider the attributes of the gapminder dataset. What kind of R object is the set of attributes?
 
 ### Advanced
 
-11) Make the destination variable a factor variable and reorder the levels by the number of arrivals from SFO at the destinations. Now create a boxplot of departure delay by destination for January, 2005.
-
-12) Create row names for the data frame based on concatenating the Year, Month, DayOfMonth, UniqueCarrier and FlightNum fields. You may run into a problem with the data that you need to resolve before you're able to do this...
+11) Create row names for the data frame based on concatenating the Continent, Country, and Year fields.

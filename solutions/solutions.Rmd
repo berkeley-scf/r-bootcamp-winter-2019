@@ -129,51 +129,46 @@ search()
 
 ```{r, basics3}
 ## 1 ##
-air[5, ]
+gapminder[5, ]
 
 ## 2 ##
-air[ nrow(air) , ]
+gapminder[ nrow(gapminder) , ]
 
 ## 3 ##
-sum(is.na(air$DepDelay))
+sum(gapminder$gdpPercap > 50000)
 
 ## 4 ## 
-air$DepDelay[ air$DepDelay > 300 ] <- NA
+gapminder$gdpPercap[ gapminder$gdpPercap > 50000 ] <- NA
 
 ## 5 ##
-paste(air$UniqueCarrier[1], air$FlightNum[1], sep = "-")
+paste(gapminder$country[1], gapminder$year[1], sep = "-")
 ```
 
 ```{r, using_the_ideas3}
 ## 6 ##
-paste("There are ", nrow(air), " rows in the dataset.", sep = "")
+paste("There are ", nrow(gapminder), " rows in the dataset.", sep = "")
 
 ## 7 ##
-air[ nrow(air), ]
+gapminder[ nrow(gapminder), ]
 
 ## 8 ##
-shortSW <- air$UniqueCarrier == "WN" & air$Distance < 1000
-mean(shortSW)   # sum(shortSW) / length(shortSW)
+economical <- gapminder$lifeExp > 75 & gapminder$gdpPercap < 10000
+mean(economical)   # sum(economical) / length(economical)
 
 ## 9 ##
-sub <- air[ shortSW , ]
+sub <- gapminder[ economical , ]
 
 ## 10 ##
-attributes(air)
-names(attributes(air))
-class(attributes(air))
+attributes(gapminder)
+names(attributes(gapminder))
+class(attributes(gapminder))
 ```
 
 ```{r, advanced3}
-## 11 ##
-numArr <- sort(table(air$Dest), decreasing = TRUE)
-air$Dest <- factor(air$Dest, levels = names(numArr)) 
-# relevel(air$Dest, names(numArr))
-boxplot(DepDelay ~ Dest, data = air, subset = Month == 1 & Year == 2005)
 
-## 12 ##
-nm <- paste(air$Year, air$Month, air$DayofMonth, air$UniqueCarrier, air$FlightNum, sep = "-")
-attributes(air)$row.names <- nm
+## 11 ##
+nm <- paste(gapminder$continent, gapminder$country, gapminder$year, sep = "-")
+attributes(gapminder)$row.names <- nm
 ```
 
 # Module 4: Calculations
