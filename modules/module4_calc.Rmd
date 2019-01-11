@@ -8,7 +8,8 @@
 library(foreign)
 library(fields)
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE)
+gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gm2007 <- gapminder[gapminder$year == 2007, ]
 ```
 
 # Reminder: Vectorized calculations and comparisons
@@ -16,20 +17,15 @@ air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE
 At the core of R is the idea of doing calculations on entire vectors.
 
 ```{r}
-vec1 <- sample(1:5, 10, replace = TRUE)
-vec2 <- sample(1:5, 10, replace = TRUE)
-vec1
-vec2
-vec1 + vec2
-vec1^vec2
+gdpTotal <- gapminder$gdpPercap * gapminder$pop
 
-vec1 >= vec2
-vec1 <= 3
+gdpSubset <- gdp[1:10]
 
-## using 'or'
-vec1 <= 0 | vec1 >= 3
-## using 'and'
-vec1 <= 0 & vec1 >= vec2
+gdpSubset >= 50000
+
+vec1 <- rnorm(5)
+vec2 <- rnorm(5)
+vec1 > vec2
 
 vec1 == vec2
 vec1 != vec2
@@ -37,21 +33,23 @@ vec1 != vec2
 vec1 = vec2
 identical(vec1, vec2)
 
-delayChange <- air$DepDelay - air$ArrDelay ## make up time in flight?
-tmp <- delayChange[1:100]
-tmp >= 15 
+## using 'or'
+gdpSubset >= 100000 | gdpSubset <= 1000
+## using 'and'
+gapminder$gdpPercap[1:10] >= 100000 & gapminder$continent[1:10] == "Asia"
 ```
 
 An important related concept is that of recycling
 ```{r}
-vec3 <- sample(1:5, 5, replace = TRUE)
-vec4 <- sample(1:5, 3, replace = TRUE)
-vec1
+vec10 <- sample(1:10, 10, replace = TRUE)
+vec3 <- sample(1:10, 3, replace = TRUE)
+vec5 <- sample(1:10, 5, replace = TRUE)
+vec10
 vec3
-vec4 
+vec5
 
-vec1 + vec3
-vec1 + vec4
+vec10 + vec5
+vec10 + vec3
 ```
 
 **Question**: Tell me what's going on. What choices were made by the R developers?
@@ -87,9 +85,9 @@ If you use a trick like this, having a comment in your code is a good idea.
 Lots of functions in R are vectorized, such as some we've already used.
 
 ```{r}
-tmp <- as.character(air$DepTime)
-air$DepHour <- substring(tmp, 1, 2)
-head(air$DepHour)
+tmp <- as.character(air$year)
+gapminder$year2 <- substring(tmp, 3, 4)
+head(gapminder$year2)
 ```
 
 Question: Note the code above runs and the syntax is perfectly good R syntax, but in terms of what it does, there is a bug in it. See if you can see what it is.
@@ -224,24 +222,6 @@ You can use `lapply()` and `sapply()` on regular vectors, such as vectors of ind
 sapply(1:10, function(x) x^2)
 ```
 
-Here's a cool trick to pull off a particular element of a list of lists:
-
-```{r}
-params <- list(a = list(mn = 7, sd = 3), b = list(mn = 6,sd = 1), 
-  c = list(mn = 2, sd = 1))
-sapply(params, "[[", 1)
-```
-
-**Challenge**: Think about why this works. 
-
-Hint:
-```{r}
-test <- list(5, 7, 3)
-test[[2]]
-# `[[`(test, 2)  # need it commented or R Markdown processing messes it up...
-
-# `+`(3, 7)
-```
 
 # And more `apply()`s
 
@@ -254,18 +234,24 @@ There are a bunch of `apply()` variants, as well as parallelized versions of the
 
 - Sometimes we need to do some basic checking for the number of observations or types of observations in our dataset
 - To do this quickly and easily, `table()` is our friend
-- Let's look at our observations by year and airline
 
 ```{r table}
-unique(air$UniqueCarrier)
-tbl <- table(air$UniqueCarrier, air$Year)
+tbl <- table(gapminder$country, gapminder$continent)
 tbl
-round(prop.table(tbl, margin = 2), 3)
-table(air$UniqueCarrier, air$Month, air$Cancelled)
-with(air[air$UniqueCarrier == 'UA', ], table(Month, Cancelled))
+rowSums(tbl)
+all(rowSums(tbl) == 12)
 ```
 
 **Challenge**: Can you figure out what `with()` does just by example? 
+
+# Discretization
+
+You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by life expectancy:
+```{r fig.width=9}
+gm2007$lifeExpBin <- cut(gm2007$lifeExp, breaks = c(0, 40, 50, 60, 70, 75, 80, Inf))
+tbl <- table(gm2007$continent, gm2007$lifeExpBin)
+round( prop.table(tbl, margin = 1), 2 )
+```
 
 # Stratified analyses I
 Often we want to do individual analyses within subsets or clusters of our data.
@@ -273,46 +259,31 @@ Often we want to do individual analyses within subsets or clusters of our data.
 As a first step, we might want to just split our dataset by a stratifying variable.  
 
 ```{r, fig.cap ="", fig.width=12}
-# restrict to a few destinations
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW','IAH', 'ORD') 
-airSmall <- subset(air, Dest %in% DestSubset)
-airSmall$DepDelay[airSmall$DepDelay > 60] <- 60
-subsets <- split(airSmall, airSmall$Dest)
+subsets <- split(gapminder,  gapminder$year)
 length(subsets)
-dim(subsets[['LAX']])
+dim(subsets[['2007']])
 par(mfrow = c(1,2))
-boxplot(DepDelay ~ Month, data = subsets[['IAH']], main = 'Houston')
+plot(lifeExp ~ gdpPercap, data = subsets[['1952']], main = '1952')
 abline(h = 0, col = 'grey')
-boxplot(DepDelay ~ Month, data = subsets[['ORD']], main = 'Chicago')
+plot(lifeExp ~ gdpPercap, data = subsets[['2007']], main = '2007')
 abline(h = 0, col = 'grey')
 ```
 
-Note the use of the `%in%` operator can also be helpful.
+Obviously, we'd want to iterate to improve that plot given the outlier.
 
 # Stratified analyses II
 
 Often we want to do individual analyses within subsets or clusters of our data. R has a variety of tools for this; for now we'll look at `aggregate()` and `by()`. These are wrappers of `tapply()`. 
 
 ```{r aggregate1}
-airSmallNum <- airSmall[ , c('DepDelay', 'ArrDelay', 'TaxiIn', 'TaxiOut')]
-aggregate(airSmallNum, by = list(destination = airSmall$Dest), FUN = median, na.rm = TRUE)
-aggregate(DepDelay ~ Dest, data = airSmall, FUN = median)
-agg <- aggregate(DepDelay ~ Dest + Month, data = airSmall, FUN = median)
-xtabs(DepDelay ~ ., data = agg)
+gmSmall <- gapminder[ , c('lifeExp', 'gdpPercap')]  # reduce to only numeric columns
+aggregate(gmSmall, by = list(year = gapminder$year), FUN = median, na.rm = TRUE) # na.rm not needed here but illustrates use of additional arguments to FUN
+aggregate(lifeExp ~ year + continent, data = gapminder, FUN = median)
+agg <- aggregate(lifeExp ~ year + continent , data = gapminder, FUN = median)
+xtabs(lifeExp ~ ., data = agg)
 ```
 
 Notice the 'long' vs. 'wide' formats. You'll see more about that sort of thing in Module 6.
-
-# Discretization
-
-You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by departure delay severity:
-```{r fig.width=9}
-air$delayStatus <- cut(air$DepDelay, breaks = c(-Inf, -5, 5, 15, 30, 60, 180, Inf))
-levels(air$delayStatus) <- c('early','on-time','slight',
-                        'short','medium','long','hair-pulling')
-tbl <- table(air$UniqueCarrier, air$delayStatus)
-round( prop.table(tbl, margin = 1), 2 )
-```
 
 
 # Stratified analyses III
@@ -320,25 +291,15 @@ round( prop.table(tbl, margin = 1), 2 )
 `aggregate()` works fine when the output is univariate, but what about more complicated analyses than computing the median, such as fitting a set of regressions?
 
 ```{r}
-airSmall$late <- airSmall$DepDelay >= 15
-airSmall$Month <- as.factor(airSmall$Month)
-airSmall$Month <- relevel(airSmall$Month, "5")
-airSmall$Dest <- as.character(airSmall$Dest)
-
-out <- by(airSmall, airSmall$Dest, 
-    function(x) {
-      if(sum(!is.na(x$late))) 
-        # fit logistic regression
-        glm(late ~ Month, family = binomial, data = x) 
-      else NA
-    }
+out <- by(gapminder, gapminder$year, 
+    function(sub) {
+      lm(lifeExp ~ log(gdpPercap), data = sub)
+    }          
 )
 length(out)
-summary(out[['IAH']])
-summary(out[['ORD']])
+summary(out[['2007']])
+summary(out[['1952']])
 ```
-
-**Question**: What's the business with the `if` statement? Why is this good practice?
 
 # Sorting
 
@@ -347,10 +308,10 @@ summary(out[['ORD']])
 Sorting a matrix or dataframe based on one or more columns is a somewhat manual process, but once you get the hang of it, it's not bad.
 
 ```{r}
-ord <- order(air$DepDelay, air$ArrDelay, decreasing = TRUE)
+ord <- order(gapminder$year, gapminder$lifeExp, decreasing = TRUE)
 ord[1:5]
-air_ordered <- air[ord, ]
-head(air_ordered)
+gm_ord <- gapminder[ord, ]
+head(gm_ord)
 ```
 
 You could of course write your own *sort* function that uses `order()`. More in Module 6.
@@ -359,17 +320,28 @@ You could of course write your own *sort* function that uses `order()`. More in 
 
 We often need to combine data across multiple data frames, merging on common fields (i.e., *keys*). In database terminology, this is a *join* operation.
 
-Here's an example where we want to add a column indicating the number of flights to the given destination.
+Suppose that our dataset did not have 'continent' in it, but that we had a separate data frame that matches country to continent.
 
 ```{r} 
-numFlights <- as.data.frame(table(air$Dest))
-head(numFlights)
+# ignore the 'wizard' behind the curtain...
+c2c <- unique(gapminder[ , c('country', 'continent')])
+gapminderSave <- gapminder
+gapminder <- gapminder[ , -which(names(gapminder) == "continent")]
+```
 
-air2 <- merge(air, numFlights, by.x = 'Dest', by.y = 'Var1',
-     all.x = TRUE, all.y = FALSE)
-dim(air)
-dim(air2)
-head(air2)
+Now let's add the continent info in:
+
+```{r}
+head(c2c)
+head(gapminder)
+
+gapminder <- merge(gapminder, c2c, by.x = 'country', by.y = 'country',
+                   all.x = TRUE, all.y = FALSE)
+
+dim(gapminderSave)
+dim(gapminder)
+identical(gapminderSave, gapminder)
+identical(gapminderSave, gapminder[ , names(gapminderSave)])
 ```
 
 What's the deal with the `all.x` and `all.y` ?  We can tell R whether we want to keep all of the `x` observations, all the `y` observations, or neither, or both, when there may be rows in either of the datasets that don't match the other dataset.
@@ -378,23 +350,27 @@ What's the deal with the `all.x` and `all.y` ?  We can tell R whether we want to
 
 ### Basics
 
-1) Create a vector that concatenates the Dest and Origin to create a 'Route' variable in a vectorized way using the string processing functions.
+1) Create a vector that concatenates the country and year to create a 'country-year' variable in a vectorized way using the string processing functions.
 
-2) Use `table()` to figure out the number of flights for each year.
+2) Use `table()` to figure out the number of countries available for each continent.
 
 ### Using the ideas
 
-3) Compute the number of NAs in each column of the *air* dataset using `sapply()` and making use of the `is.na()` function.
+3) Explain the steps of what this code is doing: `tmp <- gapminder[ , -which(names(gapminder) == "continent")]`.
 
-4) Merge the info from data/carriers.csv with the airline dataset so that we have the full names of the airlines as a new column in the data frame.
+4) Compute the number of NAs in each column of the gapminder dataset using `sapply()` and making use of the `is.na()` function.
 
-5) Discretize distance into some bins and create a Dist_binned variable. Count the number of flights in each bin.
+5) Discretize gdpPercap into some bins and create a gdpPercap_binned variable. Count the number of values in each bin.
 
-6) Create a boxplot of delay by binned distance.
+6) Create a boxplot of life expectancy by binned gdpPercap.
 
-7) Sort the dataset and find the shortest flight. Now consider the use of `which.min()` and why using that should be much quicker with large datasets.
+7) Sort the dataset and find the shortest life expectancy value. Now consider the use of `which.min()` and why using that should be much quicker with large datasets.
  
-8)  Suppose we have two categorical variables and we conduct a hypothesis test of independence. The chi-square statistic is: 
+8) Create a dataframe that has the total population across all the countries for each year.
+
+9) Merge the info from problem 8 back into the original gapminder dataset. Now plot life expectancy as a function of world population. 
+
+10)  Suppose we have two categorical variables and we conduct a hypothesis test of independence. The chi-square statistic is: 
 
 $$
 \chi^2 = \sum_{i=1}^{n}\sum_{j=1}^{m} \frac{(y_{ij} - e_{ij})^2}{e_{ij}}, 
@@ -415,18 +391,23 @@ b. How can you construct the *e* matrix? Hint: the numerator of *e* is just an *
 
 ### Advanced 
 
-9) For each combination of UniqueCarrier, Month, and DayOfWeek, find the 95th percentile of delay. 
+11) For each combination of year and continent, find the 95th percentile of life expectancy. 
 
-10) This requires a bit of setup. Run the following code:
-```{r, eval=FALSE}
-h <- air$DepTime %/% 100
-m <- air$DepTime %% 100
-h <- as.character(h)
-h[!is.na(h) & nchar(h) == 1] <- paste('0', h[!is.na(h) & nchar(h) == 1], sep = '')
-air$DepTimeChar <- paste(h, m, sep = '-')
+12) Here's a cool trick to pull off a particular element of a list of lists:
+
+```{r}
+params <- list(a = list(mn = 7, sd = 3), b = list(mn = 6,sd = 1), 
+  c = list(mn = 2, sd = 1))
+sapply(params, "[[", 1)
 ```
 
-Now suppose the `DepTimeChar` field is the format the departure time field came in.
+Explain what that does and why it works.
 
-Create hour and minute fields using `strsplit()` and `sapply()`. What format is the result of `strsplit()`. Why do you need `sapply()`? 
+Hint:
+```{r}
+test <- list(5, 7, 3)
+test[[2]]
+# `[[`(test, 2)  # need it commented or R Markdown processing messes it up...
 
+# `+`(3, 7)
+```

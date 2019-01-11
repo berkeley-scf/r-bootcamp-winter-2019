@@ -175,66 +175,74 @@ attributes(gapminder)$row.names <- nm
 
 ```{r, basics4}
 ## 1 ##
-air$Route <- paste(air$Origin, air$Dest, sep = "-")
-head(air$Route)
+gapminder$country_year <- paste(gapminder$country, gapminder$year, sep = "-")
+head(gapminder$country_year)
 
 ## 2 ##
-table(air$Year)
+table(gm2007$continent)
 ```
 
 ```{r, using_the_ideas4}
 ## 3 ##
-sapply(air, function(x) sum(is.na(x)))
+tmp <- gapminder[ , -which(names(gapminder) == "continent")]
+
+# column names
+names(gapminder)
+# logical indicating which = 'continent'
+names(gapminder) == "continent"
+# index of the continent column
+which(names(gapminder) == "continent"
+# exclude that column
+gapminder[ , -which(names(gapminder) == "continent")] 
 
 ## 4 ##
-carriers <- read.csv('../data/carriers.csv')
-air2 <- merge(air, carriers, by.x = 'UniqueCarrier', by.y = 'Code', all.x = TRUE, all.y = FALSE)
+sapply(gapminder, function(x) sum(is.na(x)))
 
 ## 5 ##
-range(air$Dist)
-air$Dist_binned <- cut(air$Distance, breaks = c(-Inf, 100, 500, 1000, 1500, 2000, Inf)) 
-table(air$Dist_binned)
+range(gapminder$gdpPercap)
+gapminder$gdp_binned <- cut(gapminder$gdpPercap,
+       breaks = c(0, 1000, 2000, 5000, 10000, 20000, 30000, Inf))
+table(gapminder$gdp_binned)
 
 ## 6 ##
-boxplot(DepDelay ~ Dist_binned, data = air, ylim = 200)
+boxplot(lifeExp ~ gdp_binned, data = gapminder)
 
 ## 7 ##
-tmp <- air[order(air$Distance), ]
+tmp <- gapminder[order(gapminder$lifeExp), ]
 tmp[1, ]
-air[which.min(air$Distance), ]
+gapminder[which.min(gapminder$lifeExp), ]
+# That's actually BEFORE the genocide occurred.
 
 ## 8 ##
+pop <- aggregate(gapminder$pop, by = list(year = gapminder$year),
+                 FUN = sum)
+
+## 9 ##
+gapminder2 <- merge(gapminder, pop, carriers, by.x = 'year',
+                    by.y = 'year', all.x = TRUE, all.y = FALSE)
+plot(gapminder2$x, gapminder2$lifeExp)
+
+
+
+## 10 ##
 y <- matrix(sample(1:10, 12, replace = TRUE), 
 nrow = 3, ncol = 4)
 
-## 8b ##
+## 10b ##
 yidot <- rowSums(y)
 ydotj <- colSums(y)
 e <- outer(yidot, ydotj) / sum(y)
 
-## 8a ##
+## 10a ##
 chi2 <- sum( (y - e)^2 / e)
 # chi2 <- sum(colSums( (y-e)^2 / e ))
 ```
 
 ```{r, advanced4}
-## 9 ## 
-aggregate(air$DepDelay, by = list(air$UniqueCarrier, air$Month, air$DayOfWeek), 
+## 11 ## 
+aggregate(gapminder$lifeExp, by = list(gapminder$year, gapminder$continent),
 quantile, probs = 0.95, na.rm = TRUE)
 
-## 10 ##
-h <- air$DepTime %/% 100
-m <- air$DepTime %% 100
-h <- as.character(h)
-h[!is.na(h) & nchar(h) == 1] <- paste('0', h[!is.na(h) & nchar(h) == 1], sep = '')
-air$DepTimeChar <- paste(h, m, sep = '-')
-
-air$Hour <- as.numeric(sapply(strsplit(air$DepTimeChar, '-'), '[', 1))
-air$Minute <- as.numeric(sapply(strsplit(air$DepTimeChar, '-'), '[', 2))
-minutesPerHour <- 60
-air$DayMinutes <- (air$Hour-1)*minutesPerHour + air$Minute
-hist(air$DayMinutes)
-```
 
 # Module 5: Programming
 

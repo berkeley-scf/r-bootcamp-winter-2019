@@ -7,7 +7,7 @@
 # e.g. package and dataset loading
 rm(list = ls())
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # Managing your objects

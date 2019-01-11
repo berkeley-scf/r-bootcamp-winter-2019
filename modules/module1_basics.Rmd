@@ -6,7 +6,7 @@
 # include any code here you don't want to show up in the document,
 # e.g. package and dataset loading
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # R as a calculator
@@ -186,7 +186,6 @@ identical(vec1, vec2)
 gdpSubset >= 100000 | gdpSubset <= 1000
 ## using 'and'
 gapminder$gdpPercap[1:10] >= 100000 & gapminder$continent[1:10] == "Asia"
-
 ```
 
 # R is a functional language

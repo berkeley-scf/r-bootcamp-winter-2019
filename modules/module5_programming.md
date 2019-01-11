@@ -1,5 +1,5 @@
 % R bootcamp, Module 5: Programming
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek, with contributions from [Nima Hejazi](http://nimahejazi.org)
 
 
@@ -22,138 +22,77 @@ Let's take our use of `aggregate()` from Module 4 and use a for loop instead.
 
 
 ```r
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','OAK','JFK','ATL','DFW','IAH',
-                'ORD')
-airSmall <- subset(air, Dest %in% DestSubset)
-airSmall$late <- airSmall$DepDelay >= 15
-airSmall$Month <- as.factor(airSmall$Month)
-airSmall$Month <- relevel(airSmall$Month, "5")
-airSmall$Dest <- as.character(airSmall$Dest)
-
 out <- list()
-length(out) <- length(DestSubset)
-names(out) <- DestSubset
+years <- unique(gapminder$year)
+length(out) <- length(years)
+names(out) <- years
 
-for (i in seq_along(DestSubset)) {
+for (yrIdx in seq_along(years)) {
      # equivalently: for(i in 1:length(DestSubset))
      # n.b., seq_along(x) is better than 1:length(x), since it handles the case
      # where the length of an object is 0 or NULL more robustly.
-     sub <- subset(airSmall, airSmall$Dest == DestSubset[i])
-     if (sum(!is.na(sub$late)) && length(sub$late) > 1) {
-     # fit logistic regression
-       out[[i]] <- glm(late ~ Month, family = binomial, data = sub)
+     sub <- subset(gapminder, gapminder$year == years[i])
+     if (sum(!is.na(sub$lifeExp)) && length(sub$lifeExp) > 1) {
+     # fit regression
+       out[[yrIdx]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
      } else {
-       out[[i]] <- NA
+       out[[yrIdx]] <- NA
      }
 }
-out[['OAK']]
 ```
 
 ```
-## [1] NA
-```
-
-```r
-summary(out[['IAH']])
-```
-
-```
-## 
-## Call:
-## glm(formula = late ~ Month, family = binomial, data = sub)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7365  -0.6121  -0.5750  -0.5252   2.2963  
-## 
-## Coefficients:
-##              Estimate Std. Error z value Pr(>|z|)    
-## (Intercept) -1.816777   0.096439 -18.839  < 2e-16 ***
-## Month1       0.100730   0.136079   0.740   0.4592    
-## Month2       0.204195   0.136910   1.491   0.1358    
-## Month3       0.329094   0.129520   2.541   0.0111 *  
-## Month4       0.153730   0.133867   1.148   0.2508    
-## Month6       0.568904   0.124816   4.558 5.17e-06 ***
-## Month7       0.237044   0.129051   1.837   0.0662 .  
-## Month8       0.136570   0.131184   1.041   0.2978    
-## Month9      -0.745516   0.166948  -4.466 7.99e-06 ***
-## Month10      0.002425   0.136671   0.018   0.9858    
-## Month11     -0.094463   0.140825  -0.671   0.5024    
-## Month12      0.650724   0.124100   5.244 1.58e-07 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 9334.1  on 10533  degrees of freedom
-## Residual deviance: 9199.0  on 10522  degrees of freedom
-##   (48 observations deleted due to missingness)
-## AIC: 9223
-## 
-## Number of Fisher Scoring iterations: 5
+## Error in eval(e, x, parent.frame()): object 'i' not found
 ```
 
 ```r
-summary(out[['ORD']])
+out[['2007']]
 ```
 
 ```
-## 
-## Call:
-## glm(formula = late ~ Month, family = binomial, data = sub)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8681  -0.7585  -0.7065  -0.6374   1.8404  
-## 
-## Coefficients:
-##             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept) -1.36737    0.05601 -24.414  < 2e-16 ***
-## Month1       0.34839    0.07732   4.506 6.61e-06 ***
-## Month2       0.33658    0.07946   4.236 2.28e-05 ***
-## Month3       0.26875    0.07777   3.456 0.000549 ***
-## Month4       0.10664    0.07912   1.348 0.177701    
-## Month6       0.48219    0.07538   6.397 1.59e-10 ***
-## Month7       0.15244    0.07742   1.969 0.048939 *  
-## Month8       0.12886    0.07773   1.658 0.097355 .  
-## Month9      -0.11699    0.08168  -1.432 0.152086    
-## Month10     -0.12304    0.08087  -1.521 0.128169    
-## Month11      0.11599    0.07911   1.466 0.142599    
-## Month12      0.58578    0.07505   7.805 5.95e-15 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 24639  on 22500  degrees of freedom
-## Residual deviance: 24453  on 22489  degrees of freedom
-##   (483 observations deleted due to missingness)
-## AIC: 24477
-## 
-## Number of Fisher Scoring iterations: 4
+## NULL
+```
+
+```r
+summary(out[['2007']])
+```
+
+```
+## Length  Class   Mode 
+##      0   NULL   NULL
+```
+
+```r
+summary(out[['1952']])
+```
+
+```
+## Length  Class   Mode 
+##      0   NULL   NULL
 ```
 
 The iterations do not have to explicitly be over sequential numbers.
 
 
 ```r
-for (dest in DestSubset) {
-     cat(dest, '\n')
+for (yr in years) {
+     cat(yr, '\n')
 }
 ```
 
 ```
-## LAX 
-## SEA 
-## PHX 
-## DEN 
-## MSP 
-## OAK 
-## JFK 
-## ATL 
-## DFW 
-## IAH 
-## ORD
+## 1952 
+## 1957 
+## 1962 
+## 1967 
+## 1972 
+## 1977 
+## 1982 
+## 1987 
+## 1992 
+## 1997 
+## 2002 
+## 2007
 ```
 
 # While loop
@@ -163,56 +102,39 @@ syntax in the same example.
 
 
 ```r
-out <- list(); length(out) <- length(DestSubset); names(out) <- DestSubset
-
 i <- 1
-while (i <= length(DestSubset)) {
-     sub <- subset(airSmall, airSmall$Dest == DestSubset[i])
-     if (sum(!is.na(sub$late)) && length(sub$late) > 1) {
-     # fit logistic regression
-       out[[i]] <- glm(late ~ Month, family = binomial, data = sub)
+while (yrIdx <= length(years)) {
+     sub <- subset(gapminder, gapminder$year == years[i])
+     if (sum(!is.na(sub$lifeExp)) && length(sub$lifeExp) > 1) {
+     # fit regression
+       out[[yrIdx]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
      } else {
-       out[[i]] <- NA
+       out[[yrIdx]] <- NA
      }
-     i = i + 1
+     yrIdx = yrIdx + 1
 }
-summary(out[['IAH']])
+summary(out[['2007']])
 ```
 
 ```
 ## 
 ## Call:
-## glm(formula = late ~ Month, family = binomial, data = sub)
+## lm(formula = lifeExp ~ log(gdpPercap), data = sub)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7365  -0.6121  -0.5750  -0.5252   2.2963  
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -28.9571  -5.7319   0.7517   6.5770  13.7361 
 ## 
 ## Coefficients:
-##              Estimate Std. Error z value Pr(>|z|)    
-## (Intercept) -1.816777   0.096439 -18.839  < 2e-16 ***
-## Month1       0.100730   0.136079   0.740   0.4592    
-## Month2       0.204195   0.136910   1.491   0.1358    
-## Month3       0.329094   0.129520   2.541   0.0111 *  
-## Month4       0.153730   0.133867   1.148   0.2508    
-## Month6       0.568904   0.124816   4.558 5.17e-06 ***
-## Month7       0.237044   0.129051   1.837   0.0662 .  
-## Month8       0.136570   0.131184   1.041   0.2978    
-## Month9      -0.745516   0.166948  -4.466 7.99e-06 ***
-## Month10      0.002425   0.136671   0.018   0.9858    
-## Month11     -0.094463   0.140825  -0.671   0.5024    
-## Month12      0.650724   0.124100   5.244 1.58e-07 ***
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)    -17.8457     5.0668  -3.522 0.000578 ***
+## log(gdpPercap)   8.8298     0.6626  13.326  < 2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 9334.1  on 10533  degrees of freedom
-## Residual deviance: 9199.0  on 10522  degrees of freedom
-##   (48 observations deleted due to missingness)
-## AIC: 9223
-## 
-## Number of Fisher Scoring iterations: 5
+## Residual standard error: 8.146 on 140 degrees of freedom
+## Multiple R-squared:  0.5592,	Adjusted R-squared:  0.556 
+## F-statistic: 177.6 on 1 and 140 DF,  p-value: < 2.2e-16
 ```
 
 # Branching (if-then-else syntax)
@@ -229,7 +151,7 @@ val
 ```
 
 ```
-## [1] 2.099657
+## [1] 0.7664723
 ```
 
 ```r
@@ -253,7 +175,7 @@ val
 ```
 
 ```
-## [1] 0.6584765
+## [1] 0.5099846
 ```
 
 ```r
@@ -288,18 +210,30 @@ if (val < 0) print("val is negative") else print("val is positive")
 The condition in the if statement cannot be NA or R will give an error. This is
 a very common bug.
 
-Suppose we were (inefficiently) setting up a new field using an if statement.
 
 ```r
-air$late <- rep(0, nrow(air))
-for (i in 1:20) {
-      if(air$DepDelay[i] > 15)
-          air$late[i] <- 1 else air$late[i] <- 0
+continents <- unique(gapminder$continent)
+continents  # what happened ?!
+```
+
+```
+## [1] "Asia"     "Europe"   "Africa"   "Americas" "Oceania"
+```
+
+```r
+continents <- unique(as.character(gapminder$continent))
+continents <- c('Antarctica', continents)
+
+out <- rep(0, length(continents))
+for (i in seq_along(continents)) {
+    sub <- gapminder[gapminder$continent == continents[i], ]
+    if(mean(sub$lifeExp) < 50)
+       print(continents[i])
 }
 ```
 
 ```
-## Error in if (air$DepDelay[i] > 15) air$late[i] <- 1 else air$late[i] <- 0: missing value where TRUE/FALSE needed
+## Error in if (mean(sub$lifeExp) < 50) print(continents[i]): missing value where TRUE/FALSE needed
 ```
 
 ```r
@@ -307,27 +241,20 @@ print(i)
 ```
 
 ```
-## [1] 4
+## [1] 1
 ```
 
 ```r
-if(air$DepDelay[4] > 15) print('here')
+sub <- gapminder[gapminder$continent == continents[i], ]
+if(mean(sub$lifeExp) < 50) print('here')
 ```
 
 ```
-## Error in if (air$DepDelay[4] > 15) print("here"): missing value where TRUE/FALSE needed
-```
-
-```r
-air$DepDelay[4] > 15
-```
-
-```
-## [1] NA
+## Error in if (mean(sub$lifeExp) < 50) print("here"): missing value where TRUE/FALSE needed
 ```
 
 ```r
-air$DepDelay[4]
+mean(sub$lifeExp) < 50
 ```
 
 ```
@@ -344,47 +271,56 @@ A more robust alternative is to use `isTRUE()`:
 
 
 ```r
-air$late <- rep(0, nrow(air))
-for (i in 1:20) {
-      if(isTRUE(air$DepDelay[i] > 15))
-          air$late[i] <- 1 else air$late[i] <- 0
+out <- rep(0, length(continents))
+for (i in seq_along(continents)) {
+    sub <- gapminder[gapminder$continent == continents[i], ]
+    if(isTRUE(mean(sub$lifeExp) < 60))
+       print(continents[i])
 }
+```
+
+```
+## [1] "Africa"
+```
 
 
 # Flow control: `next` and `break` statements
 
 `next` skips the current evaluation of the loop statements:
+
+
+```r
+continents <- unique(gm2007$continent)
+continents[2] <- "Oceania"; continents[5] <- "Europe"  # reorder to illustrate points below
+continents
 ```
 
 ```
-## Error: <text>:10:8: unexpected symbol
-## 9: 
-## 10: `next` skips
-##            ^
+## [1] "Asia"     "Oceania"  "Africa"   "Americas" "Europe"
 ```
 
 ```r
-out <- list(); length(out) <- length(DestSubset); names(out) <- DestSubset
+out <- list(); length(out) <- length(continents); names(out) <- continents
 
-for (i in seq_along(DestSubset)) {
-     # equivalently: for(i in 1:length(DestSubset))
-     sub <- subset(airSmall, airSmall$Dest == DestSubset[i])
-     if(sum(!is.na(sub$late)) && length(sub$late) > 1) {
-     # fit logistic regression
-       out[[i]] <- glm(late ~ Month, family = binomial, data = sub)
+for (i in seq_along(continents)) {
+     # equivalently: for(i in 1:length(continents))
+     sub <- subset(gm2007, gm2007$continent == continents[i])
+     if(sum(!is.na(sub$lifeExp)) > 2) { # don't regress if <= 2 obs
+     # fit regression
+       out[[i]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
      } else {
        next
      }
 }
-cat("We got to iteration ", i, " of ", length(DestSubset), " items.", sep = "")
+cat("We got to iteration ", i, " of ", length(continents), " items.\n", sep = "")
 ```
 
 ```
-## We got to iteration 11 of 11 items.
+## We got to iteration 5 of 5 items.
 ```
 
 ```r
-out[['OAK']]
+out[['Oceania']]
 ```
 
 ```
@@ -393,24 +329,26 @@ out[['OAK']]
 
 `break` immediately ends loop evaluation:
 
-```r
-out <- list(); length(out) <- length(DestSubset); names(out) <- DestSubset
 
-for (i in seq_along(DestSubset)) {
-     # equivalently: for(i in 1:length(DestSubset))
-     sub <- subset(airSmall, airSmall$Dest == DestSubset[i])
-     if(sum(!is.na(sub$late)) && length(sub$late) > 1) {
-     # fit logistic regression
-       out[[i]] <- glm(late ~ Month, family = binomial, data = sub)
+```r
+out <- list(); length(out) <- length(continents); names(out) <- continents
+
+for (i in seq_along(continents)) {
+     # equivalently: for(i in 1:length(continents))
+     sub <- subset(gm2007, gm2007$continent == continents[i])
+     if(sum(!is.na(sub$lifeExp)) > 2) { # don't regress if <= 2 obs
+     # fit regression
+       out[[i]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
      } else {
        break
      }
 }
-cat("We got to iteration ", i, " of ", length(DestSubset), " items.", sep = "")
+
+cat("We got to iteration ", i, " of ", length(continents), " items.\n", sep = "")
 ```
 
 ```
-## We got to iteration 6 of 11 items.
+## We got to iteration 2 of 5 items.
 ```
 
 Effective use of `next` and `break` can make your `for` (and other) loops both
@@ -447,16 +385,16 @@ In module 4, we sorted the airline `data.frame`.
 
 
 ```r
-ord <- order(air$DepDelay, air$ArrDelay, decreasing = TRUE)
+ord <- order(gapminder$year, gapminder$lifeExp, decreasing = TRUE)
 ord[1:5]
 ```
 
 ```
-## [1] 115794 396990 337213 168750 415550
+## [1]  804  672  696 1488   72
 ```
 
 ```r
-air_ordered <- air[ord, ]
+gm_ord <- gapminder[ord, ]
 ```
 
 How would we encapsulate that functionality generically so that
@@ -484,11 +422,11 @@ colSort <- function(data, col1, col2) {
     return(sorted)
 }
 
-identical(air_ordered, colSort(air, "DepDelay", "ArrDelay"))
+identical(gm_ordered, colSort(gapminder, "year", "lifeExp"))
 ```
 
 ```
-## [1] TRUE
+## Error in identical(gm_ordered, colSort(gapminder, "year", "lifeExp")): object 'gm_ordered' not found
 ```
 
 Of course this is somewhat limited in that it is specific to sorting based on
@@ -509,7 +447,7 @@ colSort <- function(data, col1 = 1, col2 = 2) {
     sorted <- data[ord, ]
     return(sorted)
 }
-identical(colSort(air, 1, 2), colSort(air))
+identical(colSort(gapminder, 1, 2), colSort(gapminder))
 ```
 
 ```
@@ -517,7 +455,7 @@ identical(colSort(air, 1, 2), colSort(air))
 ```
 
 ```r
-identical(colSort(col2 = 2, data = air, col1 = 1), colSort(air, 1, 2))
+identical(colSort(col2 = 2, data = gapminder, col1 = 1), colSort(gapminder, 1, 2))
 ```
 
 ```
@@ -540,11 +478,8 @@ pplot <- function(x, y, ...) {
       plot(x, y, pch = 16, cex = 0.6, ...)
 }
 
-sub <- air[sample(1:nrow(air), 10000, replace = FALSE), ]
-sub$DepDelay[sub$DepDelay > 120] <- 120
-sub$DepDelay[sub$DepDelay < -30] <- -30
-pplot(sub$Distance, sub$DepDelay, xlab = 'distance (miles)',
-      ylab = 'delay (minutes)', log = 'x')
+pplot(gapminder$gdpPercap, gapminder$lifeExp,  xlab = 'gdpPercap (log $)',
+      ylab = 'life expectancy (years)', log = 'x')
 ```
 
 ![](figure/usedots-1.png)
@@ -687,8 +622,8 @@ x[ , 2]
 ```
 
 ```
-##  [1] 0.95388021 0.70479070 0.45431020 0.73198802 0.37230402 0.75122663
-##  [7] 0.03154032 0.05696075 0.29466231 0.15265909
+##  [1] 0.98439597 0.73419259 0.05808899 0.48401256 0.72164981 0.14025814
+##  [7] 0.22856039 0.66118005 0.84247288 0.27120150
 ```
 
 ```r
@@ -696,8 +631,8 @@ x[ , 2]
 ```
 
 ```
-##  [1] 0.95388021 0.70479070 0.45431020 0.73198802 0.37230402 0.75122663
-##  [7] 0.03154032 0.05696075 0.29466231 0.15265909
+##  [1] 0.98439597 0.73419259 0.05808899 0.48401256 0.72164981 0.14025814
+##  [7] 0.22856039 0.66118005 0.84247288 0.27120150
 ```
 
 Also yes!
@@ -765,38 +700,29 @@ regression exercise that we started with.
 
 ### A simple example
 
-Let's take a look at our `airSmall` data set again. Recall that our goal was to
-fit a logistic regression model, with the outcome being late arrival (binary)
-and the only explanatory variable being the month. To fit our models across each
-of the destination separately, we'll first need to put our data in "tidy"
+Recall that we have been fitting regression models for each year. To fit our models across each
+of the years separately, we'll first need to put our data in "tidy"
 format. It's _really easy_ with some helpful verbs from `dplyr`...
 
 
 ```r
 # let's clean up the data set first
-airSmall_tidy <- airSmall %>%
-  split(.$Dest)
+gm_tidy <- gapminder %>%
+  split(.$year)
 ```
 
-Now, we can fit our logistic regression models across each of the destinations
+Now, we can fit our regression models across each of the years
 using `purrr`'s `map`:
 
 
 ```r
-airSmall_glms <- airSmall_tidy %>%
-  map(~glm(late ~ Month, family = binomial, data = .))
+gm_lms <- gm_tidy %>%
+  map(~lm(lifeExp ~ log(gdpPercap), data = .))
 ```
 
-```
-## Error in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels
-```
-
-
-Uh oh, what happened here?
-
-Oh, that's right...we had to protect against situations where there wasn't
-enough variation in the outcome variable (all flights late or on time, or with
-too much missing-ness). We did this with an `if` statement.
+What about protecting ourselves against situations where there wasn't
+enough variation in the outcome variable (fewer than two non-missing observations in a year).
+(It doesn't happen here but can easily happen in other situations.)
 
 So, can `purrr` handle this? *Yes* - in fact, it's really easy. We can use a
 verb called `safely` to separate situations where the GLM succeeds from those
@@ -804,13 +730,13 @@ where it doesn't. Let's try it out
 
 
 ```r
-airSmall_glms <- airSmall_tidy %>%
-  map(safely(~glm(late ~ Month, family = binomial, data = .)))
+gm_lms <- gm_tidy %>%
+  map(safely(~lm(lifeExp ~ log(gdpPercap), data = .)))
 ```
 
 _Remark:_ What we accomplish here with `purrr::map` is also easily done using
-tools from base R. In fact, using `lapply`, we can evaluate the very same `glm`
-formula with our `airSmall` dataset, albeit without the extra goodies offered by
+tools from base R. In fact, using `lapply`, we can evaluate the very same `lm`
+formula with our `gapminder` dataset, albeit without the extra goodies offered by
 the pipe (aka `%>%`) syntax and the `safely` convenience, afforded by `magrittr`
 and `purrr`, respectively.
 
@@ -819,41 +745,23 @@ the output
 
 
 ```r
-airSmall_glms$LAX$result
+gm_lms$`2007`
 ```
 
 ```
+## $result
 ## 
-## Call:  glm(formula = late ~ Month, family = binomial, data = .)
+## Call:
+## lm(formula = lifeExp ~ log(gdpPercap), data = .)
 ## 
 ## Coefficients:
-## (Intercept)       Month1       Month2       Month3       Month4  
-##    -1.53016      0.28260      0.26799      0.04350     -0.11293  
-##      Month6       Month7       Month8       Month9      Month10  
-##     0.36191      0.21491      0.08889     -0.09919      0.02030  
-##     Month11      Month12  
-##     0.05893      0.63107  
+##    (Intercept)  log(gdpPercap)  
+##          4.950           7.203  
 ## 
-## Degrees of Freedom: 43034 Total (i.e. Null);  43023 Residual
-##   (1230 observations deleted due to missingness)
-## Null Deviance:	    43390 
-## Residual Deviance: 43080 	AIC: 43100
+## 
+## $error
+## NULL
 ```
-
-As a sanity check, we'll make sure our results match those from before. (We do
-this for one destination city for convenience. When working, it never hurts to
-be too safe - best to check them all.)
-
-
-```r
-all.equal(coef(airSmall_glms$LAX$result), coef(out$LAX))
-```
-
-```
-## [1] TRUE
-```
-
-Looks like everything worked out just fine!
 
 Now that we've seen what we can do with `purrr`, it's important to compare this
 modern approach to what is offered in base R. (It's very important to understand
