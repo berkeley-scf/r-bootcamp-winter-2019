@@ -28,16 +28,6 @@ There are two competing schools of thought within the R community.
 
 We'll show you some of the `tidyverse` tools so you can make an informed decision about whether you want to use base R or these newfangled packages.
 
-# Example Dataset
-
-For this unit, we'll be working with the "Gapminder" dataset, which is excerpt of the data available at Gapminder.org. For each of 142 countries, the data  provides values for life expectancy, GDP per capita, and population, every five years, from 1952 to 2007.
-
-```{r}
-gapminder <- read.csv("../data/gapminder-FiveYearData.csv",
-          stringsAsFactors = TRUE)
-head(gapminder)
-```
-
 # Data frame Manipulation using Base R Functions
 
 So far, you've seen the basics of manipulating data frames, e.g. subsetting, merging, and basic calculations.
@@ -491,8 +481,6 @@ There are some other useful packages in the [tidyverse](http://www.tidyverse.org
 2. Use `dplyr` to add a column to the gapminder dataset that contains the total population of the continent of each observation in a given year. For example, if the first observation is Afghanistan in 1952, the new column would contain the population of Asia in 1952.
 
 3. Use `dplyr` to add a column called `gdpPercap_diff` that contains the difference between the observation's `gdpPercap` and the mean `gdpPercap` of the continent in that year. Arrange the dataframe by the column you just created, in descending order (so that the relatively richest country/years are listed first)
-
-   **hint**: You might have to `ungroup()` before you `arrange()`.
 
 ### `tidyr`
 

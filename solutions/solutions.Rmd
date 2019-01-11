@@ -344,7 +344,6 @@ gapminder_pop_continent <- gapminder %>%
 gap_rel_gdp <- gapminder %>%
     group_by(continent, year) %>%
     mutate(gdpPercap_diff = gdpPercap - mean(gdpPercap)) %>%
-    ungroup() %>%
     arrange(desc(gdpPercap_diff))
 
 ## 4 ##
