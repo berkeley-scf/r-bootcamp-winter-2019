@@ -328,7 +328,7 @@ environment(f)$x
 # Module 6: Data manipulation using the tidyverse
 
 ```{r, basics5}
-library(plyr)
+library(tidyr)
 
 ## 1 ##
 gap_median_lifeExp <- gapminder %>%
