@@ -373,15 +373,15 @@ qchisq(0.95, 1)
 ```{r, using_the_ideas7}
 
 ## 4 ##
-reg1 <- glm(formula = gdpPercap ~ lifeExp + pop + year, 
-                family=gaussian, data=gapminder)
+reg1 <- lm(lifeExp ~ log(gdpPercap) + log(pop) + year, 
+                data=gapminder)
 ## here we assume a linear relationship of gdp with year
 ## this is not flexible but allows us to fit the model with less data
 
-reg2 <- glm(formula = gdpPercap ~ lifeExp + pop + factor(year), 
-                family = gaussian, data = gapminder)
+reg2 <- lm(lifeExp ~ log(gdpPercap) + log(pop) + factor(year), 
+                data = gapminder)
 ## here we assume a completely arbitrary relationship of gdp with year
-## we need enough data in each year to be able to reasonably estimate the average gdp for that year, given the other explanatory variables
+## we need enough data in each year to be able to reasonably estimate the average lifeExp for that year, given the other explanatory variables
 
 
 ## 5 ##
@@ -389,44 +389,50 @@ nBoot <- 500
 vals <- rep(0, nBoot)
 
 for(i in seq_len(nBoot)) { 
-      smp <- sample(seq_len(nrow(air)), replace = TRUE) 
-      vals[i] <- mean(air$DepDelay[smp], na.rm = TRUE)
+      smp <- sample(seq_len(nrow(gapminder)), replace = TRUE) 
+      vals[i] <- mean(gapminder$lifeExp[smp], na.rm = TRUE)
 }
 hist(vals)
 se <- sd(vals)
-n <- sum(!is.na(air$DepDelay))
-se_norm <- sd(air$DepDelay, na.rm = TRUE) / sqrt(n)
+n <- sum(!is.na(gapminder$lifeExp))
+se_norm <- sd(gapminder$lifeExp, na.rm = TRUE) / sqrt(n)
 
 ## 6 ##
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW','IAH', 'ORD') 
-airSmall <- subset(air, Dest %in% DestSubset)
-airSmall$DepDelayCens <- censor(airSmall$DepDelay, 180)
-airSmall$SchedDepCont <- airSmall$CRSDepTime %/% 100 + (airSmall$CRSDepTime %% 100) / 60
-mod_LAX <- gam(DepDelayCens ~ s(Month, k = 10) + s(SchedDepCont, k = 10), 
-         data = airSmall, subset = airSmall$Dest == "LAX")
-par(mfrow = c(1, 2))
-plot(mod_LAX)
+mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gapminder)
+plot(mod)
+summary(mod)
+
+mod <- gam(lifeExp ~ s(gdpPercap, k = 60) + s(year, k = 10), data = gapminder)
+plot(mod)
+summary(mod)  # edf values are about the same as previously so 'k' is not constraining
+
+mod <- gam(lifeExp ~ s(gdpPercap, k = 4) + s(year, k = 3), data = gapminder)
+plot(mod)
+# Now the edf is much lower (and R^2 has decreased).
+# Note that uncertainty is decreased under the nearly linear fit for year.
+
 ```
 
 ```{r, advanced7}
 
-## 7 ## 
-gap_rel_gdp_sign <- gap_rel_gdp %>%
-  mutate(sign = ifelse(gdpPercap_diff > 0, 1, 0))
+## 7 ##
+library(dplyr)
+gm2 <- gapminder %>%
+  mutate(sign = ifelse(lifeExp > 60, 1, 0))
 
-reg_logit <- glm(formula = sign ~ lifeExp + pop, 
-                family = binomial(link = "logit"), data = gap_rel_gdp_sign)
+reg_logit <- glm(sign ~ log(gdpPercap) + log(pop),
+                family = binomial(link = "logit"), data = gm2)
 
 ## 8 ## 
 nFolds <- 10
-n <- nrow(air)
+n <- nrow(gapminder)
 fold_size <- rep(round(n / nFolds), nFolds)
 fold_size[nFolds] <- n - (nFolds - 1)*fold_size[1]
 
 fold <- rep(1:nFolds, times = fold_size)
 table(fold)
 set.seed(1)
-air$Fold <- sample(fold, replace = TRUE)
+gapminder$Fold <- sample(fold, replace = TRUE)
 
 ## 9 ##
 n <- 100
@@ -441,41 +447,39 @@ qqnorm(mns)
 # Module 8: Graphics
 
 ```{r, basics8}
-sub <- air[sample(1:nrow(air), 10000, replace = FALSE), ]
 
 ## 1 ##
-sub$DepDelay[sub$DepDelay < 0] <- 0
-sub$DepDelay[sub$DepDelay >= 60] <- 60 
-
-ggplot(data = sub, aes(x = DepDelay)) + geom_histogram()
+ggplot(data = gapminder, aes(x = lifeExp)) + geom_histogram()
 
 ## 2 ##
-ggplot(data = sub, aes(x = DepDelay, y = ArrDelay)) + geom_point() 
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point() 
 
 ## 3 ##
 pdf('delays.pdf')
-ggplot(data = sub, aes(x = DepDelay, y = ArrDelay)) + geom_point() + 
-  ggtitle("Arrival vs. Departure Delay") + xlab(label = "Departure delay (minutes)") +
-  ylab(label = "Arrival delay (minutes)")
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point() + 
+  ggtitle("Life expectancy vs. per capita GDP") + xlab(label = "GDP per capita (dollars)") +
+  ylab(label = "life expectancy (years)")
 dev.off()
 
 ## 4 ##
-ggplot(data = sub, aes(x = factor(DayOfWeek), y = DepDelay)) + geom_boxplot()
+ggplot(data = gapminder, aes(x = factor(year), y = lifeExp)) + geom_boxplot()
 ```
 
 ```{r, using_the_ideas8}
 ## 5 ##
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW','IAH', 'ORD')
-ggplot(data = sub[sub$Dest %in% DestSubset, ], aes(x = factor(DayOfWeek), y = DepDelay)) + geom_boxplot() + facet_wrap(~Dest, nrow = 2, ncol = 5)
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point() + facet_wrap(~year, nrow = 3, ncol = 4)
 
 ## 6 ##
-ggplot(data = sub[sub$Dest %in% c('IAH', 'ORD'), ], aes(x = CRSDepTime, y = ArrDelay, color = Dest)) + geom_point() + scale_x_continuous(limits = c(600, 2400)) + scale_y_continuous(limits = c(-10, 120))
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) + geom_point() + scale_x_continuous(limits = c(100, 50000))
+
+## 7 ##
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) + geom_point() + scale_x_log10(limits = c(100, 50000))
 ```
 
 ```{r, advanced8}
-## 7 ##
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW','IAH', 'ORD')
-ggplot(data = sub[sub$Dest %in% DestSubset, ], aes(x = CRSDepTime, y = DepDelay)) + geom_point(alpha = 0.3) + geom_smooth(method = "loess", color = 'red', se = FALSE) + scale_x_continuous(limits = c(600, 2400)) + facet_wrap(~Dest, nrow = 2) + theme_bw()
+
+## 8 ##
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point(alpha = 0.3) + geom_smooth(method = "loess", color = 'red', se = FALSE)  + scale_x_log10(limits = c(100, 50000)) + facet_wrap(~year, nrow = 3) + theme_bw()
 ```
 
 

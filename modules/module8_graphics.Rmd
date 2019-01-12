@@ -577,27 +577,26 @@ ggsave(filename = "example.pdf", plot = example.plot, scale = , width = ,
 
 # Breakout
 
-For some of these you may want to use a smaller version of the dataset, such as a random subset, `subset <- air[sample(1:nrow(air), 10000, replace = FALSE), ]`.
+These questions ask you to work with the gapminder dataset.
 
 ### Basics
 
-1) Plot a histogram of the flight delays with negative delays set to zero, censoring delay times at a maximum of 60 minutes.
+1) Plot a histogram of life expectancy. 
 
-2) Plot the arrival delay against the departure delay as a scatterplot.
+2) Plot the life expectancy against gdpPercap. 
 
 3) Clean up your scatterplot with a title and axis labels. Output it as a PDF and see if you'd be comfortable with including it in a report/paper.
 
-4) Make a boxplot of departure delays conditional on the day of week.
+4) Make a boxplot of life expectancy conditional on year.
 
 ### Using the ideas
 
-5) Create a trellis plot of departure delay by day of week boxplots, one subplot per destination for this subset of destinations,
-`DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW','IAH', 'ORD')`. Use a 2x5 layout of panels in the plot.
+5) Create a trellis plot of life expectancy by gdpPercap scatterplots, one subplot per year. Use a 3x4 layout of panels in the plot.
 
-6) Subset the data to flights going to Chicago (ORD) and Houston (IAH). Plot arrival delay against scheduled departure time (CRSDepTime). Now plot so that flights to Chicago are in one color and  those to Houston in another. Use `scale_x_continuous()` and `scale_y_continuous()` to set the x-axis limits to be in the range from 6 am to midnight and the y-axis limits to be in the range (-10, 120).
+6) Plot life expectancy versus gdpPercap. Now plot so that different continents are in different colors. Use `scale_x_continuous()` to set the x-axis limits to be in the range from 0 to 50000.
 
 
 ### Advanced
 
-7) Create a "trellis" plot where, for a given destination (see the subset in question 5), each panel uses a) hollow circles to plot departure delay as a function of time of day, and b) a red loess smoother without standard errors to plot the trend in departure delay over time of day.  Limit the time of day shown to 6 am to midnight, and turn off the grey background. Figure out how to use partially-transparent points to reduce the effect of the overplotting of points.
+7) Create a "trellis" plot where, for a given year, each panel uses a) hollow circles to plot lifeExp as a function of log(gdpPercap), and b) a red loess smoother without standard errors to plot the trend. Turn off the grey background. Figure out how to use partially-transparent points to reduce the effect of the overplotting of points.
 

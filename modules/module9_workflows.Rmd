@@ -7,7 +7,7 @@
 # e.g. package and dataset loading
 library(foreign)
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE)
+air <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # Tips for avoiding bugs
@@ -100,11 +100,11 @@ buggyFun(air)
 if(FALSE) {
   traceback()
   debug(buggyFun)
-  buggyFun(air)
+  buggyFun(gapminder)
 
   undebug(buggyFun)
   options(error = recover)
-  buggyFun(air)
+  buggyFun(gapminder)
 }
 ```    
 

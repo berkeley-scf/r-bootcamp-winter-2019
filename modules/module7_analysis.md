@@ -1,5 +1,5 @@
 % R bootcamp, Module 7: Analysis
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 
@@ -26,7 +26,7 @@ We'll just see the basics of how to fit regressions here.
 
 
 ```r
-glm(formula = y~x1+x2+x3+..., family = familyname(link = "linkname"),
+glm(formula = y ~ x1 + x2 + x3 + ..., family = familyname(link = "linkname"),
             data = )
 ```
 
@@ -38,10 +38,7 @@ If you're using `lm`, the call looks the same but without the `family` argument.
 
 
 ```r
-gapminder <- read.csv(file.path("..", "data",
-          "gapminder-FiveYearData.csv"), stringsAsFactors = TRUE)
-
-reg <- lm(formula = lifeExp ~ gdpPercap + pop + continent + year, 
+reg <- lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + year, 
                 data = gapminder)
 ```
 
@@ -68,10 +65,10 @@ reg$coefficients
 ```
 
 ```
-##       (Intercept)         gdpPercap               pop continentAmericas 
-##     -5.184555e+02      2.984892e-04      1.790640e-09      1.429204e+01 
+##       (Intercept)    log(gdpPercap)          log(pop) continentAmericas 
+##      -460.8132741         5.0756110         0.1530312         8.7453560 
 ##     continentAsia   continentEurope  continentOceania              year 
-##      9.375486e+00      1.936120e+01      2.055921e+01      2.862583e-01
+##         6.8254916        12.2808442        12.5398669         0.2377202
 ```
 
 ```r
@@ -108,28 +105,29 @@ summary(reg)
 ```
 ## 
 ## Call:
-## lm(formula = lifeExp ~ gdpPercap + pop + continent + year, data = gapminder)
+## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + 
+##     year, data = gapminder)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -28.4051  -4.0550   0.2317   4.5073  20.0217 
+## -25.0572  -3.2857   0.3289   3.7062  15.0650 
 ## 
 ## Coefficients:
 ##                     Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)       -5.185e+02  1.989e+01 -26.062   <2e-16 ***
-## gdpPercap          2.985e-04  2.002e-05  14.908   <2e-16 ***
-## pop                1.791e-09  1.634e-09   1.096    0.273    
-## continentAmericas  1.429e+01  4.946e-01  28.898   <2e-16 ***
-## continentAsia      9.375e+00  4.719e-01  19.869   <2e-16 ***
-## continentEurope    1.936e+01  5.182e-01  37.361   <2e-16 ***
-## continentOceania   2.056e+01  1.469e+00  13.995   <2e-16 ***
-## year               2.863e-01  1.006e-02  28.469   <2e-16 ***
+## (Intercept)       -4.608e+02  1.697e+01 -27.154   <2e-16 ***
+## log(gdpPercap)     5.076e+00  1.627e-01  31.191   <2e-16 ***
+## log(pop)           1.530e-01  9.668e-02   1.583    0.114    
+## continentAmericas  8.745e+00  4.766e-01  18.349   <2e-16 ***
+## continentAsia      6.825e+00  4.232e-01  16.128   <2e-16 ***
+## continentEurope    1.228e+01  5.292e-01  23.205   <2e-16 ***
+## continentOceania   1.254e+01  1.281e+00   9.788   <2e-16 ***
+## year               2.377e-01  8.932e-03  26.614   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 6.883 on 1696 degrees of freedom
-## Multiple R-squared:  0.7172,	Adjusted R-squared:  0.716 
-## F-statistic: 614.5 on 7 and 1696 DF,  p-value: < 2.2e-16
+## Residual standard error: 5.811 on 1696 degrees of freedom
+## Multiple R-squared:  0.7985,	Adjusted R-squared:  0.7976 
+## F-statistic:   960 on 7 and 1696 DF,  p-value: < 2.2e-16
 ```
 
 - Can also extract useful things from the summary object
@@ -154,15 +152,15 @@ summ_reg$coefficients
 ```
 
 ```
-##                        Estimate   Std. Error    t value      Pr(>|t|)
-## (Intercept)       -5.184555e+02 1.989299e+01 -26.062215 3.248472e-126
-## gdpPercap          2.984892e-04 2.002178e-05  14.908225  2.522143e-47
-## pop                1.790640e-09 1.634107e-09   1.095791  2.733256e-01
-## continentAmericas  1.429204e+01 4.945645e-01  28.898241 1.183161e-149
-## continentAsia      9.375486e+00 4.718629e-01  19.869087  3.798275e-79
-## continentEurope    1.936120e+01 5.182170e-01  37.361177 2.025551e-223
-## continentOceania   2.055921e+01 1.469070e+00  13.994707  3.390781e-42
-## year               2.862583e-01 1.005523e-02  28.468586 4.800797e-146
+##                       Estimate   Std. Error    t value      Pr(>|t|)
+## (Intercept)       -460.8132741 16.970277820 -27.154138 3.961833e-135
+## log(gdpPercap)       5.0756110  0.162724177  31.191499 3.371693e-169
+## log(pop)             0.1530312  0.096677948   1.582897  1.136315e-01
+## continentAmericas    8.7453560  0.476599244  18.349496  9.605994e-69
+## continentAsia        6.8254916  0.423203644  16.128149  1.492420e-54
+## continentEurope     12.2808442  0.529239698  23.204692 1.123344e-103
+## continentOceania    12.5398669  1.281141831   9.788040  4.798636e-22
+## year                 0.2377202  0.008932106  26.614126 1.058968e-130
 ```
 
 - Note that, in our results, R has broken up our variables into their different factor levels (as it will do whenever your regressors have factor levels)
@@ -171,7 +169,7 @@ summ_reg$coefficients
 
 
 ```r
-glm(formula = y~x1+x2+factor(x3), family = family(link = "link"),
+glm(formula = y ~ x1 + x2 + factor(x3), family = family(link = "link"),
             data = )
 ```
 
@@ -182,90 +180,90 @@ glm(formula = y~x1+x2+factor(x3), family = family(link = "link"),
 `x1:x2` interacts all terms in x1 with all terms in x2
 
 ```r
-summary(glm(formula = lifeExp ~ gdpPercap + pop +
+summary(lm(lifeExp ~ log(gdpPercap) + log(pop) +
                     continent:factor(year), 
-                family = gaussian, data = gapminder))
+                    data = gapminder))
 ```
 
 ```
 ## 
 ## Call:
-## glm(formula = lifeExp ~ gdpPercap + pop + continent:factor(year), 
-##     family = gaussian, data = gapminder)
+## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent:factor(year), 
+##     data = gapminder)
 ## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -29.5073   -3.4687    0.1739    3.5145   21.1851  
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.5678  -2.5530   0.0044   2.9146  15.5667 
 ## 
 ## Coefficients: (1 not defined because of singularities)
-##                                      Estimate Std. Error t value Pr(>|t|)
-## (Intercept)                         7.070e+01  4.745e+00  14.901  < 2e-16
-## gdpPercap                           3.356e-04  1.997e-05  16.805  < 2e-16
-## pop                                 8.980e-10  1.586e-09   0.566 0.571275
-## continentAfrica:factor(year)1952   -3.199e+01  4.831e+00  -6.623 4.77e-11
-## continentAmericas:factor(year)1952 -1.881e+01  4.919e+00  -3.823 0.000137
-## continentAsia:factor(year)1952     -2.617e+01  4.872e+00  -5.371 8.94e-08
-## continentEurope:factor(year)1952   -8.208e+00  4.885e+00  -1.680 0.093146
-## continentOceania:factor(year)1952  -4.910e+00  6.668e+00  -0.736 0.461687
-## continentAfrica:factor(year)1957   -2.991e+01  4.830e+00  -6.191 7.52e-10
-## continentAmericas:factor(year)1957 -1.631e+01  4.918e+00  -3.316 0.000933
-## continentAsia:factor(year)1957     -2.337e+01  4.871e+00  -4.797 1.75e-06
-## continentEurope:factor(year)1957   -6.351e+00  4.883e+00  -1.301 0.193592
-## continentOceania:factor(year)1957  -4.307e+00  6.667e+00  -0.646 0.518393
-## continentAfrica:factor(year)1962   -2.793e+01  4.830e+00  -5.782 8.83e-09
-## continentAmericas:factor(year)1962 -1.397e+01  4.917e+00  -2.840 0.004564
-## continentAsia:factor(year)1962     -2.111e+01  4.871e+00  -4.333 1.56e-05
-## continentEurope:factor(year)1962   -4.986e+00  4.880e+00  -1.022 0.307127
-## continentOceania:factor(year)1962  -3.886e+00  6.666e+00  -0.583 0.560019
-## continentAfrica:factor(year)1967   -2.606e+01  4.829e+00  -5.397 7.75e-08
-## continentAmericas:factor(year)1967 -1.221e+01  4.915e+00  -2.484 0.013074
-## continentAsia:factor(year)1967     -1.810e+01  4.871e+00  -3.715 0.000210
-## continentEurope:factor(year)1967   -4.385e+00  4.877e+00  -0.899 0.368777
-## continentOceania:factor(year)1967  -4.265e+00  6.664e+00  -0.640 0.522266
-## continentAfrica:factor(year)1972   -2.404e+01  4.828e+00  -4.980 7.03e-07
-## continentAmericas:factor(year)1972 -1.051e+01  4.914e+00  -2.138 0.032658
-## continentAsia:factor(year)1972     -1.619e+01  4.867e+00  -3.327 0.000899
-## continentEurope:factor(year)1972   -4.132e+00  4.874e+00  -0.848 0.396689
-## continentOceania:factor(year)1972  -4.311e+00  6.662e+00  -0.647 0.517700
-## continentAfrica:factor(year)1977   -2.200e+01  4.828e+00  -4.557 5.58e-06
-## continentAmericas:factor(year)1977 -8.800e+00  4.912e+00  -1.791 0.073401
-## continentAsia:factor(year)1977     -1.377e+01  4.868e+00  -2.829 0.004722
-## continentEurope:factor(year)1977   -3.575e+00  4.871e+00  -0.734 0.463098
-## continentOceania:factor(year)1977  -3.657e+00  6.662e+00  -0.549 0.583093
-## continentAfrica:factor(year)1982   -1.995e+01  4.828e+00  -4.133 3.77e-05
-## continentAmericas:factor(year)1982 -7.017e+00  4.912e+00  -1.428 0.153339
-## continentAsia:factor(year)1982     -1.065e+01  4.869e+00  -2.188 0.028825
-## continentEurope:factor(year)1982   -3.155e+00  4.870e+00  -0.648 0.517193
-## continentOceania:factor(year)1982  -2.649e+00  6.661e+00  -0.398 0.690885
-## continentAfrica:factor(year)1987   -1.813e+01  4.828e+00  -3.756 0.000179
-## continentAmericas:factor(year)1987 -5.253e+00  4.911e+00  -1.070 0.284987
-## continentAsia:factor(year)1987     -8.484e+00  4.869e+00  -1.743 0.081591
-## continentEurope:factor(year)1987   -2.855e+00  4.868e+00  -0.587 0.557619
-## continentOceania:factor(year)1987  -2.255e+00  6.660e+00  -0.339 0.734934
-## continentAfrica:factor(year)1992   -1.785e+01  4.828e+00  -3.697 0.000225
-## continentAmericas:factor(year)1992 -3.862e+00  4.911e+00  -0.786 0.431776
-## continentAsia:factor(year)1992     -7.151e+00  4.867e+00  -1.469 0.141935
-## continentEurope:factor(year)1992   -2.006e+00  4.868e+00  -0.412 0.680292
-## continentOceania:factor(year)1992  -7.804e-01  6.659e+00  -0.117 0.906723
-## continentAfrica:factor(year)1997   -1.792e+01  4.828e+00  -3.711 0.000213
-## continentAmericas:factor(year)1997 -2.565e+00  4.910e+00  -0.522 0.601411
-## continentAsia:factor(year)1997     -6.076e+00  4.865e+00  -1.249 0.211930
-## continentEurope:factor(year)1997   -1.618e+00  4.866e+00  -0.332 0.739563
-## continentOceania:factor(year)1997  -5.865e-01  6.658e+00  -0.088 0.929810
-## continentAfrica:factor(year)2002   -1.827e+01  4.827e+00  -3.784 0.000160
-## continentAmericas:factor(year)2002 -1.429e+00  4.909e+00  -0.291 0.770984
-## continentAsia:factor(year)2002     -4.982e+00  4.865e+00  -1.024 0.305936
-## continentEurope:factor(year)2002   -1.307e+00  4.864e+00  -0.269 0.788171
-## continentOceania:factor(year)2002  -1.530e-02  6.657e+00  -0.002 0.998167
-## continentAfrica:factor(year)2007   -1.695e+01  4.826e+00  -3.512 0.000457
-## continentAmericas:factor(year)2007 -8.205e-01  4.906e+00  -0.167 0.867195
-## continentAsia:factor(year)2007     -4.265e+00  4.862e+00  -0.877 0.380494
-## continentEurope:factor(year)2007   -1.481e+00  4.862e+00  -0.305 0.760680
-## continentOceania:factor(year)2007          NA         NA      NA       NA
+##                                     Estimate Std. Error t value Pr(>|t|)
+## (Intercept)                         27.18384    4.68490   5.802 7.83e-09
+## log(gdpPercap)                       5.07950    0.16049  31.650  < 2e-16
+## log(pop)                             0.07894    0.09427   0.837 0.402510
+## continentAfrica:factor(year)1952   -24.14252    4.11250  -5.871 5.25e-09
+## continentAmericas:factor(year)1952 -16.44650    4.16627  -3.948 8.23e-05
+## continentAsia:factor(year)1952     -19.33470    4.14083  -4.669 3.27e-06
+## continentEurope:factor(year)1952    -7.09176    4.13518  -1.715 0.086537
+## continentOceania:factor(year)1952   -6.06350    5.65111  -1.073 0.283440
+## continentAfrica:factor(year)1957   -22.49637    4.10985  -5.474 5.09e-08
+## continentAmericas:factor(year)1957 -14.36734    4.16433  -3.450 0.000575
+## continentAsia:factor(year)1957     -17.17434    4.13753  -4.151 3.48e-05
+## continentEurope:factor(year)1957    -5.90941    4.13272  -1.430 0.152934
+## continentOceania:factor(year)1957   -5.62997    5.65034  -0.996 0.319206
+## continentAfrica:factor(year)1962   -21.01387    4.10690  -5.117 3.47e-07
+## continentAmericas:factor(year)1962 -12.31354    4.16305  -2.958 0.003143
+## continentAsia:factor(year)1962     -15.56258    4.13513  -3.764 0.000173
+## continentEurope:factor(year)1962    -5.05421    4.13082  -1.224 0.221302
+## continentOceania:factor(year)1962   -5.31223    5.64979  -0.940 0.347226
+## continentAfrica:factor(year)1967   -19.70336    4.10348  -4.802 1.72e-06
+## continentAmericas:factor(year)1967 -10.93238    4.16129  -2.627 0.008690
+## continentAsia:factor(year)1967     -13.15690    4.13270  -3.184 0.001482
+## continentEurope:factor(year)1967    -4.91343    4.12905  -1.190 0.234232
+## continentOceania:factor(year)1967   -5.77117    5.64916  -1.022 0.307122
+## continentAfrica:factor(year)1972   -18.14692    4.10075  -4.425 1.03e-05
+## continentAmericas:factor(year)1972  -9.65366    4.15954  -2.321 0.020417
+## continentAsia:factor(year)1972     -11.60139    4.12929  -2.810 0.005020
+## continentEurope:factor(year)1972    -4.97628    4.12753  -1.206 0.228133
+## continentOceania:factor(year)1972   -5.80936    5.64868  -1.028 0.303891
+## continentAfrica:factor(year)1977   -16.18475    4.09960  -3.948 8.22e-05
+## continentAmericas:factor(year)1977  -8.33819    4.15801  -2.005 0.045092
+## continentAsia:factor(year)1977     -10.12201    4.12699  -2.453 0.014285
+## continentEurope:factor(year)1977    -4.55230    4.12667  -1.103 0.270128
+## continentOceania:factor(year)1977   -5.12322    5.64848  -0.907 0.364535
+## continentAfrica:factor(year)1982   -14.19333    4.09899  -3.463 0.000549
+## continentAmericas:factor(year)1982  -6.59214    4.15772  -1.586 0.113041
+## continentAsia:factor(year)1982      -7.60009    4.12571  -1.842 0.065636
+## continentEurope:factor(year)1982    -4.11846    4.12623  -0.998 0.318370
+## continentOceania:factor(year)1982   -4.05526    5.64827  -0.718 0.472882
+## continentAfrica:factor(year)1987   -12.18504    4.09947  -2.972 0.002998
+## continentAmericas:factor(year)1987  -4.71568    4.15765  -1.134 0.256870
+## continentAsia:factor(year)1987      -5.69142    4.12491  -1.380 0.167846
+## continentEurope:factor(year)1987    -3.72976    4.12583  -0.904 0.366126
+## continentOceania:factor(year)1987   -3.51642    5.64805  -0.623 0.533640
+## continentAfrica:factor(year)1992   -11.80275    4.09942  -2.879 0.004039
+## continentAmericas:factor(year)1992  -3.28548    4.15749  -0.790 0.429492
+## continentAsia:factor(year)1992      -4.38228    4.12405  -1.063 0.288113
+## continentEurope:factor(year)1992    -2.51508    4.12618  -0.610 0.542249
+## continentOceania:factor(year)1992   -1.98041    5.64799  -0.351 0.725904
+## continentAfrica:factor(year)1997   -11.95773    4.09861  -2.918 0.003576
+## continentAmericas:factor(year)1997  -2.16110    4.15661  -0.520 0.603190
+## continentAsia:factor(year)1997      -3.50157    4.12279  -0.849 0.395826
+## continentEurope:factor(year)1997    -2.08430    4.12564  -0.505 0.613482
+## continentOceania:factor(year)1997   -1.44783    5.64778  -0.256 0.797710
+## continentAfrica:factor(year)2002   -12.52375    4.09722  -3.057 0.002274
+## continentAmericas:factor(year)2002  -0.98980    4.15641  -0.238 0.811804
+## continentAsia:factor(year)2002      -2.67982    4.12205  -0.650 0.515707
+## continentEurope:factor(year)2002    -1.57345    4.12518  -0.381 0.702937
+## continentOceania:factor(year)2002   -0.47345    5.64768  -0.084 0.933201
+## continentAfrica:factor(year)2007   -11.65685    4.09478  -2.847 0.004472
+## continentAmericas:factor(year)2007  -0.69311    4.15497  -0.167 0.867536
+## continentAsia:factor(year)2007      -2.20076    4.12023  -0.534 0.593320
+## continentEurope:factor(year)2007    -1.52841    4.12475  -0.371 0.711024
+## continentOceania:factor(year)2007         NA         NA      NA       NA
 ##                                       
 ## (Intercept)                        ***
-## gdpPercap                          ***
-## pop                                   
+## log(gdpPercap)                     ***
+## log(pop)                              
 ## continentAfrica:factor(year)1952   ***
 ## continentAmericas:factor(year)1952 ***
 ## continentAsia:factor(year)1952     ***
@@ -282,46 +280,46 @@ summary(glm(formula = lifeExp ~ gdpPercap + pop +
 ## continentEurope:factor(year)1962      
 ## continentOceania:factor(year)1962     
 ## continentAfrica:factor(year)1967   ***
-## continentAmericas:factor(year)1967 *  
-## continentAsia:factor(year)1967     ***
+## continentAmericas:factor(year)1967 ** 
+## continentAsia:factor(year)1967     ** 
 ## continentEurope:factor(year)1967      
 ## continentOceania:factor(year)1967     
 ## continentAfrica:factor(year)1972   ***
 ## continentAmericas:factor(year)1972 *  
-## continentAsia:factor(year)1972     ***
+## continentAsia:factor(year)1972     ** 
 ## continentEurope:factor(year)1972      
 ## continentOceania:factor(year)1972     
 ## continentAfrica:factor(year)1977   ***
-## continentAmericas:factor(year)1977 .  
-## continentAsia:factor(year)1977     ** 
+## continentAmericas:factor(year)1977 *  
+## continentAsia:factor(year)1977     *  
 ## continentEurope:factor(year)1977      
 ## continentOceania:factor(year)1977     
 ## continentAfrica:factor(year)1982   ***
 ## continentAmericas:factor(year)1982    
-## continentAsia:factor(year)1982     *  
+## continentAsia:factor(year)1982     .  
 ## continentEurope:factor(year)1982      
 ## continentOceania:factor(year)1982     
-## continentAfrica:factor(year)1987   ***
+## continentAfrica:factor(year)1987   ** 
 ## continentAmericas:factor(year)1987    
-## continentAsia:factor(year)1987     .  
+## continentAsia:factor(year)1987        
 ## continentEurope:factor(year)1987      
 ## continentOceania:factor(year)1987     
-## continentAfrica:factor(year)1992   ***
+## continentAfrica:factor(year)1992   ** 
 ## continentAmericas:factor(year)1992    
 ## continentAsia:factor(year)1992        
 ## continentEurope:factor(year)1992      
 ## continentOceania:factor(year)1992     
-## continentAfrica:factor(year)1997   ***
+## continentAfrica:factor(year)1997   ** 
 ## continentAmericas:factor(year)1997    
 ## continentAsia:factor(year)1997        
 ## continentEurope:factor(year)1997      
 ## continentOceania:factor(year)1997     
-## continentAfrica:factor(year)2002   ***
+## continentAfrica:factor(year)2002   ** 
 ## continentAmericas:factor(year)2002    
 ## continentAsia:factor(year)2002        
 ## continentEurope:factor(year)2002      
 ## continentOceania:factor(year)2002     
-## continentAfrica:factor(year)2007   ***
+## continentAfrica:factor(year)2007   ** 
 ## continentAmericas:factor(year)2007    
 ## continentAsia:factor(year)2007        
 ## continentEurope:factor(year)2007      
@@ -329,100 +327,96 @@ summary(glm(formula = lifeExp ~ gdpPercap + pop +
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for gaussian family taken to be 44.3151)
-## 
-##     Null deviance: 284148  on 1703  degrees of freedom
-## Residual deviance:  72765  on 1642  degrees of freedom
-## AIC: 11359
-## 
-## Number of Fisher Scoring iterations: 2
+## Residual standard error: 5.648 on 1642 degrees of freedom
+## Multiple R-squared:  0.8157,	Adjusted R-squared:  0.8088 
+## F-statistic: 119.1 on 61 and 1642 DF,  p-value: < 2.2e-16
 ```
 
 `x1*x2` produces the cross of x1 and x2, or x1+x2+x1:x2
 
 ```r
-summary(glm(formula = lifeExp ~ gdpPercap + pop + continent*factor(year), 
-                family = gaussian, data = gapminder))
+summary(lm(lifeExp ~ log(gdpPercap) + log(pop) + continent*factor(year), 
+                data = gapminder))
 ```
 
 ```
 ## 
 ## Call:
-## glm(formula = lifeExp ~ gdpPercap + pop + continent * factor(year), 
-##     family = gaussian, data = gapminder)
+## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent * 
+##     factor(year), data = gapminder)
 ## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -29.5073   -3.4687    0.1739    3.5145   21.1851  
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.5678  -2.5530   0.0044   2.9146  15.5667 
 ## 
 ## Coefficients:
-##                                      Estimate Std. Error t value Pr(>|t|)
-## (Intercept)                         3.871e+01  9.235e-01  41.916  < 2e-16
-## gdpPercap                           3.356e-04  1.997e-05  16.805  < 2e-16
-## pop                                 8.980e-10  1.586e-09   0.566 0.571275
-## continentAmericas                   1.319e+01  1.621e+00   8.134 8.09e-16
-## continentAsia                       5.822e+00  1.485e+00   3.920 9.22e-05
-## continentEurope                     2.379e+01  1.529e+00  15.557  < 2e-16
-## continentOceania                    2.708e+01  4.800e+00   5.642 1.98e-08
-## factor(year)1957                    2.086e+00  1.306e+00   1.598 0.110304
-## factor(year)1962                    4.067e+00  1.306e+00   3.115 0.001871
-## factor(year)1967                    5.930e+00  1.306e+00   4.542 5.99e-06
-## factor(year)1972                    7.948e+00  1.306e+00   6.087 1.43e-09
-## factor(year)1977                    9.994e+00  1.306e+00   7.653 3.32e-14
-## factor(year)1982                    1.204e+01  1.306e+00   9.221  < 2e-16
-## factor(year)1987                    1.386e+01  1.306e+00  10.613  < 2e-16
-## factor(year)1992                    1.414e+01  1.306e+00  10.830  < 2e-16
-## factor(year)1997                    1.408e+01  1.306e+00  10.779  < 2e-16
-## factor(year)2002                    1.373e+01  1.306e+00  10.511  < 2e-16
-## factor(year)2007                    1.504e+01  1.306e+00  11.515  < 2e-16
-## continentAmericas:factor(year)1957  4.129e-01  2.291e+00   0.180 0.857023
-## continentAsia:factor(year)1957      7.150e-01  2.095e+00   0.341 0.732979
-## continentEurope:factor(year)1957   -2.288e-01  2.159e+00  -0.106 0.915582
-## continentOceania:factor(year)1957  -1.483e+00  6.784e+00  -0.219 0.826997
-## continentAmericas:factor(year)1962  7.727e-01  2.291e+00   0.337 0.735962
-## continentAsia:factor(year)1962      9.945e-01  2.095e+00   0.475 0.635119
-## continentEurope:factor(year)1962   -8.452e-01  2.159e+00  -0.391 0.695499
-## continentOceania:factor(year)1962  -3.043e+00  6.784e+00  -0.449 0.653798
-## continentAmericas:factor(year)1967  6.632e-01  2.291e+00   0.289 0.772261
-## continentAsia:factor(year)1967      2.145e+00  2.095e+00   1.024 0.306043
-## continentEurope:factor(year)1967   -2.107e+00  2.160e+00  -0.976 0.329424
-## continentOceania:factor(year)1967  -5.285e+00  6.784e+00  -0.779 0.436082
-## continentAmericas:factor(year)1972  3.507e-01  2.291e+00   0.153 0.878376
-## continentAsia:factor(year)1972      2.032e+00  2.096e+00   0.969 0.332439
-## continentEurope:factor(year)1972   -3.873e+00  2.161e+00  -1.792 0.073375
-## continentOceania:factor(year)1972  -7.349e+00  6.785e+00  -1.083 0.278856
-## continentAmericas:factor(year)1977  1.084e-02  2.292e+00   0.005 0.996226
-## continentAsia:factor(year)1977      2.404e+00  2.096e+00   1.147 0.251547
-## continentEurope:factor(year)1977   -5.362e+00  2.163e+00  -2.478 0.013293
-## continentOceania:factor(year)1977  -8.742e+00  6.785e+00  -1.288 0.197779
-## continentAmericas:factor(year)1982 -2.520e-01  2.292e+00  -0.110 0.912450
-## continentAsia:factor(year)1982      3.479e+00  2.096e+00   1.660 0.097163
-## continentEurope:factor(year)1982   -6.988e+00  2.165e+00  -3.227 0.001276
-## continentOceania:factor(year)1982  -9.780e+00  6.785e+00  -1.441 0.149674
-## continentAmericas:factor(year)1987 -3.056e-01  2.292e+00  -0.133 0.893940
-## continentAsia:factor(year)1987      3.829e+00  2.096e+00   1.827 0.067953
-## continentEurope:factor(year)1987   -8.505e+00  2.169e+00  -3.922 9.14e-05
-## continentOceania:factor(year)1987  -1.120e+01  6.786e+00  -1.651 0.098952
-## continentAmericas:factor(year)1992  8.020e-01  2.292e+00   0.350 0.726462
-## continentAsia:factor(year)1992      4.878e+00  2.097e+00   2.326 0.020134
-## continentEurope:factor(year)1992   -7.940e+00  2.168e+00  -3.662 0.000258
-## continentOceania:factor(year)1992  -1.001e+01  6.786e+00  -1.475 0.140318
-## continentAmericas:factor(year)1997  2.164e+00  2.292e+00   0.944 0.345341
-## continentAsia:factor(year)1997      6.019e+00  2.098e+00   2.869 0.004174
-## continentEurope:factor(year)1997   -7.487e+00  2.172e+00  -3.446 0.000582
-## continentOceania:factor(year)1997  -9.753e+00  6.788e+00  -1.437 0.150990
-## continentAmericas:factor(year)2002  3.649e+00  2.293e+00   1.591 0.111701
-## continentAsia:factor(year)2002      7.461e+00  2.099e+00   3.555 0.000388
-## continentEurope:factor(year)2002   -6.827e+00  2.178e+00  -3.134 0.001753
-## continentOceania:factor(year)2002  -8.833e+00  6.791e+00  -1.301 0.193515
-## continentAmericas:factor(year)2007  2.942e+00  2.294e+00   1.283 0.199720
-## continentAsia:factor(year)2007      6.864e+00  2.101e+00   3.267 0.001108
-## continentEurope:factor(year)2007   -8.316e+00  2.187e+00  -3.803 0.000148
-## continentOceania:factor(year)2007  -1.013e+01  6.793e+00  -1.492 0.135983
+##                                    Estimate Std. Error t value Pr(>|t|)
+## (Intercept)                         3.04133    2.07409   1.466 0.142746
+## log(gdpPercap)                      5.07950    0.16049  31.650  < 2e-16
+## log(pop)                            0.07894    0.09427   0.837 0.402510
+## continentAmericas                   7.69602    1.39324   5.524 3.85e-08
+## continentAsia                       4.80781    1.26567   3.799 0.000151
+## continentEurope                    17.05075    1.32948  12.825  < 2e-16
+## continentOceania                   18.07902    4.08899   4.421 1.05e-05
+## factor(year)1957                    1.64615    1.10777   1.486 0.137470
+## factor(year)1962                    3.12865    1.10838   2.823 0.004819
+## factor(year)1967                    4.43915    1.10969   4.000 6.61e-05
+## factor(year)1972                    5.99560    1.11134   5.395 7.85e-08
+## factor(year)1977                    7.95776    1.11240   7.154 1.27e-12
+## factor(year)1982                    9.94918    1.11336   8.936  < 2e-16
+## factor(year)1987                   11.95748    1.11375  10.736  < 2e-16
+## factor(year)1992                   12.33976    1.11463  11.071  < 2e-16
+## factor(year)1997                   12.18479    1.11605  10.918  < 2e-16
+## factor(year)2002                   11.61877    1.11805  10.392  < 2e-16
+## factor(year)2007                   12.48567    1.12120  11.136  < 2e-16
+## continentAmericas:factor(year)1957  0.43301    1.94383   0.223 0.823748
+## continentAsia:factor(year)1957      0.51422    1.77764   0.289 0.772410
+## continentEurope:factor(year)1957   -0.46380    1.83127  -0.253 0.800095
+## continentOceania:factor(year)1957  -1.21261    5.75524  -0.211 0.833150
+## continentAmericas:factor(year)1962  1.00431    1.94383   0.517 0.605458
+## continentAsia:factor(year)1962      0.64348    1.77767   0.362 0.717414
+## continentEurope:factor(year)1962   -1.09110    1.83146  -0.596 0.551422
+## continentOceania:factor(year)1962  -2.37738    5.75524  -0.413 0.679601
+## continentAmericas:factor(year)1967  1.07497    1.94383   0.553 0.580329
+## continentAsia:factor(year)1967      1.73865    1.77767   0.978 0.328194
+## continentEurope:factor(year)1967   -2.26082    1.83170  -1.234 0.217278
+## continentOceania:factor(year)1967  -4.14682    5.75524  -0.721 0.471302
+## continentAmericas:factor(year)1972  0.79724    1.94383   0.410 0.681756
+## continentAsia:factor(year)1972      1.73772    1.77790   0.977 0.328513
+## continentEurope:factor(year)1972   -3.88011    1.83221  -2.118 0.034348
+## continentOceania:factor(year)1972  -5.74146    5.75524  -0.998 0.318618
+## continentAmericas:factor(year)1977  0.15055    1.94389   0.077 0.938277
+## continentAsia:factor(year)1977      1.25493    1.77837   0.706 0.480498
+## continentEurope:factor(year)1977   -5.41829    1.83293  -2.956 0.003160
+## continentOceania:factor(year)1977  -7.01748    5.75525  -1.219 0.222899
+## continentAmericas:factor(year)1982 -0.09483    1.94391  -0.049 0.961100
+## continentAsia:factor(year)1982      1.78543    1.77884   1.004 0.315670
+## continentEurope:factor(year)1982   -6.97588    1.83363  -3.804 0.000147
+## continentOceania:factor(year)1982  -7.94094    5.75529  -1.380 0.167847
+## continentAmericas:factor(year)1987 -0.22666    1.94400  -0.117 0.907197
+## continentAsia:factor(year)1987      1.68580    1.77960   0.947 0.343629
+## continentEurope:factor(year)1987   -8.59548    1.83497  -4.684 3.04e-06
+## continentOceania:factor(year)1987  -9.41040    5.75542  -1.635 0.102230
+## continentAmericas:factor(year)1992  0.82125    1.94407   0.422 0.672760
+## continentAsia:factor(year)1992      2.61266    1.78035   1.468 0.142431
+## continentEurope:factor(year)1992   -7.76308    1.83465  -4.231 2.45e-05
+## continentOceania:factor(year)1992  -8.25667    5.75549  -1.435 0.151599
+## continentAmericas:factor(year)1997  2.10061    1.94427   1.080 0.280118
+## continentAsia:factor(year)1997      3.64834    1.78125   2.048 0.040700
+## continentEurope:factor(year)1997   -7.17732    1.83581  -3.910 9.62e-05
+## continentOceania:factor(year)1997  -7.56911    5.75567  -1.315 0.188670
+## continentAmericas:factor(year)2002  3.83793    1.94418   1.974 0.048542
+## continentAsia:factor(year)2002      5.03611    1.78142   2.827 0.004755
+## continentEurope:factor(year)2002   -6.10046    1.83686  -3.321 0.000916
+## continentOceania:factor(year)2002  -6.02872    5.75579  -1.047 0.295061
+## continentAmericas:factor(year)2007  3.26772    1.94437   1.681 0.093029
+## continentAsia:factor(year)2007      4.64828    1.78228   2.608 0.009188
+## continentEurope:factor(year)2007   -6.92231    1.83777  -3.767 0.000171
+## continentOceania:factor(year)2007  -6.42217    5.75579  -1.116 0.264682
 ##                                       
-## (Intercept)                        ***
-## gdpPercap                          ***
-## pop                                   
+## (Intercept)                           
+## log(gdpPercap)                     ***
+## log(pop)                              
 ## continentAmericas                  ***
 ## continentAsia                      ***
 ## continentEurope                    ***
@@ -452,46 +446,42 @@ summary(glm(formula = lifeExp ~ gdpPercap + pop + continent*factor(year),
 ## continentOceania:factor(year)1967     
 ## continentAmericas:factor(year)1972    
 ## continentAsia:factor(year)1972        
-## continentEurope:factor(year)1972   .  
+## continentEurope:factor(year)1972   *  
 ## continentOceania:factor(year)1972     
 ## continentAmericas:factor(year)1977    
 ## continentAsia:factor(year)1977        
-## continentEurope:factor(year)1977   *  
+## continentEurope:factor(year)1977   ** 
 ## continentOceania:factor(year)1977     
 ## continentAmericas:factor(year)1982    
-## continentAsia:factor(year)1982     .  
-## continentEurope:factor(year)1982   ** 
+## continentAsia:factor(year)1982        
+## continentEurope:factor(year)1982   ***
 ## continentOceania:factor(year)1982     
 ## continentAmericas:factor(year)1987    
-## continentAsia:factor(year)1987     .  
+## continentAsia:factor(year)1987        
 ## continentEurope:factor(year)1987   ***
-## continentOceania:factor(year)1987  .  
+## continentOceania:factor(year)1987     
 ## continentAmericas:factor(year)1992    
-## continentAsia:factor(year)1992     *  
+## continentAsia:factor(year)1992        
 ## continentEurope:factor(year)1992   ***
 ## continentOceania:factor(year)1992     
 ## continentAmericas:factor(year)1997    
-## continentAsia:factor(year)1997     ** 
+## continentAsia:factor(year)1997     *  
 ## continentEurope:factor(year)1997   ***
 ## continentOceania:factor(year)1997     
-## continentAmericas:factor(year)2002    
-## continentAsia:factor(year)2002     ***
-## continentEurope:factor(year)2002   ** 
+## continentAmericas:factor(year)2002 *  
+## continentAsia:factor(year)2002     ** 
+## continentEurope:factor(year)2002   ***
 ## continentOceania:factor(year)2002     
-## continentAmericas:factor(year)2007    
+## continentAmericas:factor(year)2007 .  
 ## continentAsia:factor(year)2007     ** 
 ## continentEurope:factor(year)2007   ***
 ## continentOceania:factor(year)2007     
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for gaussian family taken to be 44.3151)
-## 
-##     Null deviance: 284148  on 1703  degrees of freedom
-## Residual deviance:  72765  on 1642  degrees of freedom
-## AIC: 11359
-## 
-## Number of Fisher Scoring iterations: 2
+## Residual standard error: 5.648 on 1642 degrees of freedom
+## Multiple R-squared:  0.8157,	Adjusted R-squared:  0.8088 
+## F-statistic: 119.1 on 61 and 1642 DF,  p-value: < 2.2e-16
 ```
 
 
@@ -525,28 +515,15 @@ library(mgcv)
 ```
 
 ```r
-thresh <- function(x, val, upper = TRUE) {
-       if(upper) {
-         x[x > val] <- val
-       } else {
-         x[x < val] <- val
-       }
-       return(x)
-}
+mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gapminder)
 
+plot(mod)
+```
 
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW',
-           'IAH', 'ORD') 
-airSmall <- subset(air, Dest %in% DestSubset)
-# reduce outlier influence
-airSmall$DepDelayCens <- thresh(airSmall$DepDelay, 180)
-airSmall$SchedDepCont <- airSmall$CRSDepTime %/% 100 +
-                      (airSmall$CRSDepTime %% 100) / 60
-mod_LAX <- gam(DepDelayCens ~ s(Month, k = 8) + s(SchedDepCont, k = 25), 
-         data = airSmall, subset = airSmall$Dest == "LAX")
-mod_ORD <- gam(DepDelayCens ~ s(Month, k = 8) + s(SchedDepCont, k = 25), 
-         data = airSmall, subset = airSmall$Dest == "ORD")
-summary(mod_LAX)
+![](figure/gamExample-1.png)![](figure/gamExample-2.png)
+
+```r
+summary(mod)
 ```
 
 ```
@@ -555,116 +532,47 @@ summary(mod_LAX)
 ## Link function: identity 
 ## 
 ## Formula:
-## DepDelayCens ~ s(Month, k = 8) + s(SchedDepCont, k = 25)
+## lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10)
 ## 
 ## Parametric coefficients:
 ##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)   9.9311     0.1453   68.34   <2e-16 ***
+## (Intercept)  59.4744     0.1605   370.6   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Approximate significance of smooth terms:
-##                    edf Ref.df    F p-value    
-## s(Month)         6.875  6.994 63.8  <2e-16 ***
-## s(SchedDepCont) 22.323 23.689 87.3  <2e-16 ***
+##                 edf Ref.df     F p-value    
+## s(gdpPercap) 12.619  15.50 226.4  <2e-16 ***
+## s(year)       3.148   3.91 110.9  <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## R-sq.(adj) =  0.0547   Deviance explained = 5.53%
-## GCV = 909.52  Scale est. = 908.89    n = 43035
+## R-sq.(adj) =  0.737   Deviance explained = 73.9%
+## GCV = 44.315  Scale est. = 43.879    n = 1704
 ```
 
 ```r
-summary(mod_ORD)
+mod2 <- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gapminder)
+plot(mod2)
 ```
 
-```
-## 
-## Family: gaussian 
-## Link function: identity 
-## 
-## Formula:
-## DepDelayCens ~ s(Month, k = 8) + s(SchedDepCont, k = 25)
-## 
-## Parametric coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  13.1437     0.2177   60.37   <2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Approximate significance of smooth terms:
-##                    edf Ref.df     F p-value    
-## s(Month)         6.531  6.921 23.24  <2e-16 ***
-## s(SchedDepCont) 23.033 23.857 40.41  <2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## R-sq.(adj) =  0.0474   Deviance explained = 4.87%
-## GCV =   1068  Scale est. = 1066.6    n = 22501
-```
+![](figure/gamExample-3.png)![](figure/gamExample-4.png)
 
-```r
-par(mfrow = c(2,2))
-plot(mod_LAX)
-plot(mod_ORD)
-```
+If we were serious about building a good-fitting model, we could use the same kind of functionality as in lm/glm in terms of factors and interactions.
 
-![](figure/gamExample-1.png)
+# How does GAM choose how much to smooth
 
-# A bit more model-building 
+GAM uses the data to choose how much smoothing to do. Roughly one can think of what it is doing as carrying out cross-validation and choosing the best amount of smoothing for predicting held-out data.
 
-If we were willing to assume that the month and time effects are the same across destinations but there are different average delays by destination:
+`k` simply sets an upper bound on the amount of smoothing (you can think if `k` as the number of degrees of freedom - one would be a linear fit).
 
-
-```r
-# this will take a minute or so
-mod_multiple <- gam(DepDelayCens ~ s(Month, k = 8) +
-             s(SchedDepCont, k = 25) + Dest, data = airSmall)
-summary(mod_multiple)
-```
-
-```
-## 
-## Family: gaussian 
-## Link function: identity 
-## 
-## Formula:
-## DepDelayCens ~ s(Month, k = 8) + s(SchedDepCont, k = 25) + Dest
-## 
-## Parametric coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)   7.4876     0.2674  27.999  < 2e-16 ***
-## DestDEN       1.4712     0.3485   4.222 2.42e-05 ***
-## DestDFW       4.4014     0.3677  11.970  < 2e-16 ***
-## DestIAH       0.1929     0.4058   0.475  0.63451    
-## DestJFK       1.7409     0.3289   5.292 1.21e-07 ***
-## DestLAX       1.8485     0.3083   5.996 2.02e-09 ***
-## DestMSP      -2.0994     0.4494  -4.671 2.99e-06 ***
-## DestORD       6.0179     0.3371  17.854  < 2e-16 ***
-## DestPHX       1.0910     0.3652   2.987  0.00282 ** 
-## DestSEA       4.0069     0.3401  11.782  < 2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Approximate significance of smooth terms:
-##                    edf Ref.df     F p-value    
-## s(Month)         6.929  6.998 220.4  <2e-16 ***
-## s(SchedDepCont) 20.507 22.785 296.7  <2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## R-sq.(adj) =  0.0458   Deviance explained =  4.6%
-## GCV = 893.26  Scale est. = 893.09    n = 194635
-```
-
-```r
-par(mfrow = c(1,2))
-plot(mod_multiple)
-```
-
-![](figure/gamExampleFull-1.png)
+ - Make sure `k` is less than the number of unique values of the predictor variable
+ - The default for `k` is relatively small and in some cases this may overly limit the smoothness of the curve.
+    - You can try increasing `k` and see if it increases the fit.
+    - If `summary` reports and `edf` that is close to `k` that often suggests that `k` should be increased.
 
 # Distributions
+
 Since R was developed by statisticians, it handles distributions and simulation seamlessly.
 
 All commonly-used distributions have functions in R. Each distribution has a family of functions: 
@@ -758,40 +666,41 @@ We can draw a sample with or without replacement.
 
 
 ```r
-sample(1:nrow(air), 20, replace = FALSE)
+sample(1:nrow(gapminder), 20, replace = FALSE)
 ```
 
 ```
-##  [1] 387439 535525 205179 419737 504639 114534 351832  67786 144269 208458
-## [11]   7230 206446 469532 183749 260266 323694 266453 100535 446680 360890
+##  [1] 1223 1690  647 1323 1589  361 1107  214  454  655   23  648 1472  576
+## [15]  815 1013  834  315 1395 1127
 ```
 
-Here's an example of some code that would be part of coding up a bootstrap.
+Here's an example of some code that would be part of coding up a bootstrap. As I mentioned previously, this would be a weird dataset to do formal statistical inference on given it includes most of the countries in the world, though one could think about fitting models for the variation over time, treating short-term fluctuations as random.
+
 
 ```r
 # actual mean
-mean(air$DepDelay, na.rm = TRUE)
+mean(gapminder$lifeExp, na.rm = TRUE)
 ```
 
 ```
-## [1] 11.16138
+## [1] 59.47444
 ```
 
 ```r
 # here's a bootstrap sample:
-smp <- sample(seq_len(nrow(air)), replace = TRUE) 
-mean(air$DepDelay[smp], na.rm = TRUE)
+smp <- sample(seq_len(nrow(gapminder)), replace = TRUE) 
+mean(gapminder$lifeExp[smp], na.rm = TRUE)
 ```
 
 ```
-## [1] 11.20378
+## [1] 60.22094
 ```
 
-It's a good idea to use `seq_along()` and `seq_len()` and not syntax like `1:length(air)` in `sample()` because the outcome of `length()` might in some cases be unexpected (e.g., if you're taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., 
+It's a good idea to use `seq_along()` and `seq_len()` and not syntax like `1:length(gapminder)` in `sample()` because the outcome of `length()` might in some cases be unexpected (e.g., if you're taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., 
 
 
 ```r
-for(i in seq_len(nrow(air))) {
+for(i in seq_len(nrow(gapminder))) {
 # blah
 }
 ```
@@ -809,31 +718,31 @@ To replicate any work involving random numbers, make sure to set the seed first.
 
 ```r
 set.seed(1)
-vals <- sample(1:nrow(air), 10)
+vals <- sample(1:nrow(gapminder), 10)
 vals
 ```
 
 ```
-##  [1] 143347 200908 309280 490335 108887 485032 510020 356757 339651  33358
+##  [1]  453  634  975 1545  343 1527 1605 1122 1067  105
 ```
 
 ```r
-vals <- sample(1:nrow(air), 10)
+vals <- sample(1:nrow(gapminder), 10)
 vals
 ```
 
 ```
-##  [1] 111205  95322 370919 207375 415631 268703 387435 535519 205177 419732
+##  [1]  351  301 1170  654 1309  846 1219 1684  645 1318
 ```
 
 ```r
 set.seed(1)
-vals <- sample(1:nrow(air), 10)
+vals <- sample(1:nrow(gapminder), 10)
 vals
 ```
 
 ```
-##  [1] 143347 200908 309280 490335 108887 485032 510020 356757 339651  33358
+##  [1]  453  634  975 1545  343 1527 1605 1122 1067  105
 ```
 
 # Optimization
@@ -1029,7 +938,7 @@ There's lots more packages/functionality for dates/times: see *lubridate* and `?
 
 ### Using the ideas
 
-4) Fit two linear regression models from the gapminder data, where the outcome is `gdpPercap` and the explanatory variables are `pop`, `lifeExp`, and `year`. In one model, treat `year` as a numeric variable. In the other, factorize the `year` variable. How do you interpret each model?
+4) Fit two linear regression models from the gapminder data, where the outcome is `lifeExp` and the explanatory variables are `log(pop)`, `log(gdpPercap)`, and `year`. In one model, treat `year` as a numeric variable. In the other, factorize the `year` variable. How do you interpret each model?
 
 5) Consider the code where we used `sample()`.  Initialize a storage vector of 500 zeroes. Set up a bootstrap using a for loop, with 500 bootstrap datasets. Here are the steps within each iteration:
 
@@ -1039,13 +948,13 @@ There's lots more packages/functionality for dates/times: see *lubridate* and `?
 
 Now plot a histogram of the 500 values - this is an estimate of the sampling distribution of the sample mean. 
 
-6) Modify the GAMs of delay on month and time to set `k` to a variety of values for `SchedDepCont` and see how the estimated relationships change. 
+6) Modify the GAMs of lifeExp on gdpPercap and set `k` to a variety of values and see how the estimated relationships change. 
 
 ### Advanced 
 
-7) Fit a logistic regression model where the outcome is whether `gdpPercap_diff` is positive or negative -- that is, whether an observation is in the upper half or lower half of the continent's wealth in a given year. The explanatory variables should be `country`, `lifeExp`, and `pop`. 
+7) Fit a logistic regression model where the outcome is whether `lifeExp` is greater than or less than 60 years, exploring the use of different predictors.
 
-8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the *airline* dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the *times* argument to the `rep()` function. (If you're not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)
+8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the *gapminder* dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the *times* argument to the `rep()` function. (If you're not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)
 
 9) Write some code to demonstrate the central limit theorem. Generate many different replicates of samples of size `n` from a skewed or discrete distribution and show that if `n` is big enough, the distribution of the means (of each sample of size `n`) looks approximately normal in a histogram. Do it without any looping (using techniques from earlier modules)! I.e., I want you to show that if you have a large number (say 10,000) of means, each mean being the mean of `n` values from a distribution, the distribution of the means looks approximately normal if `n` is sufficiently big.
 
