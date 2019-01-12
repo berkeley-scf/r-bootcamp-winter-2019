@@ -593,10 +593,11 @@ These questions ask you to work with the gapminder dataset.
 
 5) Create a trellis plot of life expectancy by gdpPercap scatterplots, one subplot per year. Use a 3x4 layout of panels in the plot.
 
-6) Plot life expectancy versus gdpPercap. Now plot so that different continents are in different colors. Use `scale_x_continuous()` to set the x-axis limits to be in the range from 0 to 50000.
+6) Plot life expectancy versus gdpPercap. Now plot so that different continents are in different colors. Use `scale_x_continuous()` to set the x-axis limits to be in the range from 100 to 50000.
 
+7) Figure out how to use the log-scale for gdpPercap, without manually calculating the log values.
 
 ### Advanced
 
-7) Create a "trellis" plot where, for a given year, each panel uses a) hollow circles to plot lifeExp as a function of log(gdpPercap), and b) a red loess smoother without standard errors to plot the trend. Turn off the grey background. Figure out how to use partially-transparent points to reduce the effect of the overplotting of points.
+8) Create a "trellis" plot where, for a given year, each panel uses a) hollow circles to plot lifeExp as a function of log(gdpPercap), and b) a red loess smoother without standard errors to plot the trend. Turn off the grey background. Figure out how to use partially-transparent points to reduce the effect of the overplotting of points.
 
