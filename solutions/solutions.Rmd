@@ -7,7 +7,7 @@
 # e.g. package and dataset loading
 if(Sys.getenv('USER') == 'paciorek') rm(list = ls())
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-air <- read.csv('../data/airline.csv', stringsAsFactors = FALSE)
+gap <- read.csv('../data/gapminder-FiveYearData.csv', stringsAsFactors = FALSE)
 ```
 
 # Module 1: Basics
@@ -15,7 +15,7 @@ air <- read.csv('../data/airline.csv', stringsAsFactors = FALSE)
 
 ```{r basics1}
 ## 1 ##
-x <- mean(gapminder$lifeExp)
+x <- mean(gap$lifeExp)
 
 ## 2 ##
 # help(round)
@@ -24,45 +24,45 @@ round(x, digits = 0)
 
 ## 3 ##
 EurosPerDollar <- 1.1  
-gdpPercap_euro <- gapminder$gdpPercap * EurosPerDollar
-c(gdpPerCap_euro[1], gapminder$gdpPercap[1])
+gdpPercap_euro <- gap$gdpPercap * EurosPerDollar
+c(gdpPerCap_euro[1], gap$gdpPercap[1])
 
 ## 4 ##
-big <- gapminder$gdpPercap * gapminder$pop > 1e12 
+big <- gap$gdpPercap * gap$pop > 1e12 
 head(big)
 ```
 
 ```{r using_the_ideas1}
 
 ## 5 ##
-big <- gapminder$gdpPercap * gapminder$pop > 1e12 
+big <- gap$gdpPercap * gap$pop > 1e12 
 big_gm <- gm[big, ]
 head(big_gm)
 
 ## 6 ##
-gdp_cens <- gapminder$gdpPercap
+gdp_cens <- gap$gdpPercap
 cens_value <- 40000
 gdp_cens[gdp_cens > cens_value] <- cens_value
-plot(gapminder$lifeExp ~ gdp_cens)
+plot(gap$lifeExp ~ gdp_cens)
 
 ## 7 ##
-gm2007 <- gapminder[gapminder$year == 2007, ]
-hist(gm2007$lifeExp)
-hist(gm2007$lifeExp, nclass = 5)
-hist(gm2007$lifeExp, nclass = 25)
+gap2007 <- gap[gap$year == 2007, ]
+hist(gap2007$lifeExp)
+hist(gap2007$lifeExp, nclass = 5)
+hist(gap2007$lifeExp, nclass = 25)
 
 ## 8 ##
-gm2007 <- gapminder[gapminder$year == 2007, ]
-plot(gm2007$lifeExp ~ gm2007$gdpPercap, main = 'Life expectancy by GDP')
-gm2007$color <- "blue"
-gm2007$color[gm2007$continent == 'Asia'] <- "red"
-plot(gm2007$lifeExp ~ gm2007$gdpPercap, col = gm2007$color, 
+gap2007 <- gap[gap$year == 2007, ]
+plot(gap2007$lifeExp ~ gap2007$gdpPercap, main = 'Life expectancy by GDP')
+gap2007$color <- "blue"
+gap2007$color[gap2007$continent == 'Asia'] <- "red"
+plot(gap2007$lifeExp ~ gap2007$gdpPercap, col = gap2007$color, 
                      main = 'Life expectancy by GDP, highlighting Asia')
 
 ```{r advanced1}
 
 ## 9 ##
-mod <- lm(lifeExp ~ log(gdpPercap), data = gapminder)
+mod <- lm(lifeExp ~ log(gdpPercap), data = gap)
 summ <- summary(mod)
 r2 <- summ$r.squared
 rse <- summ$sigma
@@ -70,10 +70,10 @@ rse <- summ$sigma
 
 
 ## 10 ##
-gm2007 <- gapminder[gapminder$year == 2007, ]
-gm2007$color <- "blue"
-gm2007$color[gm2007$continent == 'Asia'] <- "red"
-plot(gm2007$lifeExp ~ gm2007$gdpPercap, col = gm2007$color, 
+gap2007 <- gap[gap$year == 2007, ]
+gap2007$color <- "blue"
+gap2007$color[gap2007$continent == 'Asia'] <- "red"
+plot(gap2007$lifeExp ~ gap2007$gdpPercap, col = gap2007$color, 
                      main = 'Life expectancy by GDP, highlighting Asia',
                      cex = 0.7, las = 1)
 legend("bottomright", legend = c('Asia', 'all other'), col = c('red', 'blue'), cex = 0.7,
@@ -102,11 +102,11 @@ write.csv(cpds, file = 'new_cpds.csv', row.names = FALSE, quote = FALSE)
 
 ## 4 ## 
 pdf('test1.pdf')
-hist(gapminder$lifeExp)
+hist(gap$lifeExp)
 dev.off()
 
 pdf('test2.pdf', height = 2, width = 2)
-hist(gapminder$lifeExp)
+hist(gap$lifeExp)
 dev.off()
 
 ## 5 ##
@@ -129,98 +129,98 @@ search()
 
 ```{r, basics3}
 ## 1 ##
-gapminder[5, ]
+gap[5, ]
 
 ## 2 ##
-gapminder[ nrow(gapminder) , ]
+gap[ nrow(gap) , ]
 
 ## 3 ##
-sum(gapminder$gdpPercap > 50000)
+sum(gap$gdpPercap > 50000)
 
 ## 4 ## 
-gapminder$gdpPercap[ gapminder$gdpPercap > 50000 ] <- NA
+gap$gdpPercap[ gap$gdpPercap > 50000 ] <- NA
 
 ## 5 ##
-paste(gapminder$country[1], gapminder$year[1], sep = "-")
+paste(gap$country[1], gap$year[1], sep = "-")
 ```
 
 ```{r, using_the_ideas3}
 ## 6 ##
-paste("There are ", nrow(gapminder), " rows in the dataset.", sep = "")
+paste("There are ", nrow(gap), " rows in the dataset.", sep = "")
 
 ## 7 ##
-gapminder[ nrow(gapminder), ]
+gap[ nrow(gap), ]
 
 ## 8 ##
-economical <- gapminder$lifeExp > 75 & gapminder$gdpPercap < 10000
+economical <- gap$lifeExp > 75 & gap$gdpPercap < 10000
 mean(economical)   # sum(economical) / length(economical)
 
 ## 9 ##
-sub <- gapminder[ economical , ]
+sub <- gap[ economical , ]
 
 ## 10 ##
-attributes(gapminder)
-names(attributes(gapminder))
-class(attributes(gapminder))
+attributes(gap)
+names(attributes(gap))
+class(attributes(gap))
 ```
 
 ```{r, advanced3}
 
 ## 11 ##
-nm <- paste(gapminder$continent, gapminder$country, gapminder$year, sep = "-")
-attributes(gapminder)$row.names <- nm
+nm <- paste(gap$continent, gap$country, gap$year, sep = "-")
+attributes(gap)$row.names <- nm
 ```
 
 # Module 4: Calculations
 
 ```{r, basics4}
 ## 1 ##
-gapminder$country_year <- paste(gapminder$country, gapminder$year, sep = "-")
-head(gapminder$country_year)
+gap$country_year <- paste(gap$country, gap$year, sep = "-")
+head(gap$country_year)
 
 ## 2 ##
-table(gm2007$continent)
+table(gap2007$continent)
 ```
 
 ```{r, using_the_ideas4}
 ## 3 ##
-tmp <- gapminder[ , -which(names(gapminder) == "continent")]
+tmp <- gap[ , -which(names(gap) == "continent")]
 
 # column names
-names(gapminder)
+names(gap)
 # logical indicating which = 'continent'
-names(gapminder) == "continent"
+names(gap) == "continent"
 # index of the continent column
-which(names(gapminder) == "continent"
+which(names(gap) == "continent"
 # exclude that column
-gapminder[ , -which(names(gapminder) == "continent")] 
+gap[ , -which(names(gap) == "continent")] 
 
 ## 4 ##
-sapply(gapminder, function(x) sum(is.na(x)))
+sapply(gap, function(x) sum(is.na(x)))
 
 ## 5 ##
-range(gapminder$gdpPercap)
-gapminder$gdp_binned <- cut(gapminder$gdpPercap,
+range(gap$gdpPercap)
+gap$gdp_binned <- cut(gap$gdpPercap,
        breaks = c(0, 1000, 2000, 5000, 10000, 20000, 30000, Inf))
-table(gapminder$gdp_binned)
+table(gap$gdp_binned)
 
 ## 6 ##
-boxplot(lifeExp ~ gdp_binned, data = gapminder)
+boxplot(lifeExp ~ gdp_binned, data = gap)
 
 ## 7 ##
-tmp <- gapminder[order(gapminder$lifeExp), ]
+tmp <- gap[order(gap$lifeExp), ]
 tmp[1, ]
-gapminder[which.min(gapminder$lifeExp), ]
+gap[which.min(gap$lifeExp), ]
 # That's actually BEFORE the genocide occurred.
 
 ## 8 ##
-pop <- aggregate(gapminder$pop, by = list(year = gapminder$year),
+pop <- aggregate(gap$pop, by = list(year = gap$year),
                  FUN = sum)
 
 ## 9 ##
-gapminder2 <- merge(gapminder, pop, carriers, by.x = 'year',
+gap2 <- merge(gap, pop, carriers, by.x = 'year',
                     by.y = 'year', all.x = TRUE, all.y = FALSE)
-plot(gapminder2$x, gapminder2$lifeExp)
+plot(gap2$x, gap2$lifeExp)
 
 
 
@@ -240,7 +240,7 @@ chi2 <- sum( (y - e)^2 / e)
 
 ```{r, advanced4}
 ## 11 ## 
-aggregate(gapminder$lifeExp, by = list(gapminder$year, gapminder$continent),
+aggregate(gap$lifeExp, by = list(gap$year, gap$continent),
 quantile, probs = 0.95, na.rm = TRUE)
 
 
@@ -331,17 +331,17 @@ environment(f)$x
 library(tidyr)
 
 ## 1 ##
-gap_median_lifeExp <- gapminder %>%
+gap_median_lifeExp <- gap %>%
     group_by(continent) %>%
     summarize(med_lifeExp = median(lifeExp))
 
 ## 2 ## 
-gapminder_pop_continent <- gapminder %>%
+gap_pop_continent <- gap %>%
     group_by(continent, year) %>%
     mutate(continent_pop = sum(pop))
 
 ## 3 ##
-gap_rel_gdp <- gapminder %>%
+gap_rel_gdp <- gap %>%
     group_by(continent, year) %>%
     mutate(gdpPercap_diff = gdpPercap - mean(gdpPercap)) %>%
     arrange(desc(gdpPercap_diff))
@@ -374,12 +374,12 @@ qchisq(0.95, 1)
 
 ## 4 ##
 reg1 <- lm(lifeExp ~ log(gdpPercap) + log(pop) + year, 
-                data=gapminder)
+                data=gap)
 ## here we assume a linear relationship of gdp with year
 ## this is not flexible but allows us to fit the model with less data
 
 reg2 <- lm(lifeExp ~ log(gdpPercap) + log(pop) + factor(year), 
-                data = gapminder)
+                data = gap)
 ## here we assume a completely arbitrary relationship of gdp with year
 ## we need enough data in each year to be able to reasonably estimate the average lifeExp for that year, given the other explanatory variables
 
@@ -389,24 +389,24 @@ nBoot <- 500
 vals <- rep(0, nBoot)
 
 for(i in seq_len(nBoot)) { 
-      smp <- sample(seq_len(nrow(gapminder)), replace = TRUE) 
-      vals[i] <- mean(gapminder$lifeExp[smp], na.rm = TRUE)
+      smp <- sample(seq_len(nrow(gap)), replace = TRUE) 
+      vals[i] <- mean(gap$lifeExp[smp], na.rm = TRUE)
 }
 hist(vals)
 se <- sd(vals)
-n <- sum(!is.na(gapminder$lifeExp))
-se_norm <- sd(gapminder$lifeExp, na.rm = TRUE) / sqrt(n)
+n <- sum(!is.na(gap$lifeExp))
+se_norm <- sd(gap$lifeExp, na.rm = TRUE) / sqrt(n)
 
 ## 6 ##
-mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gapminder)
+mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gap)
 plot(mod)
 summary(mod)
 
-mod <- gam(lifeExp ~ s(gdpPercap, k = 60) + s(year, k = 10), data = gapminder)
+mod <- gam(lifeExp ~ s(gdpPercap, k = 60) + s(year, k = 10), data = gap)
 plot(mod)
 summary(mod)  # edf values are about the same as previously so 'k' is not constraining
 
-mod <- gam(lifeExp ~ s(gdpPercap, k = 4) + s(year, k = 3), data = gapminder)
+mod <- gam(lifeExp ~ s(gdpPercap, k = 4) + s(year, k = 3), data = gap)
 plot(mod)
 # Now the edf is much lower (and R^2 has decreased).
 # Note that uncertainty is decreased under the nearly linear fit for year.
@@ -417,7 +417,7 @@ plot(mod)
 
 ## 7 ##
 library(dplyr)
-gm2 <- gapminder %>%
+gm2 <- gap %>%
   mutate(sign = ifelse(lifeExp > 60, 1, 0))
 
 reg_logit <- glm(sign ~ log(gdpPercap) + log(pop),
@@ -425,14 +425,14 @@ reg_logit <- glm(sign ~ log(gdpPercap) + log(pop),
 
 ## 8 ## 
 nFolds <- 10
-n <- nrow(gapminder)
+n <- nrow(gap)
 fold_size <- rep(round(n / nFolds), nFolds)
 fold_size[nFolds] <- n - (nFolds - 1)*fold_size[1]
 
 fold <- rep(1:nFolds, times = fold_size)
 table(fold)
 set.seed(1)
-gapminder$Fold <- sample(fold, replace = TRUE)
+gap$Fold <- sample(fold, replace = TRUE)
 
 ## 9 ##
 n <- 100
@@ -449,37 +449,37 @@ qqnorm(mns)
 ```{r, basics8}
 
 ## 1 ##
-ggplot(data = gapminder, aes(x = lifeExp)) + geom_histogram()
+ggplot(data = gap, aes(x = lifeExp)) + geom_histogram()
 
 ## 2 ##
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point() 
+ggplot(data = gap, aes(x = gdpPercap, y = lifeExp)) + geom_point() 
 
 ## 3 ##
 pdf('delays.pdf')
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point() + 
+ggplot(data = gap, aes(x = gdpPercap, y = lifeExp)) + geom_point() + 
   ggtitle("Life expectancy vs. per capita GDP") + xlab(label = "GDP per capita (dollars)") +
   ylab(label = "life expectancy (years)")
 dev.off()
 
 ## 4 ##
-ggplot(data = gapminder, aes(x = factor(year), y = lifeExp)) + geom_boxplot()
+ggplot(data = gap, aes(x = factor(year), y = lifeExp)) + geom_boxplot()
 ```
 
 ```{r, using_the_ideas8}
 ## 5 ##
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point() + facet_wrap(~year, nrow = 3, ncol = 4)
+ggplot(data = gap, aes(x = gdpPercap, y = lifeExp)) + geom_point() + facet_wrap(~year, nrow = 3, ncol = 4)
 
 ## 6 ##
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) + geom_point() + scale_x_continuous(limits = c(100, 50000))
+ggplot(data = gap, aes(x = gdpPercap, y = lifeExp, color = continent)) + geom_point() + scale_x_continuous(limits = c(100, 50000))
 
 ## 7 ##
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) + geom_point() + scale_x_log10(limits = c(100, 50000))
+ggplot(data = gap, aes(x = gdpPercap, y = lifeExp, color = continent)) + geom_point() + scale_x_log10(limits = c(100, 50000))
 ```
 
 ```{r, advanced8}
 
 ## 8 ##
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point(alpha = 0.3) + geom_smooth(method = "loess", color = 'red', se = FALSE)  + scale_x_log10(limits = c(100, 50000)) + facet_wrap(~year, nrow = 3) + theme_bw()
+ggplot(data = gap, aes(x = gdpPercap, y = lifeExp)) + geom_point(alpha = 0.3) + geom_smooth(method = "loess", color = 'red', se = FALSE)  + scale_x_log10(limits = c(100, 50000)) + facet_wrap(~year, nrow = 3) + theme_bw()
 ```
 
 

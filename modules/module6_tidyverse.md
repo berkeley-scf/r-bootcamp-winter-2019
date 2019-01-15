@@ -1,5 +1,5 @@
 % R Bootcamp, Module 6: Data manipulation with the `tidyverse`
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % [Nima Hejazi](https://nimahejazi.org) (based on materials developed by Kellie Ottoboni, Rochelle Terman, and Chris Krogslund)
 
 
@@ -21,27 +21,6 @@ There are two competing schools of thought within the R community.
 
 We'll show you some of the `tidyverse` tools so you can make an informed decision about whether you want to use base R or these newfangled packages.
 
-# Example Dataset
-
-For this unit, we'll be working with the "Gapminder" dataset, which is excerpt of the data available at Gapminder.org. For each of 142 countries, the data  provides values for life expectancy, GDP per capita, and population, every five years, from 1952 to 2007.
-
-
-```r
-gapminder <- read.csv("../data/gapminder-FiveYearData.csv",
-          stringsAsFactors = TRUE)
-head(gapminder)
-```
-
-```
-##       country year      pop continent lifeExp gdpPercap
-## 1 Afghanistan 1952  8425333      Asia  28.801  779.4453
-## 2 Afghanistan 1957  9240934      Asia  30.332  820.8530
-## 3 Afghanistan 1962 10267083      Asia  31.997  853.1007
-## 4 Afghanistan 1967 11537966      Asia  34.020  836.1971
-## 5 Afghanistan 1972 13079460      Asia  36.088  739.9811
-## 6 Afghanistan 1977 14880372      Asia  38.438  786.1134
-```
-
 # Data frame Manipulation using Base R Functions
 
 So far, you've seen the basics of manipulating data frames, e.g. subsetting, merging, and basic calculations.
@@ -50,7 +29,7 @@ e.g., the mean GDP per capita within each region:
 
 
 ```r
-mean(gapminder[gapminder$continent == "Africa", "gdpPercap"])
+mean(gap[gap$continent == "Africa", "gdpPercap"])
 ```
 
 ```
@@ -58,7 +37,7 @@ mean(gapminder[gapminder$continent == "Africa", "gdpPercap"])
 ```
 
 ```r
-mean(gapminder[gapminder$continent == "Americas", "gdpPercap"])
+mean(gap[gap$continent == "Americas", "gdpPercap"])
 ```
 
 ```
@@ -66,7 +45,7 @@ mean(gapminder[gapminder$continent == "Americas", "gdpPercap"])
 ```
 
 ```r
-mean(gapminder[gapminder$continent == "Asia", "gdpPercap"])
+mean(gap[gap$continent == "Asia", "gdpPercap"])
 ```
 
 ```
@@ -109,7 +88,7 @@ Imagine that we just received the gapminder dataset, but are only interested in 
 
 
 ```r
-year_country_gdp_dplyr <- select(gapminder, year, country, gdpPercap)
+year_country_gdp_dplyr <- select(gap, year, country, gdpPercap)
 head(year_country_gdp_dplyr)
 ```
 
@@ -129,7 +108,7 @@ If we open up `year_country_gdp`, we'll see that it only contains the year, coun
 
 
 ```r
-year_country_gdp_base <- gapminder[,c("year", "country", "gdpPercap")]
+year_country_gdp_base <- gap[,c("year", "country", "gdpPercap")]
 head(year_country_gdp_base)
 ```
 
@@ -167,7 +146,7 @@ Since the pipe grammar is unlike anything we've seen in R before, let's repeat w
 
 
 ```r
-year_country_gdp <- gapminder %>% select(year, country, gdpPercap)
+year_country_gdp <- gap %>% select(year, country, gdpPercap)
 ```
 
 First we summon the gapminder dataframe and pass it on to the next step using the pipe symbol `%>%`
@@ -182,7 +161,7 @@ Now let's say we're only interested in African countries. We can combine `select
 
 
 ```r
-year_country_gdp_africa <- gapminder %>%
+year_country_gdp_africa <- gap %>%
     filter(continent == "Africa") %>%
     select(year,country,gdpPercap)
 ```
@@ -201,7 +180,7 @@ In base R, you would have to run the `mean()` function for each subset of data:
 
 
 ```r
-mean(gapminder$gdpPercap[gapminder$continent == "Africa"])
+mean(gap$gdpPercap[gap$continent == "Africa"])
 ```
 
 ```
@@ -209,7 +188,7 @@ mean(gapminder$gdpPercap[gapminder$continent == "Africa"])
 ```
 
 ```r
-mean(gapminder$gdpPercap[gapminder$continent == "Americas"])
+mean(gap$gdpPercap[gap$continent == "Americas"])
 ```
 
 ```
@@ -217,7 +196,7 @@ mean(gapminder$gdpPercap[gapminder$continent == "Americas"])
 ```
 
 ```r
-mean(gapminder$gdpPercap[gapminder$continent == "Asia"])
+mean(gap$gdpPercap[gap$continent == "Asia"])
 ```
 
 ```
@@ -225,7 +204,7 @@ mean(gapminder$gdpPercap[gapminder$continent == "Asia"])
 ```
 
 ```r
-mean(gapminder$gdpPercap[gapminder$continent == "Europe"])
+mean(gap$gdpPercap[gap$continent == "Europe"])
 ```
 
 ```
@@ -233,7 +212,7 @@ mean(gapminder$gdpPercap[gapminder$continent == "Europe"])
 ```
 
 ```r
-mean(gapminder$gdpPercap[gapminder$continent == "Oceania"])
+mean(gap$gdpPercap[gap$continent == "Oceania"])
 ```
 
 ```
@@ -244,17 +223,17 @@ That's a lot of repetition! To make matters worse, what if we wanted to add thes
 
 
 ```r
-gapminder$mean.continent.GDP <- NA
+gap$mean.continent.GDP <- NA
 
-gapminder$mean.continent.GDP[gapminder$continent == "Africa"] <- mean(gapminder$gdpPercap[gapminder$continent == "Africa"])
+gap$mean.continent.GDP[gap$continent == "Africa"] <- mean(gap$gdpPercap[gap$continent == "Africa"])
 
-gapminder$mean.continent.GDP[gapminder$continent == "Americas"] <- mean(gapminder$gdpPercap[gapminder$continent == "Americas"])
+gap$mean.continent.GDP[gap$continent == "Americas"] <- mean(gap$gdpPercap[gap$continent == "Americas"])
 
-gapminder$mean.continent.GDP[gapminder$continent == "Asia"] <- mean(gapminder$gdpPercap[gapminder$continent == "Asia"])
+gap$mean.continent.GDP[gap$continent == "Asia"] <- mean(gap$gdpPercap[gap$continent == "Asia"])
 
-gapminder$mean.continent.GDP[gapminder$continent == "Europe"] <- mean(gapminder$gdpPercap[gapminder$continent == "Europe"])
+gap$mean.continent.GDP[gap$continent == "Europe"] <- mean(gap$gdpPercap[gap$continent == "Europe"])
 
-gapminder$mean.continent.GDP[gapminder$continent == "Oceania"] <- mean(gapminder$gdpPercap[gapminder$continent == "Oceania"])
+gap$mean.continent.GDP[gap$continent == "Oceania"] <- mean(gap$gdpPercap[gap$continent == "Oceania"])
 ```
 
 You can see how this can get pretty tedious, especially if we want to calculate more complicated or refined statistics. We could use loops or apply functions, but these can be difficult, slow, or error-prone.
@@ -274,9 +253,9 @@ Luckily, `dplyr` offers a much cleaner, straight-forward solution to this proble
 
 ```r
 # remove this column -- there are two easy ways!
-gapminder <- gapminder %>% select(-mean.continent.GDP)
+gap <- gap %>% select(-mean.continent.GDP)
 # OR
-gapminder$mean.continent.GDP <- NULL
+gap$mean.continent.GDP <- NULL
 ```
 
 # `dplyr::group_by`
@@ -297,7 +276,7 @@ The output is a new data frame reduced in size, with one row per group.
 
 
 ```r
-gdp_bycontinents <- gapminder %>%
+gdp_bycontinents <- gap %>%
     group_by(continent) %>%
     summarize(mean_gdpPercap = mean(gdpPercap))
 head(gdp_bycontinents)
@@ -306,7 +285,7 @@ head(gdp_bycontinents)
 ```
 ## # A tibble: 5 x 2
 ##   continent mean_gdpPercap
-##   <fct>              <dbl>
+##   <chr>              <dbl>
 ## 1 Africa             2194.
 ## 2 Americas           7136.
 ## 3 Asia               7902.
@@ -320,7 +299,7 @@ That allowed us to calculate the mean gdpPercap for each continent. But it gets 
 
 
 ```r
-gdp_bycontinents_byyear <- gapminder %>%
+gdp_bycontinents_byyear <- gap %>%
     group_by(continent, year) %>%
     summarize(mean_gdpPercap = mean(gdpPercap))
 head(gdp_bycontinents_byyear)
@@ -330,7 +309,7 @@ head(gdp_bycontinents_byyear)
 ## # A tibble: 6 x 3
 ## # Groups:   continent [1]
 ##   continent  year mean_gdpPercap
-##   <fct>     <int>          <dbl>
+##   <chr>     <int>          <dbl>
 ## 1 Africa     1952          1253.
 ## 2 Africa     1957          1385.
 ## 3 Africa     1962          1598.
@@ -343,7 +322,7 @@ That is already quite powerful, but it gets even better! You're not limited to d
 
 
 ```r
-gdp_pop_bycontinents_byyear <- gapminder %>%
+gdp_pop_bycontinents_byyear <- gap %>%
     group_by(continent, year) %>%
     summarize(mean_gdpPercap = mean(gdpPercap),
               sd_gdpPercap = sd(gdpPercap),
@@ -356,7 +335,7 @@ head(gdp_pop_bycontinents_byyear)
 ## # A tibble: 6 x 6
 ## # Groups:   continent [1]
 ##   continent  year mean_gdpPercap sd_gdpPercap mean_pop    sd_pop
-##   <fct>     <int>          <dbl>        <dbl>    <dbl>     <dbl>
+##   <chr>     <int>          <dbl>        <dbl>    <dbl>     <dbl>
 ## 1 Africa     1952          1253.         983. 4570010.  6317450.
 ## 2 Africa     1957          1385.        1135. 5093033.  7076042.
 ## 3 Africa     1962          1598.        1462. 5702247.  7957545.
@@ -371,20 +350,20 @@ What if we wanted to add these values to our original data frame instead of crea
 
 
 ```r
-gapminder_with_extra_vars <- gapminder %>%
+gap_with_extra_vars <- gap %>%
     group_by(continent, year) %>%
     mutate(mean_gdpPercap = mean(gdpPercap),
               sd_gdpPercap = sd(gdpPercap),
               mean_pop = mean(pop),
               sd_pop = sd(pop))
-head(gapminder_with_extra_vars)
+head(gap_with_extra_vars)
 ```
 
 ```
 ## # A tibble: 6 x 10
 ## # Groups:   continent, year [6]
 ##   country      year      pop continent lifeExp gdpPercap mean_gdpPercap
-##   <fct>       <int>    <dbl> <fct>       <dbl>     <dbl>          <dbl>
+##   <chr>       <int>    <dbl> <chr>       <dbl>     <dbl>          <dbl>
 ## 1 Afghanistan  1952  8425333 Asia         28.8      779.          5195.
 ## 2 Afghanistan  1957  9240934 Asia         30.3      821.          5788.
 ## 3 Afghanistan  1962 10267083 Asia         32.0      853.          5729.
@@ -399,7 +378,7 @@ We can use also use `mutate()` to create new variables prior to (or even after) 
 
 
 ```r
-gdp_pop_bycontinents_byyear <- gapminder %>%
+gdp_pop_bycontinents_byyear <- gap %>%
     mutate(gdp_billion = gdpPercap*pop/10^9) %>%
     group_by(continent, year) %>%
     summarize(mean_gdpPercap = mean(gdpPercap),
@@ -415,7 +394,7 @@ head(gdp_pop_bycontinents_byyear)
 ## # A tibble: 6 x 8
 ## # Groups:   continent [1]
 ##   continent  year mean_gdpPercap sd_gdpPercap mean_pop    sd_pop
-##   <fct>     <int>          <dbl>        <dbl>    <dbl>     <dbl>
+##   <chr>     <int>          <dbl>        <dbl>    <dbl>     <dbl>
 ## 1 Africa     1952          1253.         983. 4570010.  6317450.
 ## 2 Africa     1957          1385.        1135. 5093033.  7076042.
 ## 3 Africa     1962          1598.        1462. 5702247.  7957545.
@@ -431,21 +410,21 @@ As a last step, let's say we want to sort the rows in our data frame according t
 
 
 ```r
-gapminder_with_extra_vars <- gapminder %>%
+gap_with_extra_vars <- gap %>%
     group_by(continent, year) %>%
     mutate(mean_gdpPercap = mean(gdpPercap),
               sd_gdpPercap = sd(gdpPercap),
               mean_pop = mean(pop),
               sd_pop = sd(pop)) %>%
     arrange(desc(year), continent)
-head(gapminder_with_extra_vars)
+head(gap_with_extra_vars)
 ```
 
 ```
 ## # A tibble: 6 x 10
 ## # Groups:   continent, year [1]
 ##   country       year      pop continent lifeExp gdpPercap mean_gdpPercap
-##   <fct>        <int>    <dbl> <fct>       <dbl>     <dbl>          <dbl>
+##   <chr>        <int>    <dbl> <chr>       <dbl>     <dbl>          <dbl>
 ## 1 Algeria       2007 33333216 Africa       72.3     6223.          3089.
 ## 2 Angola        2007 12420476 Africa       42.7     4797.          3089.
 ## 3 Benin         2007  8078314 Africa       56.7     1441.          3089.
@@ -464,9 +443,9 @@ head(gapminder_with_extra_vars)
 
 ```r
 # without pipes:
-gapminder_with_extra_vars <- arrange(
+gap_with_extra_vars <- arrange(
     mutate(
-      group_by(gapminder, continent, year),
+      group_by(gap, continent, year),
       mean_gdpPercap = mean(gdpPercap)
       ),
     desc(year), continent)
@@ -550,7 +529,7 @@ Lets look at the structure of our original gapminder dataframe:
 
 
 ```r
-head(gapminder)
+head(gap)
 ```
 
 ```
@@ -590,67 +569,24 @@ Until now, we've been using the nicely formatted original gapminder data set. Th
 
 
 ```r
-gap_wide <- read.csv("../data/gapminder_wide.csv", stringsAsFactors = FALSE)
+gap_wide <- read.csv("../data/gap_wide.csv", stringsAsFactors = FALSE)
+```
+
+```
+## Warning in file(file, "rt"): cannot open file '../data/gap_wide.csv': No
+## such file or directory
+```
+
+```
+## Error in file(file, "rt"): cannot open the connection
+```
+
+```r
 head(gap_wide)
 ```
 
 ```
-##   continent      country gdpPercap_1952 gdpPercap_1957 gdpPercap_1962
-## 1    Africa      Algeria      2449.0082      3013.9760      2550.8169
-## 2    Africa       Angola      3520.6103      3827.9405      4269.2767
-## 3    Africa        Benin      1062.7522       959.6011       949.4991
-## 4    Africa     Botswana       851.2411       918.2325       983.6540
-## 5    Africa Burkina Faso       543.2552       617.1835       722.5120
-## 6    Africa      Burundi       339.2965       379.5646       355.2032
-##   gdpPercap_1967 gdpPercap_1972 gdpPercap_1977 gdpPercap_1982
-## 1      3246.9918      4182.6638      4910.4168      5745.1602
-## 2      5522.7764      5473.2880      3008.6474      2756.9537
-## 3      1035.8314      1085.7969      1029.1613      1277.8976
-## 4      1214.7093      2263.6111      3214.8578      4551.1421
-## 5       794.8266       854.7360       743.3870       807.1986
-## 6       412.9775       464.0995       556.1033       559.6032
-##   gdpPercap_1987 gdpPercap_1992 gdpPercap_1997 gdpPercap_2002
-## 1      5681.3585      5023.2166      4797.2951      5288.0404
-## 2      2430.2083      2627.8457      2277.1409      2773.2873
-## 3      1225.8560      1191.2077      1232.9753      1372.8779
-## 4      6205.8839      7954.1116      8647.1423     11003.6051
-## 5       912.0631       931.7528       946.2950      1037.6452
-## 6       621.8188       631.6999       463.1151       446.4035
-##   gdpPercap_2007 lifeExp_1952 lifeExp_1957 lifeExp_1962 lifeExp_1967
-## 1      6223.3675       43.077       45.685       48.303       51.407
-## 2      4797.2313       30.015       31.999       34.000       35.985
-## 3      1441.2849       38.223       40.358       42.618       44.885
-## 4     12569.8518       47.622       49.618       51.520       53.298
-## 5      1217.0330       31.975       34.906       37.814       40.697
-## 6       430.0707       39.031       40.533       42.045       43.548
-##   lifeExp_1972 lifeExp_1977 lifeExp_1982 lifeExp_1987 lifeExp_1992
-## 1       54.518       58.014       61.368       65.799       67.744
-## 2       37.928       39.483       39.942       39.906       40.647
-## 3       47.014       49.190       50.904       52.337       53.919
-## 4       56.024       59.319       61.484       63.622       62.745
-## 5       43.591       46.137       48.122       49.557       50.260
-## 6       44.057       45.910       47.471       48.211       44.736
-##   lifeExp_1997 lifeExp_2002 lifeExp_2007 pop_1952 pop_1957 pop_1962
-## 1       69.152       70.994       72.301  9279525 10270856 11000948
-## 2       40.963       41.003       42.731  4232095  4561361  4826015
-## 3       54.777       54.406       56.728  1738315  1925173  2151895
-## 4       52.556       46.634       50.728   442308   474639   512764
-## 5       50.324       50.650       52.295  4469979  4713416  4919632
-## 6       45.326       47.360       49.580  2445618  2667518  2961915
-##   pop_1967 pop_1972 pop_1977 pop_1982 pop_1987 pop_1992 pop_1997 pop_2002
-## 1 12760499 14760787 17152804 20033753 23254956 26298373 29072015 31287142
-## 2  5247469  5894858  6162675  7016384  7874230  8735988  9875024 10866106
-## 3  2427334  2761407  3168267  3641603  4243788  4981671  6066080  7026113
-## 4   553541   619351   781472   970347  1151184  1342614  1536536  1630347
-## 5  5127935  5433886  5889574  6634596  7586551  8878303 10352843 12251209
-## 6  3330989  3529983  3834415  4580410  5126023  5809236  6121610  7021078
-##   pop_2007
-## 1 33333216
-## 2 12420476
-## 3  8078314
-## 4  1639131
-## 5 14326203
-## 6  8390505
+## Error in head(gap_wide): object 'gap_wide' not found
 ```
 
 The first step towards getting our nice intermediate data format is to first convert from the wide to the long format.
@@ -660,17 +596,18 @@ The function `gather()` will 'gather' the observation variables into a single va
 ```r
 gap_long <- gap_wide %>%
     gather(obstype_year, obs_values, 3:38)
+```
+
+```
+## Error in eval(lhs, parent, parent): object 'gap_wide' not found
+```
+
+```r
 head(gap_long)
 ```
 
 ```
-##   continent      country   obstype_year obs_values
-## 1    Africa      Algeria gdpPercap_1952  2449.0082
-## 2    Africa       Angola gdpPercap_1952  3520.6103
-## 3    Africa        Benin gdpPercap_1952  1062.7522
-## 4    Africa     Botswana gdpPercap_1952   851.2411
-## 5    Africa Burkina Faso gdpPercap_1952   543.2552
-## 6    Africa      Burundi gdpPercap_1952   339.2965
+## Error in head(gap_long): object 'gap_long' not found
 ```
 
 Notice that we put 3 arguments into the `gather()` function:
@@ -703,34 +640,36 @@ For instance, here we do the same gather operation with (1) the `starts_with` fu
 gap_long <- gap_wide %>%
     gather(obstype_year, obs_values, starts_with('pop'),
            starts_with('lifeExp'), starts_with('gdpPercap'))
+```
+
+```
+## Error in eval(lhs, parent, parent): object 'gap_wide' not found
+```
+
+```r
 head(gap_long)
 ```
 
 ```
-##   continent      country obstype_year obs_values
-## 1    Africa      Algeria     pop_1952    9279525
-## 2    Africa       Angola     pop_1952    4232095
-## 3    Africa        Benin     pop_1952    1738315
-## 4    Africa     Botswana     pop_1952     442308
-## 5    Africa Burkina Faso     pop_1952    4469979
-## 6    Africa      Burundi     pop_1952    2445618
+## Error in head(gap_long): object 'gap_long' not found
 ```
 
 ```r
 # with the - operator
 gap_long <- gap_wide %>%
   gather(obstype_year, obs_values, -continent, -country)
+```
+
+```
+## Error in eval(lhs, parent, parent): object 'gap_wide' not found
+```
+
+```r
 head(gap_long)
 ```
 
 ```
-##   continent      country   obstype_year obs_values
-## 1    Africa      Algeria gdpPercap_1952  2449.0082
-## 2    Africa       Angola gdpPercap_1952  3520.6103
-## 3    Africa        Benin gdpPercap_1952  1062.7522
-## 4    Africa     Botswana gdpPercap_1952   851.2411
-## 5    Africa Burkina Faso gdpPercap_1952   543.2552
-## 6    Africa      Burundi gdpPercap_1952   339.2965
+## Error in head(gap_long): object 'gap_long' not found
 ```
 
 However you choose to do it, notice that the output collapses all of the measure variables into two columns: one containing new ID variable, the other containing the observation value for that row.
@@ -746,17 +685,18 @@ We can use the `separate()` function to split the character strings into multipl
 gap_long_sep <- gap_long %>%
   separate(obstype_year, into = c('obs_type','year'), sep = "_") %>%
   mutate(year = as.integer(year))
+```
+
+```
+## Error in eval(lhs, parent, parent): object 'gap_long' not found
+```
+
+```r
 head(gap_long_sep)
 ```
 
 ```
-##   continent      country  obs_type year obs_values
-## 1    Africa      Algeria gdpPercap 1952  2449.0082
-## 2    Africa       Angola gdpPercap 1952  3520.6103
-## 3    Africa        Benin gdpPercap 1952  1062.7522
-## 4    Africa     Botswana gdpPercap 1952   851.2411
-## 5    Africa Burkina Faso gdpPercap 1952   543.2552
-## 6    Africa      Burundi gdpPercap 1952   339.2965
+## Error in head(gap_long_sep): object 'gap_long_sep' not found
 ```
 
 If you didn't use `tidyr` to do this, you'd have to use the `strsplit` function and use multiple lines of code to replace the column in `gap_long` with two new columns. This solution is much cleaner.
@@ -769,39 +709,34 @@ The opposite of `gather()` is `spread()`. It spreads our observation variables b
 ```r
 gap_medium <- gap_long_sep %>%
   spread(obs_type, obs_values)
+```
+
+```
+## Error in eval(lhs, parent, parent): object 'gap_long_sep' not found
+```
+
+```r
 head(gap_medium)
 ```
 
 ```
-##   continent country year gdpPercap lifeExp      pop
-## 1    Africa Algeria 1952  2449.008  43.077  9279525
-## 2    Africa Algeria 1957  3013.976  45.685 10270856
-## 3    Africa Algeria 1962  2550.817  48.303 11000948
-## 4    Africa Algeria 1967  3246.992  51.407 12760499
-## 5    Africa Algeria 1972  4182.664  54.518 14760787
-## 6    Africa Algeria 1977  4910.417  58.014 17152804
+## Error in head(gap_medium): object 'gap_medium' not found
 ```
 
-All we need is some quick fixes to make this dataset identical to the original `gapminder` dataset:
+All we need is some quick fixes to make this dataset identical to the original `gap` dataset:
 
 
 ```r
-gapminder <- read.csv("../data/gapminder-FiveYearData.csv")
+gap <- read.csv("../data/gapminder-FiveYearData.csv")
 head(gap_medium)
 ```
 
 ```
-##   continent country year gdpPercap lifeExp      pop
-## 1    Africa Algeria 1952  2449.008  43.077  9279525
-## 2    Africa Algeria 1957  3013.976  45.685 10270856
-## 3    Africa Algeria 1962  2550.817  48.303 11000948
-## 4    Africa Algeria 1967  3246.992  51.407 12760499
-## 5    Africa Algeria 1972  4182.664  54.518 14760787
-## 6    Africa Algeria 1977  4910.417  58.014 17152804
+## Error in head(gap_medium): object 'gap_medium' not found
 ```
 
 ```r
-head(gapminder)
+head(gap)
 ```
 
 ```
@@ -816,35 +751,37 @@ head(gapminder)
 
 ```r
 # rearrange columns
-gap_medium <- gap_medium[,names(gapminder)]
+gap_medium <- gap_medium[,names(gap)]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gap_medium' not found
+```
+
+```r
 head(gap_medium)
 ```
 
 ```
-##   country year      pop continent lifeExp gdpPercap
-## 1 Algeria 1952  9279525    Africa  43.077  2449.008
-## 2 Algeria 1957 10270856    Africa  45.685  3013.976
-## 3 Algeria 1962 11000948    Africa  48.303  2550.817
-## 4 Algeria 1967 12760499    Africa  51.407  3246.992
-## 5 Algeria 1972 14760787    Africa  54.518  4182.664
-## 6 Algeria 1977 17152804    Africa  58.014  4910.417
+## Error in head(gap_medium): object 'gap_medium' not found
 ```
 
 ```r
 # arrange by country, continent, and year
 gap_medium <- gap_medium %>%
   arrange(country,continent,year)
+```
+
+```
+## Error in eval(lhs, parent, parent): object 'gap_medium' not found
+```
+
+```r
 head(gap_medium)
 ```
 
 ```
-##       country year      pop continent lifeExp gdpPercap
-## 1 Afghanistan 1952  8425333      Asia  28.801  779.4453
-## 2 Afghanistan 1957  9240934      Asia  30.332  820.8530
-## 3 Afghanistan 1962 10267083      Asia  31.997  853.1007
-## 4 Afghanistan 1967 11537966      Asia  34.020  836.1971
-## 5 Afghanistan 1972 13079460      Asia  36.088  739.9811
-## 6 Afghanistan 1977 14880372      Asia  38.438  786.1134
+## Error in head(gap_medium): object 'gap_medium' not found
 ```
 
 # Extra Resources
@@ -868,9 +805,8 @@ There are some other useful packages in the [tidyverse](http://www.tidyverse.org
 
 3. Use `dplyr` to add a column called `gdpPercap_diff` that contains the difference between the observation's `gdpPercap` and the mean `gdpPercap` of the continent in that year. Arrange the dataframe by the column you just created, in descending order (so that the relatively richest country/years are listed first)
 
-   **hint**: You might have to `ungroup()` before you `arrange()`.
-
 ### `tidyr`
 
 4. Subset the results from question #3 to select only the `country`, `year`, and `gdpPercap_diff` columns. Use tidyr put it in wide format so that countries are rows and years are columns.
 
+Hint: you'll probably see a message about a missing grouping variable. If you don't want continent included, you can pass the output of problem 3 through `ungroup()` to get rid of the continent information.

@@ -39,7 +39,7 @@ If you're using `lm`, the call looks the same but without the `family` argument.
 
 ```r
 reg <- lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + year, 
-                data = gapminder)
+                data = gap)
 ```
 
 # Regression output
@@ -106,7 +106,7 @@ summary(reg)
 ## 
 ## Call:
 ## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + 
-##     year, data = gapminder)
+##     year, data = gap)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
@@ -182,14 +182,14 @@ glm(formula = y ~ x1 + x2 + factor(x3), family = family(link = "link"),
 ```r
 summary(lm(lifeExp ~ log(gdpPercap) + log(pop) +
                     continent:factor(year), 
-                    data = gapminder))
+                    data = gap))
 ```
 
 ```
 ## 
 ## Call:
 ## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent:factor(year), 
-##     data = gapminder)
+##     data = gap)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
@@ -336,14 +336,14 @@ summary(lm(lifeExp ~ log(gdpPercap) + log(pop) +
 
 ```r
 summary(lm(lifeExp ~ log(gdpPercap) + log(pop) + continent*factor(year), 
-                data = gapminder))
+                data = gap))
 ```
 
 ```
 ## 
 ## Call:
 ## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent * 
-##     factor(year), data = gapminder)
+##     factor(year), data = gap)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
@@ -504,18 +504,8 @@ Any hypotheses about the relationship of delays with month and time of day?
 
 ```r
 library(mgcv)
-```
 
-```
-## Loading required package: nlme
-```
-
-```
-## This is mgcv 1.8-17. For overview type 'help("mgcv-package")'.
-```
-
-```r
-mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gapminder)
+mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gap)
 
 plot(mod)
 ```
@@ -552,7 +542,7 @@ summary(mod)
 ```
 
 ```r
-mod2 <- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gapminder)
+mod2 <- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gap)
 plot(mod2)
 ```
 
@@ -560,7 +550,7 @@ plot(mod2)
 
 If we were serious about building a good-fitting model, we could use the same kind of functionality as in lm/glm in terms of factors and interactions.
 
-# How does GAM choose how much to smooth
+# How does GAM choose how much to smooth?
 
 GAM uses the data to choose how much smoothing to do. Roughly one can think of what it is doing as carrying out cross-validation and choosing the best amount of smoothing for predicting held-out data.
 
@@ -666,7 +656,7 @@ We can draw a sample with or without replacement.
 
 
 ```r
-sample(1:nrow(gapminder), 20, replace = FALSE)
+sample(1:nrow(gap), 20, replace = FALSE)
 ```
 
 ```
@@ -679,7 +669,7 @@ Here's an example of some code that would be part of coding up a bootstrap. As I
 
 ```r
 # actual mean
-mean(gapminder$lifeExp, na.rm = TRUE)
+mean(gap$lifeExp, na.rm = TRUE)
 ```
 
 ```
@@ -688,19 +678,19 @@ mean(gapminder$lifeExp, na.rm = TRUE)
 
 ```r
 # here's a bootstrap sample:
-smp <- sample(seq_len(nrow(gapminder)), replace = TRUE) 
-mean(gapminder$lifeExp[smp], na.rm = TRUE)
+smp <- sample(seq_len(nrow(gap)), replace = TRUE) 
+mean(gap$lifeExp[smp], na.rm = TRUE)
 ```
 
 ```
 ## [1] 60.22094
 ```
 
-It's a good idea to use `seq_along()` and `seq_len()` and not syntax like `1:length(gapminder)` in `sample()` because the outcome of `length()` might in some cases be unexpected (e.g., if you're taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., 
+It's a good idea to use `seq_along()` and `seq_len()` and not syntax like `1:length(gap)` in `sample()` because the outcome of `length()` might in some cases be unexpected (e.g., if you're taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., 
 
 
 ```r
-for(i in seq_len(nrow(gapminder))) {
+for(i in seq_len(nrow(gap))) {
 # blah
 }
 ```
@@ -718,7 +708,7 @@ To replicate any work involving random numbers, make sure to set the seed first.
 
 ```r
 set.seed(1)
-vals <- sample(1:nrow(gapminder), 10)
+vals <- sample(1:nrow(gap), 10)
 vals
 ```
 
@@ -727,7 +717,7 @@ vals
 ```
 
 ```r
-vals <- sample(1:nrow(gapminder), 10)
+vals <- sample(1:nrow(gap), 10)
 vals
 ```
 
@@ -737,7 +727,7 @@ vals
 
 ```r
 set.seed(1)
-vals <- sample(1:nrow(gapminder), 10)
+vals <- sample(1:nrow(gap), 10)
 vals
 ```
 
@@ -948,13 +938,13 @@ There's lots more packages/functionality for dates/times: see *lubridate* and `?
 
 Now plot a histogram of the 500 values - this is an estimate of the sampling distribution of the sample mean. 
 
-6) Modify the GAMs of lifeExp on gdpPercap and set `k` to a variety of values and see how the estimated relationships change. 
+6) Modify the GAMs of lifeExp on gdpPercap and set `k` to a variety of values and see how the estimated relationships change. What about the estimated uncertainties?
 
 ### Advanced 
 
 7) Fit a logistic regression model where the outcome is whether `lifeExp` is greater than or less than 60 years, exploring the use of different predictors.
 
-8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the *gapminder* dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the *times* argument to the `rep()` function. (If you're not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)
+8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the *gap* dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the *times* argument to the `rep()` function. (If you're not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)
 
 9) Write some code to demonstrate the central limit theorem. Generate many different replicates of samples of size `n` from a skewed or discrete distribution and show that if `n` is big enough, the distribution of the means (of each sample of size `n`) looks approximately normal in a histogram. Do it without any looping (using techniques from earlier modules)! I.e., I want you to show that if you have a large number (say 10,000) of means, each mean being the mean of `n` values from a distribution, the distribution of the means looks approximately normal if `n` is sufficiently big.
 

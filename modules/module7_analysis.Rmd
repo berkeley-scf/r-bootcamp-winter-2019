@@ -8,8 +8,8 @@
 library(fields)
 library(foreign)
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
-gm2007 <- gapminder[gapminder$year == 2007, ]
+gap <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gap2007 <- gap[gap$year == 2007, ]
 ```
 
 # Describing relationships
@@ -45,7 +45,7 @@ If you're using `lm`, the call looks the same but without the `family` argument.
 
 ```{r}
 reg <- lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + year, 
-                data = gapminder)
+                data = gap)
 ```
 
 # Regression output
@@ -98,13 +98,13 @@ glm(formula = y ~ x1 + x2 + factor(x3), family = family(link = "link"),
 ```{r}
 summary(lm(lifeExp ~ log(gdpPercap) + log(pop) +
                     continent:factor(year), 
-                    data = gapminder))
+                    data = gap))
 ```
 
 `x1*x2` produces the cross of x1 and x2, or x1+x2+x1:x2
 ```{r}
 summary(lm(lifeExp ~ log(gdpPercap) + log(pop) + continent*factor(year), 
-                data = gapminder))
+                data = gap))
 ```
 
 
@@ -127,12 +127,12 @@ Any hypotheses about the relationship of delays with month and time of day?
 ```{r gamExample, cache=TRUE, fig.width=10, fig.cap = ""}
 library(mgcv)
 
-mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gapminder)
+mod <- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gap)
 
 plot(mod)
 summary(mod)
 
-mod2 <- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gapminder)
+mod2 <- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gap)
 plot(mod2)
 ```
 
@@ -189,23 +189,23 @@ lines(x, dchisq(x, df = 2), col = 'red')
 We can draw a sample with or without replacement.
 
 ```{r}
-sample(1:nrow(gapminder), 20, replace = FALSE)
+sample(1:nrow(gap), 20, replace = FALSE)
 ```
 
 Here's an example of some code that would be part of coding up a bootstrap. As I mentioned previously, this would be a weird dataset to do formal statistical inference on given it includes most of the countries in the world, though one could think about fitting models for the variation over time, treating short-term fluctuations as random.
 
 ```{r}
 # actual mean
-mean(gapminder$lifeExp, na.rm = TRUE)
+mean(gap$lifeExp, na.rm = TRUE)
 # here's a bootstrap sample:
-smp <- sample(seq_len(nrow(gapminder)), replace = TRUE) 
-mean(gapminder$lifeExp[smp], na.rm = TRUE)
+smp <- sample(seq_len(nrow(gap)), replace = TRUE) 
+mean(gap$lifeExp[smp], na.rm = TRUE)
 ```
 
-It's a good idea to use `seq_along()` and `seq_len()` and not syntax like `1:length(gapminder)` in `sample()` because the outcome of `length()` might in some cases be unexpected (e.g., if you're taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., 
+It's a good idea to use `seq_along()` and `seq_len()` and not syntax like `1:length(gap)` in `sample()` because the outcome of `length()` might in some cases be unexpected (e.g., if you're taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., 
 
 ```{r eval=FALSE}
-for(i in seq_len(nrow(gapminder))) {
+for(i in seq_len(nrow(gap))) {
 # blah
 }
 ```
@@ -222,12 +222,12 @@ To replicate any work involving random numbers, make sure to set the seed first.
 
 ```{r}
 set.seed(1)
-vals <- sample(1:nrow(gapminder), 10)
+vals <- sample(1:nrow(gap), 10)
 vals
-vals <- sample(1:nrow(gapminder), 10)
+vals <- sample(1:nrow(gap), 10)
 vals
 set.seed(1)
-vals <- sample(1:nrow(gapminder), 10)
+vals <- sample(1:nrow(gap), 10)
 vals
 ```
 
@@ -337,7 +337,7 @@ Now plot a histogram of the 500 values - this is an estimate of the sampling dis
 
 7) Fit a logistic regression model where the outcome is whether `lifeExp` is greater than or less than 60 years, exploring the use of different predictors.
 
-8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the *gapminder* dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the *times* argument to the `rep()` function. (If you're not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)
+8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the *gap* dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the *times* argument to the `rep()` function. (If you're not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)
 
 9) Write some code to demonstrate the central limit theorem. Generate many different replicates of samples of size `n` from a skewed or discrete distribution and show that if `n` is big enough, the distribution of the means (of each sample of size `n`) looks approximately normal in a histogram. Do it without any looping (using techniques from earlier modules)! I.e., I want you to show that if you have a large number (say 10,000) of means, each mean being the mean of `n` values from a distribution, the distribution of the means looks approximately normal if `n` is sufficiently big.
 

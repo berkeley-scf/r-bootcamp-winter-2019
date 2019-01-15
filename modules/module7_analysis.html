@@ -236,7 +236,7 @@ hr {
 </ul>
 
 <pre><code class="r">reg &lt;- lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + year, 
-                data = gapminder)
+                data = gap)
 </code></pre>
 
 <h1>Regression output</h1>
@@ -295,7 +295,7 @@ plot(reg)
 <pre><code>## 
 ## Call:
 ## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent + 
-##     year, data = gapminder)
+##     year, data = gap)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
@@ -368,13 +368,13 @@ summ_reg$coefficients
 
 <pre><code class="r">summary(lm(lifeExp ~ log(gdpPercap) + log(pop) +
                     continent:factor(year), 
-                    data = gapminder))
+                    data = gap))
 </code></pre>
 
 <pre><code>## 
 ## Call:
 ## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent:factor(year), 
-##     data = gapminder)
+##     data = gap)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
@@ -520,13 +520,13 @@ summ_reg$coefficients
 <p><code>x1*x2</code> produces the cross of x1 and x2, or x1+x2+x1:x2</p>
 
 <pre><code class="r">summary(lm(lifeExp ~ log(gdpPercap) + log(pop) + continent*factor(year), 
-                data = gapminder))
+                data = gap))
 </code></pre>
 
 <pre><code>## 
 ## Call:
 ## lm(formula = lifeExp ~ log(gdpPercap) + log(pop) + continent * 
-##     factor(year), data = gapminder)
+##     factor(year), data = gap)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
@@ -684,15 +684,8 @@ summ_reg$coefficients
 <p>Any hypotheses about the relationship of delays with month and time of day?</p>
 
 <pre><code class="r">library(mgcv)
-</code></pre>
 
-<pre><code>## Loading required package: nlme
-</code></pre>
-
-<pre><code>## This is mgcv 1.8-17. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.
-</code></pre>
-
-<pre><code class="r">mod &lt;- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gapminder)
+mod &lt;- gam(lifeExp ~ s(gdpPercap, k = 30) + s(year, k = 10), data = gap)
 
 plot(mod)
 </code></pre>
@@ -726,7 +719,7 @@ plot(mod)
 ## GCV = 44.315  Scale est. = 43.879    n = 1704
 </code></pre>
 
-<pre><code class="r">mod2 &lt;- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gapminder)
+<pre><code class="r">mod2 &lt;- gam(lifeExp ~ s(log(gdpPercap), k = 30) + s(year, k = 10), data = gap)
 plot(mod2)
 </code></pre>
 
@@ -734,7 +727,7 @@ plot(mod2)
 
 <p>If we were serious about building a good-fitting model, we could use the same kind of functionality as in lm/glm in terms of factors and interactions.</p>
 
-<h1>How does GAM choose how much to smooth</h1>
+<h1>How does GAM choose how much to smooth?</h1>
 
 <p>GAM uses the data to choose how much smoothing to do. Roughly one can think of what it is doing as carrying out cross-validation and choosing the best amount of smoothing for predicting held-out data.</p>
 
@@ -829,7 +822,7 @@ lines(x, dchisq(x, df = 2), col = &#39;red&#39;)
 
 <p>We can draw a sample with or without replacement.</p>
 
-<pre><code class="r">sample(1:nrow(gapminder), 20, replace = FALSE)
+<pre><code class="r">sample(1:nrow(gap), 20, replace = FALSE)
 </code></pre>
 
 <pre><code>##  [1] 1223 1690  647 1323 1589  361 1107  214  454  655   23  648 1472  576
@@ -839,23 +832,23 @@ lines(x, dchisq(x, df = 2), col = &#39;red&#39;)
 <p>Here&#39;s an example of some code that would be part of coding up a bootstrap. As I mentioned previously, this would be a weird dataset to do formal statistical inference on given it includes most of the countries in the world, though one could think about fitting models for the variation over time, treating short-term fluctuations as random.</p>
 
 <pre><code class="r"># actual mean
-mean(gapminder$lifeExp, na.rm = TRUE)
+mean(gap$lifeExp, na.rm = TRUE)
 </code></pre>
 
 <pre><code>## [1] 59.47444
 </code></pre>
 
 <pre><code class="r"># here&#39;s a bootstrap sample:
-smp &lt;- sample(seq_len(nrow(gapminder)), replace = TRUE) 
-mean(gapminder$lifeExp[smp], na.rm = TRUE)
+smp &lt;- sample(seq_len(nrow(gap)), replace = TRUE) 
+mean(gap$lifeExp[smp], na.rm = TRUE)
 </code></pre>
 
 <pre><code>## [1] 60.22094
 </code></pre>
 
-<p>It&#39;s a good idea to use <code>seq_along()</code> and <code>seq_len()</code> and not syntax like <code>1:length(gapminder)</code> in <code>sample()</code> because the outcome of <code>length()</code> might in some cases be unexpected (e.g., if you&#39;re taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., </p>
+<p>It&#39;s a good idea to use <code>seq_along()</code> and <code>seq_len()</code> and not syntax like <code>1:length(gap)</code> in <code>sample()</code> because the outcome of <code>length()</code> might in some cases be unexpected (e.g., if you&#39;re taking subsets of a dataset). Similar reasoning holds when setting up for loops: e.g., </p>
 
-<pre><code class="r">for(i in seq_len(nrow(gapminder))) {
+<pre><code class="r">for(i in seq_len(nrow(gap))) {
 # blah
 }
 </code></pre>
@@ -873,14 +866,14 @@ mean(gapminder$lifeExp[smp], na.rm = TRUE)
 <p>To replicate any work involving random numbers, make sure to set the seed first.</p>
 
 <pre><code class="r">set.seed(1)
-vals &lt;- sample(1:nrow(gapminder), 10)
+vals &lt;- sample(1:nrow(gap), 10)
 vals
 </code></pre>
 
 <pre><code>##  [1]  453  634  975 1545  343 1527 1605 1122 1067  105
 </code></pre>
 
-<pre><code class="r">vals &lt;- sample(1:nrow(gapminder), 10)
+<pre><code class="r">vals &lt;- sample(1:nrow(gap), 10)
 vals
 </code></pre>
 
@@ -888,7 +881,7 @@ vals
 </code></pre>
 
 <pre><code class="r">set.seed(1)
-vals &lt;- sample(1:nrow(gapminder), 10)
+vals &lt;- sample(1:nrow(gap), 10)
 vals
 </code></pre>
 
@@ -1073,13 +1066,13 @@ class(d1)
 
 <p>Now plot a histogram of the 500 values - this is an estimate of the sampling distribution of the sample mean. </p>
 
-<p>6) Modify the GAMs of lifeExp on gdpPercap and set <code>k</code> to a variety of values and see how the estimated relationships change. </p>
+<p>6) Modify the GAMs of lifeExp on gdpPercap and set <code>k</code> to a variety of values and see how the estimated relationships change. What about the estimated uncertainties?</p>
 
 <h3>Advanced</h3>
 
 <p>7) Fit a logistic regression model where the outcome is whether <code>lifeExp</code> is greater than or less than 60 years, exploring the use of different predictors.</p>
 
-<p>8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the <em>gapminder</em> dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the <em>times</em> argument to the <code>rep()</code> function. (If you&#39;re not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)</p>
+<p>8) Suppose you wanted to do 10-fold cross-validation for some sort of regression model fit to the <em>gap</em> dataset. Write some R code that produces a field in the dataset that indicates which fold each observation is in. Ensure each of the folds has an equal (or as nearly equal as possible if the number of observations is not divisible by 10) number of observations. Hint: consider the <em>times</em> argument to the <code>rep()</code> function. (If you&#39;re not familiar with 10-fold cross-validation, it requires one to divide the dataset into 10 subsets of approximately equal size.)</p>
 
 <p>9) Write some code to demonstrate the central limit theorem. Generate many different replicates of samples of size <code>n</code> from a skewed or discrete distribution and show that if <code>n</code> is big enough, the distribution of the means (of each sample of size <code>n</code>) looks approximately normal in a histogram. Do it without any looping (using techniques from earlier modules)! I.e., I want you to show that if you have a large number (say 10,000) of means, each mean being the mean of <code>n</code> values from a distribution, the distribution of the means looks approximately normal if <code>n</code> is sufficiently big.</p>
 

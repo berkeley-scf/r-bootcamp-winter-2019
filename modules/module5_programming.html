@@ -218,7 +218,7 @@ like optimization.</p>
 <p>Let&#39;s take our use of <code>aggregate()</code> from Module 4 and use a for loop instead.</p>
 
 <pre><code class="r">out &lt;- list()
-years &lt;- unique(gapminder$year)
+years &lt;- unique(gap$year)
 length(out) &lt;- length(years)
 names(out) &lt;- years
 
@@ -226,7 +226,7 @@ for (yrIdx in seq_along(years)) {
      # equivalently: for(i in 1:length(DestSubset))
      # n.b., seq_along(x) is better than 1:length(x), since it handles the case
      # where the length of an object is 0 or NULL more robustly.
-     sub &lt;- subset(gapminder, gapminder$year == years[i])
+     sub &lt;- subset(gap, gap$year == years[i])
      if (sum(!is.na(sub$lifeExp)) &amp;&amp; length(sub$lifeExp) &gt; 1) {
      # fit regression
        out[[yrIdx]] &lt;- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -287,7 +287,7 @@ syntax in the same example.</p>
 
 <pre><code class="r">i &lt;- 1
 while (yrIdx &lt;= length(years)) {
-     sub &lt;- subset(gapminder, gapminder$year == years[i])
+     sub &lt;- subset(gap, gap$year == years[i])
      if (sum(!is.na(sub$lifeExp)) &amp;&amp; length(sub$lifeExp) &gt; 1) {
      # fit regression
        out[[yrIdx]] &lt;- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -330,7 +330,7 @@ implicit.</p>
 val
 </code></pre>
 
-<pre><code>## [1] 0.7664723
+<pre><code>## [1] 0.08880645
 </code></pre>
 
 <pre><code class="r">if (val &lt; 0) {
@@ -349,7 +349,7 @@ val
 val
 </code></pre>
 
-<pre><code>## [1] 0.5099846
+<pre><code>## [1] -0.6805233
 </code></pre>
 
 <pre><code class="r">if (val &lt; -1) {
@@ -371,7 +371,7 @@ but R will complain when an <code>else</code> starts a line of code, so generall
 <pre><code class="r">if (val &lt; 0) print(&quot;val is negative&quot;) else print(&quot;val is positive&quot;)
 </code></pre>
 
-<pre><code>## [1] &quot;val is positive&quot;
+<pre><code>## [1] &quot;val is negative&quot;
 </code></pre>
 
 <h1>The condition in an if statement</h1>
@@ -379,19 +379,19 @@ but R will complain when an <code>else</code> starts a line of code, so generall
 <p>The condition in the if statement cannot be NA or R will give an error. This is
 a very common bug.</p>
 
-<pre><code class="r">continents &lt;- unique(gapminder$continent)
+<pre><code class="r">continents &lt;- unique(gap$continent)
 continents  # what happened ?!
 </code></pre>
 
 <pre><code>## [1] &quot;Asia&quot;     &quot;Europe&quot;   &quot;Africa&quot;   &quot;Americas&quot; &quot;Oceania&quot;
 </code></pre>
 
-<pre><code class="r">continents &lt;- unique(as.character(gapminder$continent))
+<pre><code class="r">continents &lt;- unique(as.character(gap$continent))
 continents &lt;- c(&#39;Antarctica&#39;, continents)
 
 out &lt;- rep(0, length(continents))
 for (i in seq_along(continents)) {
-    sub &lt;- gapminder[gapminder$continent == continents[i], ]
+    sub &lt;- gap[gap$continent == continents[i], ]
     if(mean(sub$lifeExp) &lt; 50)
        print(continents[i])
 }
@@ -406,7 +406,7 @@ for (i in seq_along(continents)) {
 <pre><code>## [1] 1
 </code></pre>
 
-<pre><code class="r">sub &lt;- gapminder[gapminder$continent == continents[i], ]
+<pre><code class="r">sub &lt;- gap[gap$continent == continents[i], ]
 if(mean(sub$lifeExp) &lt; 50) print(&#39;here&#39;)
 </code></pre>
 
@@ -429,7 +429,7 @@ strings are not converted to booleans.</p>
 
 <pre><code class="r">out &lt;- rep(0, length(continents))
 for (i in seq_along(continents)) {
-    sub &lt;- gapminder[gapminder$continent == continents[i], ]
+    sub &lt;- gap[gap$continent == continents[i], ]
     if(isTRUE(mean(sub$lifeExp) &lt; 60))
        print(continents[i])
 }
@@ -442,7 +442,7 @@ for (i in seq_along(continents)) {
 
 <p><code>next</code> skips the current evaluation of the loop statements:</p>
 
-<pre><code class="r">continents &lt;- unique(gm2007$continent)
+<pre><code class="r">continents &lt;- unique(gap2007$continent)
 continents[2] &lt;- &quot;Oceania&quot;; continents[5] &lt;- &quot;Europe&quot;  # reorder to illustrate points below
 continents
 </code></pre>
@@ -454,7 +454,7 @@ continents
 
 for (i in seq_along(continents)) {
      # equivalently: for(i in 1:length(continents))
-     sub &lt;- subset(gm2007, gm2007$continent == continents[i])
+     sub &lt;- subset(gap2007, gap2007$continent == continents[i])
      if(sum(!is.na(sub$lifeExp)) &gt; 2) { # don&#39;t regress if &lt;= 2 obs
      # fit regression
        out[[i]] &lt;- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -480,7 +480,7 @@ cat(&quot;We got to iteration &quot;, i, &quot; of &quot;, length(continents), &
 
 for (i in seq_along(continents)) {
      # equivalently: for(i in 1:length(continents))
-     sub &lt;- subset(gm2007, gm2007$continent == continents[i])
+     sub &lt;- subset(gap2007, gap2007$continent == continents[i])
      if(sum(!is.na(sub$lifeExp)) &gt; 2) { # don&#39;t regress if &lt;= 2 obs
      # fit regression
        out[[i]] &lt;- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -531,14 +531,14 @@ carry out more complicated operations.</li>
 
 <p>In module 4, we sorted the airline <code>data.frame</code>.</p>
 
-<pre><code class="r">ord &lt;- order(gapminder$year, gapminder$lifeExp, decreasing = TRUE)
+<pre><code class="r">ord &lt;- order(gap$year, gap$lifeExp, decreasing = TRUE)
 ord[1:5]
 </code></pre>
 
 <pre><code>## [1]  804  672  696 1488   72
 </code></pre>
 
-<pre><code class="r">gm_ord &lt;- gapminder[ord, ]
+<pre><code class="r">gm_ord &lt;- gap[ord, ]
 </code></pre>
 
 <p>How would we encapsulate that functionality generically so that
@@ -564,10 +564,10 @@ we can apply it to other <code>data.frame</code>s (or matrices)?</p>
     return(sorted)
 }
 
-identical(gm_ordered, colSort(gapminder, &quot;year&quot;, &quot;lifeExp&quot;))
+identical(gm_ordered, colSort(gap, &quot;year&quot;, &quot;lifeExp&quot;))
 </code></pre>
 
-<pre><code>## Error in identical(gm_ordered, colSort(gapminder, &quot;year&quot;, &quot;lifeExp&quot;)): object &#39;gm_ordered&#39; not found
+<pre><code>## Error in identical(gm_ordered, colSort(gap, &quot;year&quot;, &quot;lifeExp&quot;)): object &#39;gm_ordered&#39; not found
 </code></pre>
 
 <p>Of course this is somewhat limited in that it is specific to sorting based on
@@ -586,13 +586,13 @@ explicitly provide all the arguments.</p>
     sorted &lt;- data[ord, ]
     return(sorted)
 }
-identical(colSort(gapminder, 1, 2), colSort(gapminder))
+identical(colSort(gap, 1, 2), colSort(gap))
 </code></pre>
 
 <pre><code>## [1] TRUE
 </code></pre>
 
-<pre><code class="r">identical(colSort(col2 = 2, data = gapminder, col1 = 1), colSort(gapminder, 1, 2))
+<pre><code class="r">identical(colSort(col2 = 2, data = gap, col1 = 1), colSort(gap, 1, 2))
 </code></pre>
 
 <pre><code>## [1] TRUE
@@ -612,7 +612,7 @@ me.</p>
       plot(x, y, pch = 16, cex = 0.6, ...)
 }
 
-pplot(gapminder$gdpPercap, gapminder$lifeExp,  xlab = &#39;gdpPercap (log $)&#39;,
+pplot(gap$gdpPercap, gap$lifeExp,  xlab = &#39;gdpPercap (log $)&#39;,
       ylab = &#39;life expectancy (years)&#39;, log = &#39;x&#39;)
 </code></pre>
 
@@ -747,15 +747,15 @@ talk</a></p></li>
 x[ , 2]
 </code></pre>
 
-<pre><code>##  [1] 0.98439597 0.73419259 0.05808899 0.48401256 0.72164981 0.14025814
-##  [7] 0.22856039 0.66118005 0.84247288 0.27120150
+<pre><code>##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
+##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
 </code></pre>
 
 <pre><code class="r">&#39;[&#39;(x , , 2)
 </code></pre>
 
-<pre><code>##  [1] 0.98439597 0.73419259 0.05808899 0.48401256 0.72164981 0.14025814
-##  [7] 0.22856039 0.66118005 0.84247288 0.27120150
+<pre><code>##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
+##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
 </code></pre>
 
 <p>Also yes!</p>
@@ -817,7 +817,7 @@ of the years separately, we&#39;ll first need to put our data in &ldquo;tidy&rdq
 format. It&#39;s <em>really easy</em> with some helpful verbs from <code>dplyr</code>&hellip;</p>
 
 <pre><code class="r"># let&#39;s clean up the data set first
-gm_tidy &lt;- gapminder %&gt;%
+gm_tidy &lt;- gap %&gt;%
   split(.$year)
 </code></pre>
 
@@ -842,7 +842,7 @@ where it doesn&#39;t. Let&#39;s try it out</p>
 
 <p><em>Remark:</em> What we accomplish here with <code>purrr::map</code> is also easily done using
 tools from base R. In fact, using <code>lapply</code>, we can evaluate the very same <code>lm</code>
-formula with our <code>gapminder</code> dataset, albeit without the extra goodies offered by
+formula with our <code>gap</code> dataset, albeit without the extra goodies offered by
 the pipe (aka <code>%&gt;%</code>) syntax and the <code>safely</code> convenience, afforded by <code>magrittr</code>
 and <code>purrr</code>, respectively.</p>
 

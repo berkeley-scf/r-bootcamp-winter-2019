@@ -7,7 +7,7 @@
 # e.g. package and dataset loading
 rm(list = ls())
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gap <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # Managing your objects
@@ -16,9 +16,9 @@ R has a number of functions for getting metadata about your objects. Some of thi
 
 ```{r}
 
-v1 <- gapminder$year
-v2 <- gapminder$continent
-v3 <- gapminder$lifeExp
+v1 <- gap$year
+v2 <- gap$continent
+v3 <- gap$lifeExp
 
 length(v1)
 str(v1)
@@ -31,11 +31,12 @@ typeof(v3)
 is.vector(v1)
 is.list(v1)
 
+# only present if code from module 1 run in this R session
 is.list(myList)
 is.vector(myList)
 
-is.data.frame(gapminder)
-is.list(gapminder)
+is.data.frame(gap)
+is.list(gap)
 ```
 
 **Question**: What have you learned? Does it make sense? 
@@ -66,8 +67,8 @@ ls()
 ```
 
 ```{r, include=FALSE}
-# load airline data back in for use later
-air <- read.csv('../data/gapminder-FiveYearData.csv', stringsAsFactors = FALSE)
+# load gapminder data back in for use later
+gap <- read.csv('../data/gapminder-FiveYearData.csv', stringsAsFactors = FALSE)
 ```
 
 **Challenge**: how would I find all of my objects that have 'x' in their names?
@@ -149,8 +150,8 @@ lm <- function(i) {
    print(i)
 }
 lm(7) 
-lm(gapminder$lifeExp ~ gapminder$gdpPerCap)
-stats::lm(gapminder$lifeExp ~ gapminder$gdpPerCap)
+lm(gap$lifeExp ~ gap$gdpPercap)
+stats::lm(gap$lifeExp ~ gap$gdpPercap)
 rm(lm)
 ```
 
@@ -266,7 +267,7 @@ dev.off()
 
 ```{r}
 library(xtable)
-print(xtable(table(gapminder$year, gapminder$continent)), type = "html")
+print(xtable(table(gap$year, gap$continent)), type = "html")
 ```
 
 Recall our discussion of the `summary()` function used on either a vector or a regression object. What do you think is going on with call to `print()` above? 

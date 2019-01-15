@@ -23,7 +23,7 @@ Let's take our use of `aggregate()` from Module 4 and use a for loop instead.
 
 ```r
 out <- list()
-years <- unique(gapminder$year)
+years <- unique(gap$year)
 length(out) <- length(years)
 names(out) <- years
 
@@ -31,7 +31,7 @@ for (yrIdx in seq_along(years)) {
      # equivalently: for(i in 1:length(DestSubset))
      # n.b., seq_along(x) is better than 1:length(x), since it handles the case
      # where the length of an object is 0 or NULL more robustly.
-     sub <- subset(gapminder, gapminder$year == years[i])
+     sub <- subset(gap, gap$year == years[i])
      if (sum(!is.na(sub$lifeExp)) && length(sub$lifeExp) > 1) {
      # fit regression
        out[[yrIdx]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -104,7 +104,7 @@ syntax in the same example.
 ```r
 i <- 1
 while (yrIdx <= length(years)) {
-     sub <- subset(gapminder, gapminder$year == years[i])
+     sub <- subset(gap, gap$year == years[i])
      if (sum(!is.na(sub$lifeExp)) && length(sub$lifeExp) > 1) {
      # fit regression
        out[[yrIdx]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -151,7 +151,7 @@ val
 ```
 
 ```
-## [1] 0.7664723
+## [1] 0.08880645
 ```
 
 ```r
@@ -175,7 +175,7 @@ val
 ```
 
 ```
-## [1] 0.5099846
+## [1] -0.6805233
 ```
 
 ```r
@@ -202,7 +202,7 @@ if (val < 0) print("val is negative") else print("val is positive")
 ```
 
 ```
-## [1] "val is positive"
+## [1] "val is negative"
 ```
 
 # The condition in an if statement
@@ -212,7 +212,7 @@ a very common bug.
 
 
 ```r
-continents <- unique(gapminder$continent)
+continents <- unique(gap$continent)
 continents  # what happened ?!
 ```
 
@@ -221,12 +221,12 @@ continents  # what happened ?!
 ```
 
 ```r
-continents <- unique(as.character(gapminder$continent))
+continents <- unique(as.character(gap$continent))
 continents <- c('Antarctica', continents)
 
 out <- rep(0, length(continents))
 for (i in seq_along(continents)) {
-    sub <- gapminder[gapminder$continent == continents[i], ]
+    sub <- gap[gap$continent == continents[i], ]
     if(mean(sub$lifeExp) < 50)
        print(continents[i])
 }
@@ -245,7 +245,7 @@ print(i)
 ```
 
 ```r
-sub <- gapminder[gapminder$continent == continents[i], ]
+sub <- gap[gap$continent == continents[i], ]
 if(mean(sub$lifeExp) < 50) print('here')
 ```
 
@@ -273,7 +273,7 @@ A more robust alternative is to use `isTRUE()`:
 ```r
 out <- rep(0, length(continents))
 for (i in seq_along(continents)) {
-    sub <- gapminder[gapminder$continent == continents[i], ]
+    sub <- gap[gap$continent == continents[i], ]
     if(isTRUE(mean(sub$lifeExp) < 60))
        print(continents[i])
 }
@@ -290,7 +290,7 @@ for (i in seq_along(continents)) {
 
 
 ```r
-continents <- unique(gm2007$continent)
+continents <- unique(gap2007$continent)
 continents[2] <- "Oceania"; continents[5] <- "Europe"  # reorder to illustrate points below
 continents
 ```
@@ -304,7 +304,7 @@ out <- list(); length(out) <- length(continents); names(out) <- continents
 
 for (i in seq_along(continents)) {
      # equivalently: for(i in 1:length(continents))
-     sub <- subset(gm2007, gm2007$continent == continents[i])
+     sub <- subset(gap2007, gap2007$continent == continents[i])
      if(sum(!is.na(sub$lifeExp)) > 2) { # don't regress if <= 2 obs
      # fit regression
        out[[i]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -335,7 +335,7 @@ out <- list(); length(out) <- length(continents); names(out) <- continents
 
 for (i in seq_along(continents)) {
      # equivalently: for(i in 1:length(continents))
-     sub <- subset(gm2007, gm2007$continent == continents[i])
+     sub <- subset(gap2007, gap2007$continent == continents[i])
      if(sum(!is.na(sub$lifeExp)) > 2) { # don't regress if <= 2 obs
      # fit regression
        out[[i]] <- lm(lifeExp ~ log(gdpPercap), data = sub)
@@ -385,7 +385,7 @@ In module 4, we sorted the airline `data.frame`.
 
 
 ```r
-ord <- order(gapminder$year, gapminder$lifeExp, decreasing = TRUE)
+ord <- order(gap$year, gap$lifeExp, decreasing = TRUE)
 ord[1:5]
 ```
 
@@ -394,7 +394,7 @@ ord[1:5]
 ```
 
 ```r
-gm_ord <- gapminder[ord, ]
+gm_ord <- gap[ord, ]
 ```
 
 How would we encapsulate that functionality generically so that
@@ -422,11 +422,11 @@ colSort <- function(data, col1, col2) {
     return(sorted)
 }
 
-identical(gm_ordered, colSort(gapminder, "year", "lifeExp"))
+identical(gm_ordered, colSort(gap, "year", "lifeExp"))
 ```
 
 ```
-## Error in identical(gm_ordered, colSort(gapminder, "year", "lifeExp")): object 'gm_ordered' not found
+## Error in identical(gm_ordered, colSort(gap, "year", "lifeExp")): object 'gm_ordered' not found
 ```
 
 Of course this is somewhat limited in that it is specific to sorting based on
@@ -447,7 +447,7 @@ colSort <- function(data, col1 = 1, col2 = 2) {
     sorted <- data[ord, ]
     return(sorted)
 }
-identical(colSort(gapminder, 1, 2), colSort(gapminder))
+identical(colSort(gap, 1, 2), colSort(gap))
 ```
 
 ```
@@ -455,7 +455,7 @@ identical(colSort(gapminder, 1, 2), colSort(gapminder))
 ```
 
 ```r
-identical(colSort(col2 = 2, data = gapminder, col1 = 1), colSort(gapminder, 1, 2))
+identical(colSort(col2 = 2, data = gap, col1 = 1), colSort(gap, 1, 2))
 ```
 
 ```
@@ -478,7 +478,7 @@ pplot <- function(x, y, ...) {
       plot(x, y, pch = 16, cex = 0.6, ...)
 }
 
-pplot(gapminder$gdpPercap, gapminder$lifeExp,  xlab = 'gdpPercap (log $)',
+pplot(gap$gdpPercap, gap$lifeExp,  xlab = 'gdpPercap (log $)',
       ylab = 'life expectancy (years)', log = 'x')
 ```
 
@@ -622,8 +622,8 @@ x[ , 2]
 ```
 
 ```
-##  [1] 0.98439597 0.73419259 0.05808899 0.48401256 0.72164981 0.14025814
-##  [7] 0.22856039 0.66118005 0.84247288 0.27120150
+##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
+##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
 ```
 
 ```r
@@ -631,8 +631,8 @@ x[ , 2]
 ```
 
 ```
-##  [1] 0.98439597 0.73419259 0.05808899 0.48401256 0.72164981 0.14025814
-##  [7] 0.22856039 0.66118005 0.84247288 0.27120150
+##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
+##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
 ```
 
 Also yes!
@@ -707,7 +707,7 @@ format. It's _really easy_ with some helpful verbs from `dplyr`...
 
 ```r
 # let's clean up the data set first
-gm_tidy <- gapminder %>%
+gm_tidy <- gap %>%
   split(.$year)
 ```
 
@@ -736,7 +736,7 @@ gm_lms <- gm_tidy %>%
 
 _Remark:_ What we accomplish here with `purrr::map` is also easily done using
 tools from base R. In fact, using `lapply`, we can evaluate the very same `lm`
-formula with our `gapminder` dataset, albeit without the extra goodies offered by
+formula with our `gap` dataset, albeit without the extra goodies offered by
 the pipe (aka `%>%`) syntax and the `safely` convenience, afforded by `magrittr`
 and `purrr`, respectively.
 

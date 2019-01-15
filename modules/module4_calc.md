@@ -1,8 +1,137 @@
 % R bootcamp, Module 4: Calculations
-% August 2018, UC Berkeley
-% Sean Wu (based on materials developed by Chris Paciorek)
+% January 2019, UC Berkeley
+% Chris Paciorek
 
 
+
+# Reminder: Vectorized calculations and comparisons
+
+At the core of R is the idea of doing calculations on entire vectors.
+
+
+```r
+gdpTotal <- gap$gdpPercap * gap$pop
+
+gdpSubset <- gdp[1:10]
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gdp' not found
+```
+
+```r
+gdpSubset >= 50000
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gdpSubset' not found
+```
+
+```r
+vec1 <- rnorm(5)
+vec2 <- rnorm(5)
+vec1 > vec2
+```
+
+```
+## [1]  TRUE FALSE  TRUE  TRUE  TRUE
+```
+
+```r
+vec1 == vec2
+```
+
+```
+## [1] FALSE FALSE FALSE FALSE FALSE
+```
+
+```r
+vec1 != vec2
+```
+
+```
+## [1] TRUE TRUE TRUE TRUE TRUE
+```
+
+```r
+## careful: 
+vec1 = vec2
+identical(vec1, vec2)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+## using 'or'
+gdpSubset >= 100000 | gdpSubset <= 1000
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gdpSubset' not found
+```
+
+```r
+## using 'and'
+gap$gdpPercap[1:10] >= 100000 & gap$continent[1:10] == "Asia"
+```
+
+```
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+An important related concept is that of recycling
+
+```r
+vec10 <- sample(1:10, 10, replace = TRUE)
+vec3 <- sample(1:10, 3, replace = TRUE)
+vec5 <- sample(1:10, 5, replace = TRUE)
+vec10
+```
+
+```
+##  [1] 10  9  4  9  9  3 10  4  2  1
+```
+
+```r
+vec3
+```
+
+```
+## [1] 1 3 2
+```
+
+```r
+vec5
+```
+
+```
+## [1] 7 8 3 2 4
+```
+
+```r
+vec10 + vec5
+```
+
+```
+##  [1] 17 17  7 11 13 10 18  7  4  5
+```
+
+```r
+vec10 + vec3
+```
+
+```
+## Warning in vec10 + vec3: longer object length is not a multiple of shorter
+## object length
+```
+
+```
+##  [1] 11 12  6 10 12  5 11  7  4  2
+```
+
+**Question**: Tell me what's going on. What choices were made by the R developers?
 
 # Vectorized calculations
 
@@ -31,7 +160,7 @@ system.time(trunc <- ifelse(vals > 0, vals, 0))
 
 ```
 ##    user  system elapsed 
-##   0.064   0.000   0.064
+##   0.148   0.012   0.159
 ```
 
 ```r
@@ -40,7 +169,7 @@ system.time(vals <- vals * (vals > 0))
 
 ```
 ##    user  system elapsed 
-##   0.004   0.000   0.005
+##   0.008   0.000   0.005
 ```
 
 **Question**: What am I doing with `vals * (vals > 0)` ? What happens behind the scenes in R?
@@ -51,13 +180,27 @@ Lots of functions in R are vectorized, such as some we've already used.
 
 
 ```r
-tmp <- as.character(air$DepTime)
-air$DepHour <- substring(tmp, 1, 2)
-head(air$DepHour)
+tmp <- as.character(air$year)
 ```
 
 ```
-## [1] "12" "12" "12" NA   "12" "12"
+## Error in eval(expr, envir, enclos): object 'air' not found
+```
+
+```r
+gap$year2 <- substring(tmp, 3, 4)
+```
+
+```
+## Error in substring(tmp, 3, 4): object 'tmp' not found
+```
+
+```r
+head(gap$year2)
+```
+
+```
+## NULL
 ```
 
 Question: Note the code above runs and the syntax is perfectly good R syntax, but in terms of what it does, there is a bug in it. See if you can see what it is.
@@ -220,7 +363,7 @@ for(i in 1:n)
 
 ```
 ##    user  system elapsed 
-##   2.640   0.016   2.655
+##   2.892   0.008   2.900
 ```
 
 The same holds for using `rbind()`, `cbind()`, or adding to a list, one element at a time.
@@ -238,7 +381,7 @@ for(i in 1:n)
 
 ```
 ##    user  system elapsed 
-##   0.044   0.000   0.045
+##   0.040   0.000   0.039
 ```
 
 **Question**: Thoughts on why these are so slow? Think about what R might be doing behind the scenes
@@ -260,7 +403,7 @@ for(i in 1:n)
 
 ```
 ##    user  system elapsed 
-##   0.036   0.000   0.037
+##   0.032   0.000   0.033
 ```
 
 Here's how to pre-allocate an empty list: 
@@ -320,13 +463,13 @@ lapply(myList, min)
 
 ```
 ## [[1]]
-## [1] -0.213107
+## [1] -0.8286919
 ## 
 ## [[2]]
-## [1] -1.263107
+## [1] -1.543495
 ## 
 ## [[3]]
-## [1] -0.5841702
+## [1] -0.07627372
 ```
 
 ```r
@@ -334,7 +477,7 @@ sapply(myList, min)
 ```
 
 ```
-## [1] -0.2131070 -1.2631070 -0.5841702
+## [1] -0.82869190 -1.54349527 -0.07627372
 ```
 
 Note that we don't generally want to use `apply()` on a data frame. 
@@ -349,38 +492,6 @@ sapply(1:10, function(x) x^2)
 ##  [1]   1   4   9  16  25  36  49  64  81 100
 ```
 
-Here's a cool trick to pull off a particular element of a list of lists:
-
-
-```r
-params <- list(a = list(mn = 7, sd = 3), b = list(mn = 6,sd = 1), 
-  c = list(mn = 2, sd = 1))
-sapply(params, "[[", 1)
-```
-
-```
-## a b c 
-## 7 6 2
-```
-
-**Challenge**: Think about why this works. 
-
-Hint:
-
-```r
-test <- list(5, 7, 3)
-test[[2]]
-```
-
-```
-## [1] 7
-```
-
-```r
-# `[[`(test, 2)  # need it commented or R Markdown processing messes it up...
-
-# `+`(3, 7)
-```
 
 # And more `apply()`s
 
@@ -393,205 +504,292 @@ There are a bunch of `apply()` variants, as well as parallelized versions of the
 
 - Sometimes we need to do some basic checking for the number of observations or types of observations in our dataset
 - To do this quickly and easily, `table()` is our friend
-- Let's look at our observations by year and airline
 
 
 ```r
-unique(air$UniqueCarrier)
-```
-
-```
-##  [1] "UA" "US" "NW" "OH" "OO" "TZ" "DL" "FL" "HA" "HP" "MQ" "AA" "AS" "CO"
-## [15] "EV" "F9" "DH" "YV" "B6" "XE" "WN"
-```
-
-```r
-tbl <- table(air$UniqueCarrier, air$Year)
+tbl <- table(gap$country, gap$continent)
 tbl
 ```
 
 ```
-##     
-##       2005  2006  2007  2008
-##   AA 12734 12770 12743 12008
-##   AS  4525  4933  6088  5062
-##   B6     0     0  1291  1923
-##   CO  4557  4752  4919  4801
-##   DH   470     0     0     0
-##   DL  6338  5487  5212  4575
-##   EV   179   140   423     0
-##   F9  1196  2643  2893  1686
-##   FL   642   815   960   951
-##   HA   365   364   365   366
-##   HP  4485     0     0     0
-##   MQ  1922  1711  1766  1742
-##   NW  3784  3928  3819  3827
-##   OH    30     0     0     0
-##   OO 38869 40407 41355 39027
-##   TZ  1846   475     0     0
-##   UA 43769 45766 45275 43736
-##   US  3262  7454  7272  7112
-##   WN     0     0  2675 12568
-##   XE     0     0  1164  1203
-##   YV     0   199   271     0
+##                           
+##                            Africa Americas Asia Europe Oceania
+##   Afghanistan                   0        0   12      0       0
+##   Albania                       0        0    0     12       0
+##   Algeria                      12        0    0      0       0
+##   Angola                       12        0    0      0       0
+##   Argentina                     0       12    0      0       0
+##   Australia                     0        0    0      0      12
+##   Austria                       0        0    0     12       0
+##   Bahrain                       0        0   12      0       0
+##   Bangladesh                    0        0   12      0       0
+##   Belgium                       0        0    0     12       0
+##   Benin                        12        0    0      0       0
+##   Bolivia                       0       12    0      0       0
+##   Bosnia and Herzegovina        0        0    0     12       0
+##   Botswana                     12        0    0      0       0
+##   Brazil                        0       12    0      0       0
+##   Bulgaria                      0        0    0     12       0
+##   Burkina Faso                 12        0    0      0       0
+##   Burundi                      12        0    0      0       0
+##   Cambodia                      0        0   12      0       0
+##   Cameroon                     12        0    0      0       0
+##   Canada                        0       12    0      0       0
+##   Central African Republic     12        0    0      0       0
+##   Chad                         12        0    0      0       0
+##   Chile                         0       12    0      0       0
+##   China                         0        0   12      0       0
+##   Colombia                      0       12    0      0       0
+##   Comoros                      12        0    0      0       0
+##   Congo Dem. Rep.              12        0    0      0       0
+##   Congo Rep.                   12        0    0      0       0
+##   Costa Rica                    0       12    0      0       0
+##   Cote d'Ivoire                12        0    0      0       0
+##   Croatia                       0        0    0     12       0
+##   Cuba                          0       12    0      0       0
+##   Czech Republic                0        0    0     12       0
+##   Denmark                       0        0    0     12       0
+##   Djibouti                     12        0    0      0       0
+##   Dominican Republic            0       12    0      0       0
+##   Ecuador                       0       12    0      0       0
+##   Egypt                        12        0    0      0       0
+##   El Salvador                   0       12    0      0       0
+##   Equatorial Guinea            12        0    0      0       0
+##   Eritrea                      12        0    0      0       0
+##   Ethiopia                     12        0    0      0       0
+##   Finland                       0        0    0     12       0
+##   France                        0        0    0     12       0
+##   Gabon                        12        0    0      0       0
+##   Gambia                       12        0    0      0       0
+##   Germany                       0        0    0     12       0
+##   Ghana                        12        0    0      0       0
+##   Greece                        0        0    0     12       0
+##   Guatemala                     0       12    0      0       0
+##   Guinea                       12        0    0      0       0
+##   Guinea-Bissau                12        0    0      0       0
+##   Haiti                         0       12    0      0       0
+##   Honduras                      0       12    0      0       0
+##   Hong Kong China               0        0   12      0       0
+##   Hungary                       0        0    0     12       0
+##   Iceland                       0        0    0     12       0
+##   India                         0        0   12      0       0
+##   Indonesia                     0        0   12      0       0
+##   Iran                          0        0   12      0       0
+##   Iraq                          0        0   12      0       0
+##   Ireland                       0        0    0     12       0
+##   Israel                        0        0   12      0       0
+##   Italy                         0        0    0     12       0
+##   Jamaica                       0       12    0      0       0
+##   Japan                         0        0   12      0       0
+##   Jordan                        0        0   12      0       0
+##   Kenya                        12        0    0      0       0
+##   Korea Dem. Rep.               0        0   12      0       0
+##   Korea Rep.                    0        0   12      0       0
+##   Kuwait                        0        0   12      0       0
+##   Lebanon                       0        0   12      0       0
+##   Lesotho                      12        0    0      0       0
+##   Liberia                      12        0    0      0       0
+##   Libya                        12        0    0      0       0
+##   Madagascar                   12        0    0      0       0
+##   Malawi                       12        0    0      0       0
+##   Malaysia                      0        0   12      0       0
+##   Mali                         12        0    0      0       0
+##   Mauritania                   12        0    0      0       0
+##   Mauritius                    12        0    0      0       0
+##   Mexico                        0       12    0      0       0
+##   Mongolia                      0        0   12      0       0
+##   Montenegro                    0        0    0     12       0
+##   Morocco                      12        0    0      0       0
+##   Mozambique                   12        0    0      0       0
+##   Myanmar                       0        0   12      0       0
+##   Namibia                      12        0    0      0       0
+##   Nepal                         0        0   12      0       0
+##   Netherlands                   0        0    0     12       0
+##   New Zealand                   0        0    0      0      12
+##   Nicaragua                     0       12    0      0       0
+##   Niger                        12        0    0      0       0
+##   Nigeria                      12        0    0      0       0
+##   Norway                        0        0    0     12       0
+##   Oman                          0        0   12      0       0
+##   Pakistan                      0        0   12      0       0
+##   Panama                        0       12    0      0       0
+##   Paraguay                      0       12    0      0       0
+##   Peru                          0       12    0      0       0
+##   Philippines                   0        0   12      0       0
+##   Poland                        0        0    0     12       0
+##   Portugal                      0        0    0     12       0
+##   Puerto Rico                   0       12    0      0       0
+##   Reunion                      12        0    0      0       0
+##   Romania                       0        0    0     12       0
+##   Rwanda                       12        0    0      0       0
+##   Sao Tome and Principe        12        0    0      0       0
+##   Saudi Arabia                  0        0   12      0       0
+##   Senegal                      12        0    0      0       0
+##   Serbia                        0        0    0     12       0
+##   Sierra Leone                 12        0    0      0       0
+##   Singapore                     0        0   12      0       0
+##   Slovak Republic               0        0    0     12       0
+##   Slovenia                      0        0    0     12       0
+##   Somalia                      12        0    0      0       0
+##   South Africa                 12        0    0      0       0
+##   Spain                         0        0    0     12       0
+##   Sri Lanka                     0        0   12      0       0
+##   Sudan                        12        0    0      0       0
+##   Swaziland                    12        0    0      0       0
+##   Sweden                        0        0    0     12       0
+##   Switzerland                   0        0    0     12       0
+##   Syria                         0        0   12      0       0
+##   Taiwan                        0        0   12      0       0
+##   Tanzania                     12        0    0      0       0
+##   Thailand                      0        0   12      0       0
+##   Togo                         12        0    0      0       0
+##   Trinidad and Tobago           0       12    0      0       0
+##   Tunisia                      12        0    0      0       0
+##   Turkey                        0        0    0     12       0
+##   Uganda                       12        0    0      0       0
+##   United Kingdom                0        0    0     12       0
+##   United States                 0       12    0      0       0
+##   Uruguay                       0       12    0      0       0
+##   Venezuela                     0       12    0      0       0
+##   Vietnam                       0        0   12      0       0
+##   West Bank and Gaza            0        0   12      0       0
+##   Yemen Rep.                    0        0   12      0       0
+##   Zambia                       12        0    0      0       0
+##   Zimbabwe                     12        0    0      0       0
 ```
 
 ```r
-round(prop.table(tbl, margin = 2), 3)
+rowSums(tbl)
 ```
 
 ```
-##     
-##       2005  2006  2007  2008
-##   AA 0.099 0.097 0.092 0.085
-##   AS 0.035 0.037 0.044 0.036
-##   B6 0.000 0.000 0.009 0.014
-##   CO 0.035 0.036 0.036 0.034
-##   DH 0.004 0.000 0.000 0.000
-##   DL 0.049 0.042 0.038 0.033
-##   EV 0.001 0.001 0.003 0.000
-##   F9 0.009 0.020 0.021 0.012
-##   FL 0.005 0.006 0.007 0.007
-##   HA 0.003 0.003 0.003 0.003
-##   HP 0.035 0.000 0.000 0.000
-##   MQ 0.015 0.013 0.013 0.012
-##   NW 0.029 0.030 0.028 0.027
-##   OH 0.000 0.000 0.000 0.000
-##   OO 0.301 0.306 0.299 0.278
-##   TZ 0.014 0.004 0.000 0.000
-##   UA 0.339 0.347 0.327 0.311
-##   US 0.025 0.057 0.053 0.051
-##   WN 0.000 0.000 0.019 0.089
-##   XE 0.000 0.000 0.008 0.009
-##   YV 0.000 0.002 0.002 0.000
-```
-
-```r
-table(air$UniqueCarrier, air$Month, air$Cancelled)
-```
-
-```
-## , ,  = 0
-## 
-##     
-##          1     2     3     4     5     6     7     8     9    10    11
-##   AA  3967  3542  3963  4089  4295  4200  4394  4370  4116  4260  4005
-##   AS  1703  1579  1740  1683  1733  1706  1816  1775  1573  1604  1691
-##   B6   154   143   154   150   352   349   336   344   297   305   296
-##   CO  1438  1285  1482  1448  1580  1761  1875  1887  1536  1620  1442
-##   DH     0     0     0     0    61    89    93    93    65    50    18
-##   DL  1692  1518  1712  1674  1808  1933  2030  2032  1820  1845  1698
-##   EV    88   105   113   114    84    25    23    27    24    30    28
-##   F9   592   544   612   569   741   776   883   834   712   730   679
-##   FL   138   113   152   218   299   403   480   485   325   310   220
-##   HA   123   113   124   120   124   120   124   124   120   122   120
-##   HP   398   351   393   383   396   364   355   361   352   361   348
-##   MQ   563   516   582   587   612   592   597   604   567   587   520
-##   NW  1139  1018  1125  1192  1358  1553  1651  1479  1205  1249  1123
-##   OH    29     0     0     0     0     0     0     0     0     0     0
-##   OO 12650 11942 13445 12757 13156 13138 13495 13790 12972 13449 12512
-##   TZ   338   270   272   250   157   151   163   157   126   143   135
-##   UA 14169 13110 14722 14474 15045 15050 15539 15719 14304 14884 14108
-##   US  1986  1814  2013  1983  2150  2177  2333  2317  2055  2104  1926
-##   WN   749   736   974  1000  1084  1061  1082  1185  1657  1705  1817
-##   XE   143   123   145   140   142   268   354   336   184   182   174
-##   YV    51    33    56    54    59    51    27    39    27    24    24
-##     
-##         12
-##   AA  4021
-##   AS  1723
-##   B6   303
-##   CO  1579
-##   DH     0
-##   DL  1684
-##   EV    50
-##   F9   694
-##   FL   217
-##   HA   123
-##   HP   346
-##   MQ   535
-##   NW  1198
-##   OH     0
-##   OO 12765
-##   TZ   142
-##   UA 14445
-##   US  1954
-##   WN  1873
-##   XE   162
-##   YV    11
-## 
-## , ,  = 1
-## 
-##     
-##          1     2     3     4     5     6     7     8     9    10    11
-##   AA   137   157   115   113    54    70    53    60    56    49    62
-##   AS    52    28    20    19    17    16    17    23    12    10    25
-##   B6     1     2     1     0     0     7     6     6     0     0     1
-##   CO     6    11    13     0     2     4     6     2    31     3     1
-##   DH     0     0     0     0     0     1     0     0     0     0     0
-##   DL    32    24    13    11    11    11    10     4     9     7     7
-##   EV     4     3     7     2     5     1     1     0     1     0     0
-##   F9     0     6     2     1     2     1     3     2     4     3     4
-##   FL     0     0     0     0     0     2     5     1     0     0     0
-##   HA     1     0     0     0     0     0     0     0     0     2     0
-##   HP     4     9     6     2     4     7     6     3     4     6     6
-##   MQ    36    33    17    10    16    13    27    21    18    20    32
-##   NW     7     9     4     5     2     6     7    13     4     2     4
-##   OH     1     0     0     0     0     0     0     0     0     0     0
-##   OO   624   373   247   191   155   159   217   162   177   252   392
-##   TZ     5     5     2     2     0     0     1     0     0     1     0
-##   UA   357   269   231   249   205   255   326   253   179   178   153
-##   US    37    29    36    17    10    28    29    18    16    16    26
-##   WN    44    18    18    22     9    24    26    17    17    28    44
-##   XE     5     0     0     0     0     3     1     1     0     0     2
-##   YV     2     1     1     2     0     4     0     0     2     2     0
-##     
-##         12
-##   AA   107
-##   AS    43
-##   B6     7
-##   CO    17
-##   DH     0
-##   DL    27
-##   EV     7
-##   F9    24
-##   FL     0
-##   HA     0
-##   HP    20
-##   MQ    36
-##   NW     5
-##   OH     0
-##   OO   638
-##   TZ     1
-##   UA   322
-##   US    26
-##   WN    53
-##   XE     2
-##   YV     0
+##              Afghanistan                  Albania                  Algeria 
+##                       12                       12                       12 
+##                   Angola                Argentina                Australia 
+##                       12                       12                       12 
+##                  Austria                  Bahrain               Bangladesh 
+##                       12                       12                       12 
+##                  Belgium                    Benin                  Bolivia 
+##                       12                       12                       12 
+##   Bosnia and Herzegovina                 Botswana                   Brazil 
+##                       12                       12                       12 
+##                 Bulgaria             Burkina Faso                  Burundi 
+##                       12                       12                       12 
+##                 Cambodia                 Cameroon                   Canada 
+##                       12                       12                       12 
+## Central African Republic                     Chad                    Chile 
+##                       12                       12                       12 
+##                    China                 Colombia                  Comoros 
+##                       12                       12                       12 
+##          Congo Dem. Rep.               Congo Rep.               Costa Rica 
+##                       12                       12                       12 
+##            Cote d'Ivoire                  Croatia                     Cuba 
+##                       12                       12                       12 
+##           Czech Republic                  Denmark                 Djibouti 
+##                       12                       12                       12 
+##       Dominican Republic                  Ecuador                    Egypt 
+##                       12                       12                       12 
+##              El Salvador        Equatorial Guinea                  Eritrea 
+##                       12                       12                       12 
+##                 Ethiopia                  Finland                   France 
+##                       12                       12                       12 
+##                    Gabon                   Gambia                  Germany 
+##                       12                       12                       12 
+##                    Ghana                   Greece                Guatemala 
+##                       12                       12                       12 
+##                   Guinea            Guinea-Bissau                    Haiti 
+##                       12                       12                       12 
+##                 Honduras          Hong Kong China                  Hungary 
+##                       12                       12                       12 
+##                  Iceland                    India                Indonesia 
+##                       12                       12                       12 
+##                     Iran                     Iraq                  Ireland 
+##                       12                       12                       12 
+##                   Israel                    Italy                  Jamaica 
+##                       12                       12                       12 
+##                    Japan                   Jordan                    Kenya 
+##                       12                       12                       12 
+##          Korea Dem. Rep.               Korea Rep.                   Kuwait 
+##                       12                       12                       12 
+##                  Lebanon                  Lesotho                  Liberia 
+##                       12                       12                       12 
+##                    Libya               Madagascar                   Malawi 
+##                       12                       12                       12 
+##                 Malaysia                     Mali               Mauritania 
+##                       12                       12                       12 
+##                Mauritius                   Mexico                 Mongolia 
+##                       12                       12                       12 
+##               Montenegro                  Morocco               Mozambique 
+##                       12                       12                       12 
+##                  Myanmar                  Namibia                    Nepal 
+##                       12                       12                       12 
+##              Netherlands              New Zealand                Nicaragua 
+##                       12                       12                       12 
+##                    Niger                  Nigeria                   Norway 
+##                       12                       12                       12 
+##                     Oman                 Pakistan                   Panama 
+##                       12                       12                       12 
+##                 Paraguay                     Peru              Philippines 
+##                       12                       12                       12 
+##                   Poland                 Portugal              Puerto Rico 
+##                       12                       12                       12 
+##                  Reunion                  Romania                   Rwanda 
+##                       12                       12                       12 
+##    Sao Tome and Principe             Saudi Arabia                  Senegal 
+##                       12                       12                       12 
+##                   Serbia             Sierra Leone                Singapore 
+##                       12                       12                       12 
+##          Slovak Republic                 Slovenia                  Somalia 
+##                       12                       12                       12 
+##             South Africa                    Spain                Sri Lanka 
+##                       12                       12                       12 
+##                    Sudan                Swaziland                   Sweden 
+##                       12                       12                       12 
+##              Switzerland                    Syria                   Taiwan 
+##                       12                       12                       12 
+##                 Tanzania                 Thailand                     Togo 
+##                       12                       12                       12 
+##      Trinidad and Tobago                  Tunisia                   Turkey 
+##                       12                       12                       12 
+##                   Uganda           United Kingdom            United States 
+##                       12                       12                       12 
+##                  Uruguay                Venezuela                  Vietnam 
+##                       12                       12                       12 
+##       West Bank and Gaza               Yemen Rep.                   Zambia 
+##                       12                       12                       12 
+##                 Zimbabwe 
+##                       12
 ```
 
 ```r
-with(air[air$UniqueCarrier == 'UA', ], table(Month, Cancelled))
+all(rowSums(tbl) == 12)
 ```
 
 ```
-##      Cancelled
-## Month     0     1
-##    1  14169   357
-##    2  13110   269
-##    3  14722   231
-##    4  14474   249
-##    5  15045   205
-##    6  15050   255
-##    7  15539   326
-##    8  15719   253
-##    9  14304   179
-##    10 14884   178
-##    11 14108   153
-##    12 14445   322
+## [1] TRUE
 ```
 
 **Challenge**: Can you figure out what `with()` does just by example? 
+
+# Discretization
+
+You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by life expectancy:
+
+```r
+gap2007$lifeExpBin <- cut(gap2007$lifeExp, breaks = c(0, 40, 50, 60, 70, 75, 80, Inf))
+tbl <- table(gap2007$continent, gap2007$lifeExpBin)
+round( prop.table(tbl, margin = 1), 2 )
+```
+
+```
+##           
+##            (0,40] (40,50] (50,60] (60,70] (70,75] (75,80] (80,Inf]
+##   Africa     0.02    0.33    0.42    0.10    0.12    0.02     0.00
+##   Americas   0.00    0.00    0.00    0.12    0.48    0.36     0.04
+##   Asia       0.00    0.03    0.06    0.24    0.39    0.18     0.09
+##   Europe     0.00    0.00    0.00    0.00    0.27    0.50     0.23
+##   Oceania    0.00    0.00    0.00    0.00    0.00    0.00     1.00
+```
 
 # Stratified analyses I
 Often we want to do individual analyses within subsets or clusters of our data.
@@ -600,37 +798,33 @@ As a first step, we might want to just split our dataset by a stratifying variab
 
 
 ```r
-# restrict to a few destinations
-DestSubset <- c('LAX','SEA','PHX','DEN','MSP','JFK','ATL','DFW','IAH', 'ORD') 
-airSmall <- subset(air, Dest %in% DestSubset)
-airSmall$DepDelay[airSmall$DepDelay > 60] <- 60
-subsets <- split(airSmall, airSmall$Dest)
+subsets <- split(gap,  gap$year)
 length(subsets)
 ```
 
 ```
-## [1] 10
+## [1] 12
 ```
 
 ```r
-dim(subsets[['LAX']])
+dim(subsets[['2007']])
 ```
 
 ```
-## [1] 44265    30
+## [1] 142   6
 ```
 
 ```r
 par(mfrow = c(1,2))
-boxplot(DepDelay ~ Month, data = subsets[['IAH']], main = 'Houston')
+plot(lifeExp ~ gdpPercap, data = subsets[['1952']], main = '1952')
 abline(h = 0, col = 'grey')
-boxplot(DepDelay ~ Month, data = subsets[['ORD']], main = 'Chicago')
+plot(lifeExp ~ gdpPercap, data = subsets[['2007']], main = '2007')
 abline(h = 0, col = 'grey')
 ```
 
-![](figure/unnamed-chunk-17-1.png)
+![](figure/unnamed-chunk-18-1.png)
 
-Note the use of the `%in%` operator can also be helpful.
+Obviously, we'd want to iterate to improve that plot given the outlier.
 
 # Stratified analyses II
 
@@ -638,101 +832,117 @@ Often we want to do individual analyses within subsets or clusters of our data. 
 
 
 ```r
-airSmallNum <- airSmall[ , c('DepDelay', 'ArrDelay', 'TaxiIn', 'TaxiOut')]
-aggregate(airSmallNum, by = list(destination = airSmall$Dest), FUN = median, na.rm = TRUE)
+gmSmall <- gap[ , c('lifeExp', 'gdpPercap')]  # reduce to only numeric columns
+aggregate(gmSmall, by = list(year = gap$year), FUN = median, na.rm = TRUE) # na.rm not needed here but illustrates use of additional arguments to FUN
 ```
 
 ```
-##    destination DepDelay ArrDelay TaxiIn TaxiOut
-## 1          ATL       -1       -2      8      16
-## 2          DEN       -1       -1      7      15
-## 3          DFW       -1       -2      9      15
-## 4          IAH       -2       -1      7      15
-## 5          JFK       -2        1      9      17
-## 6          LAX       -2       -1      9      16
-## 7          MSP       -4       -3      6      15
-## 8          ORD        0        0      7      17
-## 9          PHX       -1       -2      6      14
-## 10         SEA       -1        0      5      16
-```
-
-```r
-aggregate(DepDelay ~ Dest, data = airSmall, FUN = median)
-```
-
-```
-##    Dest DepDelay
-## 1   ATL       -1
-## 2   DEN       -1
-## 3   DFW       -1
-## 4   IAH       -2
-## 5   JFK       -2
-## 6   LAX       -2
-## 7   MSP       -4
-## 8   ORD        0
-## 9   PHX       -1
-## 10  SEA       -1
+##    year lifeExp gdpPercap
+## 1  1952 45.1355  1968.528
+## 2  1957 48.3605  2173.220
+## 3  1962 50.8810  2335.440
+## 4  1967 53.8250  2678.335
+## 5  1972 56.5300  3339.129
+## 6  1977 59.6720  3798.609
+## 7  1982 62.4415  4216.228
+## 8  1987 65.8340  4280.300
+## 9  1992 67.7030  4386.086
+## 10 1997 69.3940  4781.825
+## 11 2002 70.8255  5319.805
+## 12 2007 71.9355  6124.371
 ```
 
 ```r
-agg <- aggregate(DepDelay ~ Dest + Month, data = airSmall, FUN = median)
-xtabs(DepDelay ~ ., data = agg)
+aggregate(lifeExp ~ year + continent, data = gap, FUN = median)
 ```
 
 ```
-##      Month
-## Dest   1  2  3  4  5  6  7  8  9 10 11 12
-##   ATL -1  0  0 -2 -2  1  0 -1 -2 -2 -1  1
-##   DEN -2 -1 -1 -1 -1  1 -1 -1 -2 -2 -2  1
-##   DFW -1 -1 -1 -1 -1  0 -1 -1 -2 -2 -2  0
-##   IAH -3 -3 -2 -2 -2  0 -1 -1 -3 -2 -2  0
-##   JFK -2 -2 -2 -2 -2  0 -1 -1 -2 -2 -2  0
-##   LAX -2 -2 -2 -2 -2 -1 -2 -2 -3 -2 -2  0
-##   MSP -4 -4 -4 -5 -5 -4 -5 -4 -4 -4 -3 -2
-##   ORD  0  0  1  0 -1  2  0  0 -1 -1 -1  2
-##   PHX -1 -1 -1 -2 -2  0 -1 -1 -2 -2 -2  0
-##   SEA -2 -1 -1 -2 -1  1  0 -1 -3 -3 -2  1
+##    year continent lifeExp
+## 1  1952    Africa 38.8330
+## 2  1957    Africa 40.5925
+## 3  1962    Africa 42.6305
+## 4  1967    Africa 44.6985
+## 5  1972    Africa 47.0315
+## 6  1977    Africa 49.2725
+## 7  1982    Africa 50.7560
+## 8  1987    Africa 51.6395
+## 9  1992    Africa 52.4290
+## 10 1997    Africa 52.7590
+## 11 2002    Africa 51.2355
+## 12 2007    Africa 52.9265
+## 13 1952  Americas 54.7450
+## 14 1957  Americas 56.0740
+## 15 1962  Americas 58.2990
+## 16 1967  Americas 60.5230
+## 17 1972  Americas 63.4410
+## 18 1977  Americas 66.3530
+## 19 1982  Americas 67.4050
+## 20 1987  Americas 69.4980
+## 21 1992  Americas 69.8620
+## 22 1997  Americas 72.1460
+## 23 2002  Americas 72.0470
+## 24 2007  Americas 72.8990
+## 25 1952      Asia 44.8690
+## 26 1957      Asia 48.2840
+## 27 1962      Asia 49.3250
+## 28 1967      Asia 53.6550
+## 29 1972      Asia 56.9500
+## 30 1977      Asia 60.7650
+## 31 1982      Asia 63.7390
+## 32 1987      Asia 66.2950
+## 33 1992      Asia 68.6900
+## 34 1997      Asia 70.2650
+## 35 2002      Asia 71.0280
+## 36 2007      Asia 72.3960
+## 37 1952    Europe 65.9000
+## 38 1957    Europe 67.6500
+## 39 1962    Europe 69.5250
+## 40 1967    Europe 70.6100
+## 41 1972    Europe 70.8850
+## 42 1977    Europe 72.3350
+## 43 1982    Europe 73.4900
+## 44 1987    Europe 74.8150
+## 45 1992    Europe 75.4510
+## 46 1997    Europe 76.1160
+## 47 2002    Europe 77.5365
+## 48 2007    Europe 78.6085
+## 49 1952   Oceania 69.2550
+## 50 1957   Oceania 70.2950
+## 51 1962   Oceania 71.0850
+## 52 1967   Oceania 71.3100
+## 53 1972   Oceania 71.9100
+## 54 1977   Oceania 72.8550
+## 55 1982   Oceania 74.2900
+## 56 1987   Oceania 75.3200
+## 57 1992   Oceania 76.9450
+## 58 1997   Oceania 78.1900
+## 59 2002   Oceania 79.7400
+## 60 2007   Oceania 80.7195
+```
+
+```r
+agg <- aggregate(lifeExp ~ year + continent , data = gap, FUN = median)
+xtabs(lifeExp ~ ., data = agg)
+```
+
+```
+##       continent
+## year    Africa Americas    Asia  Europe Oceania
+##   1952 38.8330  54.7450 44.8690 65.9000 69.2550
+##   1957 40.5925  56.0740 48.2840 67.6500 70.2950
+##   1962 42.6305  58.2990 49.3250 69.5250 71.0850
+##   1967 44.6985  60.5230 53.6550 70.6100 71.3100
+##   1972 47.0315  63.4410 56.9500 70.8850 71.9100
+##   1977 49.2725  66.3530 60.7650 72.3350 72.8550
+##   1982 50.7560  67.4050 63.7390 73.4900 74.2900
+##   1987 51.6395  69.4980 66.2950 74.8150 75.3200
+##   1992 52.4290  69.8620 68.6900 75.4510 76.9450
+##   1997 52.7590  72.1460 70.2650 76.1160 78.1900
+##   2002 51.2355  72.0470 71.0280 77.5365 79.7400
+##   2007 52.9265  72.8990 72.3960 78.6085 80.7195
 ```
 
 Notice the 'long' vs. 'wide' formats. You'll see more about that sort of thing in Module 6.
-
-# Discretization
-
-You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by departure delay severity:
-
-```r
-air$delayStatus <- cut(air$DepDelay, breaks = c(-Inf, -5, 5, 15, 30, 60, 180, Inf))
-levels(air$delayStatus) <- c('early','on-time','slight',
-                        'short','medium','long','hair-pulling')
-tbl <- table(air$UniqueCarrier, air$delayStatus)
-round( prop.table(tbl, margin = 1), 2 )
-```
-
-```
-##     
-##      early on-time slight short medium long hair-pulling
-##   AA  0.23    0.48   0.09  0.06   0.07 0.07         0.01
-##   AS  0.36    0.28   0.10  0.09   0.08 0.08         0.01
-##   B6  0.31    0.36   0.09  0.07   0.07 0.09         0.01
-##   CO  0.29    0.42   0.09  0.07   0.06 0.05         0.01
-##   DH  0.23    0.51   0.13  0.05   0.04 0.03         0.01
-##   DL  0.25    0.50   0.11  0.07   0.04 0.03         0.00
-##   EV  0.17    0.55   0.10  0.06   0.05 0.07         0.00
-##   F9  0.40    0.33   0.10  0.07   0.06 0.04         0.00
-##   FL  0.29    0.43   0.09  0.08   0.06 0.06         0.01
-##   HA  0.28    0.49   0.08  0.05   0.04 0.04         0.02
-##   HP  0.23    0.50   0.11  0.06   0.05 0.04         0.00
-##   MQ  0.36    0.40   0.07  0.06   0.06 0.04         0.00
-##   NW  0.45    0.36   0.06  0.05   0.04 0.04         0.01
-##   OH  0.21    0.48   0.03  0.07   0.17 0.03         0.00
-##   OO  0.25    0.40   0.11  0.08   0.08 0.08         0.00
-##   TZ  0.38    0.39   0.07  0.05   0.05 0.04         0.01
-##   UA  0.24    0.48   0.09  0.06   0.06 0.06         0.01
-##   US  0.20    0.49   0.14  0.07   0.06 0.04         0.00
-##   WN  0.11    0.59   0.09  0.06   0.07 0.08         0.01
-##   XE  0.37    0.34   0.08  0.06   0.07 0.07         0.01
-##   YV  0.25    0.48   0.08  0.04   0.07 0.07         0.00
-```
 
 
 # Stratified analyses III
@@ -741,107 +951,67 @@ round( prop.table(tbl, margin = 1), 2 )
 
 
 ```r
-airSmall$late <- airSmall$DepDelay >= 15
-airSmall$Month <- as.factor(airSmall$Month)
-airSmall$Month <- relevel(airSmall$Month, "5")
-airSmall$Dest <- as.character(airSmall$Dest)
-
-out <- by(airSmall, airSmall$Dest, 
-    function(x) {
-      if(sum(!is.na(x$late))) 
-        # fit logistic regression
-        glm(late ~ Month, family = binomial, data = x) 
-      else NA
-    }
+out <- by(gap, gap$year, 
+    function(sub) {
+      lm(lifeExp ~ log(gdpPercap), data = sub)
+    }          
 )
 length(out)
 ```
 
 ```
-## [1] 10
+## [1] 12
 ```
 
 ```r
-summary(out[['IAH']])
+summary(out[['2007']])
 ```
 
 ```
 ## 
 ## Call:
-## glm(formula = late ~ Month, family = binomial, data = x)
+## lm(formula = lifeExp ~ log(gdpPercap), data = sub)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7365  -0.6121  -0.5750  -0.5252   2.2963  
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -25.947  -2.661   1.215   4.469  13.115 
 ## 
 ## Coefficients:
-##              Estimate Std. Error z value Pr(>|z|)    
-## (Intercept) -1.816777   0.096439 -18.839  < 2e-16 ***
-## Month1       0.100730   0.136079   0.740   0.4592    
-## Month2       0.204195   0.136910   1.491   0.1358    
-## Month3       0.329094   0.129520   2.541   0.0111 *  
-## Month4       0.153730   0.133867   1.148   0.2508    
-## Month6       0.568904   0.124816   4.558 5.17e-06 ***
-## Month7       0.237044   0.129051   1.837   0.0662 .  
-## Month8       0.136570   0.131184   1.041   0.2978    
-## Month9      -0.745516   0.166948  -4.466 7.99e-06 ***
-## Month10      0.002425   0.136671   0.018   0.9858    
-## Month11     -0.094463   0.140825  -0.671   0.5024    
-## Month12      0.650724   0.124100   5.244 1.58e-07 ***
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      4.9496     3.8577   1.283    0.202    
+## log(gdpPercap)   7.2028     0.4423  16.283   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 9334.1  on 10533  degrees of freedom
-## Residual deviance: 9199.0  on 10522  degrees of freedom
-##   (48 observations deleted due to missingness)
-## AIC: 9223
-## 
-## Number of Fisher Scoring iterations: 5
+## Residual standard error: 7.122 on 140 degrees of freedom
+## Multiple R-squared:  0.6544,	Adjusted R-squared:  0.652 
+## F-statistic: 265.2 on 1 and 140 DF,  p-value: < 2.2e-16
 ```
 
 ```r
-summary(out[['ORD']])
+summary(out[['1952']])
 ```
 
 ```
 ## 
 ## Call:
-## glm(formula = late ~ Month, family = binomial, data = x)
+## lm(formula = lifeExp ~ log(gdpPercap), data = sub)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8681  -0.7585  -0.7065  -0.6374   1.8404  
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -28.9571  -5.7319   0.7517   6.5770  13.7361 
 ## 
 ## Coefficients:
-##             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept) -1.36737    0.05601 -24.414  < 2e-16 ***
-## Month1       0.34839    0.07732   4.506 6.61e-06 ***
-## Month2       0.33658    0.07946   4.236 2.28e-05 ***
-## Month3       0.26875    0.07777   3.456 0.000549 ***
-## Month4       0.10664    0.07912   1.348 0.177701    
-## Month6       0.48219    0.07538   6.397 1.59e-10 ***
-## Month7       0.15244    0.07742   1.969 0.048939 *  
-## Month8       0.12886    0.07773   1.658 0.097355 .  
-## Month9      -0.11699    0.08168  -1.432 0.152086    
-## Month10     -0.12304    0.08087  -1.521 0.128169    
-## Month11      0.11599    0.07911   1.466 0.142599    
-## Month12      0.58578    0.07505   7.805 5.95e-15 ***
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)    -17.8457     5.0668  -3.522 0.000578 ***
+## log(gdpPercap)   8.8298     0.6626  13.326  < 2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 24639  on 22500  degrees of freedom
-## Residual deviance: 24453  on 22489  degrees of freedom
-##   (483 observations deleted due to missingness)
-## AIC: 24477
-## 
-## Number of Fisher Scoring iterations: 4
+## Residual standard error: 8.146 on 140 degrees of freedom
+## Multiple R-squared:  0.5592,	Adjusted R-squared:  0.556 
+## F-statistic: 177.6 on 1 and 140 DF,  p-value: < 2.2e-16
 ```
-
-**Question**: What's the business with the `if` statement? Why is this good practice?
 
 # Sorting
 
@@ -851,62 +1021,27 @@ Sorting a matrix or dataframe based on one or more columns is a somewhat manual 
 
 
 ```r
-ord <- order(air$DepDelay, air$ArrDelay, decreasing = TRUE)
+ord <- order(gap$year, gap$lifeExp, decreasing = TRUE)
 ord[1:5]
 ```
 
 ```
-## [1] 115794 396990 337213 168750 415550
+## [1]  804  672  696 1488   72
 ```
 
 ```r
-air_ordered <- air[ord, ]
-head(air_ordered)
+gm_ord <- gap[ord, ]
+head(gm_ord)
 ```
 
 ```
-##        Year Month DayofMonth DayOfWeek DepTime CRSDepTime ArrTime
-## 115794 2005    11          2         3    1009        630    1526
-## 396990 2007    12         31         1     745       1225    1318
-## 337213 2007     7         16         1     858       1410    1805
-## 168750 2006     4         11         2    1001       1543    1505
-## 415550 2008     2          9         6    1003       1605    1302
-## 290635 2007     3         22         4     729       1545    1257
-##        CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
-## 115794       1207            NW       368  N552NW               197
-## 396990       1809            NW       360  N525US               213
-## 337213       2245            AA       194  N5EVAA               367
-## 168750       2112            NW       354  N541US               184
-## 415550       1946            UA        77  N667UA               299
-## 290635       2115            NW       354  N504US               208
-##        CRSElapsedTime AirTime ArrDelay DepDelay Origin Dest Distance
-## 115794            217     175     1639     1659    SFO  MSP     1589
-## 396990            224     191     1149     1160    SFO  MSP     1589
-## 337213            335     323     1160     1128    SFO  BOS     2704
-## 168750            209     165     1073     1098    SFO  MSP     1589
-## 415550            341     272     1036     1078    SFO  HNL     2398
-## 290635            210     188      942      944    SFO  MSP     1589
-##        TaxiIn TaxiOut Cancelled CancellationCode Diverted CarrierDelay
-## 115794      3      19         0                         0         1639
-## 396990      9      13         0                         0         1106
-## 337213     25      19         0                         0          993
-## 168750      5      14         0                         0         1048
-## 415550      2      25         0                         0          710
-## 290635      4      16         0                         0          884
-##        WeatherDelay NASDelay SecurityDelay LateAircraftDelay DepHour
-## 115794            0        0             0                 0      10
-## 396990            0        0             0                43      74
-## 337213            0       32             0               135      85
-## 168750            6        0             0                19      10
-## 415550            0        0             0               326      10
-## 290635            0        0             0                58      72
-##         delayStatus
-## 115794 hair-pulling
-## 396990 hair-pulling
-## 337213 hair-pulling
-## 168750 hair-pulling
-## 415550 hair-pulling
-## 290635 hair-pulling
+##              country year       pop continent lifeExp gdpPercap
+## 804            Japan 2007 127467972      Asia  82.603  31656.07
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
+## 696          Iceland 2007    301931    Europe  81.757  36180.79
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
+## 72         Australia 2007  20434176   Oceania  81.235  34435.37
+## 1428           Spain 2007  40448191    Europe  80.941  28821.06
 ```
 
 You could of course write your own *sort* function that uses `order()`. More in Module 6.
@@ -915,82 +1050,80 @@ You could of course write your own *sort* function that uses `order()`. More in 
 
 We often need to combine data across multiple data frames, merging on common fields (i.e., *keys*). In database terminology, this is a *join* operation.
 
-Here's an example where we want to add a column indicating the number of flights to the given destination.
+Suppose that our dataset did not have 'continent' in it, but that we had a separate data frame that matches country to continent.
 
 
 ```r
-numFlights <- as.data.frame(table(air$Dest))
-head(numFlights)
+# ignore the 'wizard' behind the curtain...
+c2c <- unique(gap[ , c('country', 'continent')])
+gapSave <- gap
+gap <- gap[ , -which(names(gap) == "continent")]
+```
+
+Now let's add the continent info in:
+
+
+```r
+head(c2c)
 ```
 
 ```
-##   Var1  Freq
-## 1  ABQ  2467
-## 2  ACV 10402
-## 3  ANC   613
-## 4  ASE   166
-## 5  ATL 13374
-## 6  AUS  1705
+##        country continent
+## 1  Afghanistan      Asia
+## 13     Albania    Europe
+## 25     Algeria    Africa
+## 37      Angola    Africa
+## 49   Argentina  Americas
+## 61   Australia   Oceania
 ```
 
 ```r
-air2 <- merge(air, numFlights, by.x = 'Dest', by.y = 'Var1',
-     all.x = TRUE, all.y = FALSE)
-dim(air)
+head(gap)
 ```
 
 ```
-## [1] 539895     31
-```
-
-```r
-dim(air2)
-```
-
-```
-## [1] 539895     32
+##       country year      pop lifeExp gdpPercap
+## 1 Afghanistan 1952  8425333  28.801  779.4453
+## 2 Afghanistan 1957  9240934  30.332  820.8530
+## 3 Afghanistan 1962 10267083  31.997  853.1007
+## 4 Afghanistan 1967 11537966  34.020  836.1971
+## 5 Afghanistan 1972 13079460  36.088  739.9811
+## 6 Afghanistan 1977 14880372  38.438  786.1134
 ```
 
 ```r
-head(air2)
+gap <- merge(gap, c2c, by.x = 'country', by.y = 'country',
+                   all.x = TRUE, all.y = FALSE)
+
+dim(gapSave)
 ```
 
 ```
-##   Dest Year Month DayofMonth DayOfWeek DepTime CRSDepTime ArrTime
-## 1  ABQ 2007     3          3         6    1208       1218    1525
-## 2  ABQ 2007     4         24         2    2030       2025    2333
-## 3  ABQ 2007     9         13         4    2036       2042    2348
-## 4  ABQ 2007    12         18         2    2315       2100     227
-## 5  ABQ 2008     1         29         2    1327       1230    1653
-## 6  ABQ 2007     9         12         3    1346       1218    1704
-##   CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
-## 1       1539            OO      6416  N969SW               137
-## 2       2341            OO      5588  N728SK               123
-## 3       2356            OO      6422  N738SK               132
-## 4         16            OO      6422  N978SW               132
-## 5       1548            OO      6416  N405SW               146
-## 6       1535            OO      6416  N923SW               138
-##   CRSElapsedTime AirTime ArrDelay DepDelay Origin Distance TaxiIn TaxiOut
-## 1            141     120      -14      -10    SFO      896      5      12
-## 2            136     107       -8        5    SFO      896      4      12
-## 3            134     111       -8       -6    SFO      896      5      16
-## 4            136     110      131      135    SFO      896      6      16
-## 5            138     102       65       57    SFO      896      6      38
-## 6            137     118       89       88    SFO      896      6      14
-##   Cancelled CancellationCode Diverted CarrierDelay WeatherDelay NASDelay
-## 1         0                         0            0            0        0
-## 2         0                         0            0            0        0
-## 3         0                         0            0            0        0
-## 4         0                         0          131            0        0
-## 5         0                         0            0            0        0
-## 6         0                         0            0            0        0
-##   SecurityDelay LateAircraftDelay DepHour delayStatus Freq
-## 1             0                 0      12       early 2467
-## 2             0                 0      20     on-time 2467
-## 3             0                 0      20       early 2467
-## 4             0                 0      23        long 2467
-## 5             0                65      13      medium 2467
-## 6             0                89      13        long 2467
+## [1] 1704    6
+```
+
+```r
+dim(gap)
+```
+
+```
+## [1] 1704    6
+```
+
+```r
+identical(gapSave, gap)
+```
+
+```
+## [1] FALSE
+```
+
+```r
+identical(gapSave, gap[ , names(gapSave)])
+```
+
+```
+## [1] TRUE
 ```
 
 What's the deal with the `all.x` and `all.y` ?  We can tell R whether we want to keep all of the `x` observations, all the `y` observations, or neither, or both, when there may be rows in either of the datasets that don't match the other dataset.
@@ -999,23 +1132,27 @@ What's the deal with the `all.x` and `all.y` ?  We can tell R whether we want to
 
 ### Basics
 
-1) Create a vector that concatenates the Dest and Origin to create a 'Route' variable in a vectorized way using the string processing functions.
+1) Create a vector that concatenates the country and year to create a 'country-year' variable in a vectorized way using the string processing functions.
 
-2) Use `table()` to figure out the number of flights for each year.
+2) Use `table()` to figure out the number of countries available for each continent.
 
 ### Using the ideas
 
-3) Compute the number of NAs in each column of the *air* dataset using `sapply()` and making use of the `is.na()` function.
+3) Explain the steps of what this code is doing: `tmp <- gap[ , -which(names(gap) == "continent")]`.
 
-4) Merge the info from data/carriers.csv with the airline dataset so that we have the full names of the airlines as a new column in the data frame.
+4) Compute the number of NAs in each column of the gapminder dataset using `sapply()` and making use of the `is.na()` function.
 
-5) Discretize distance into some bins and create a Dist_binned variable. Count the number of flights in each bin.
+5) Discretize gdpPercap into some bins and create a gdpPercap_binned variable. Count the number of values in each bin.
 
-6) Create a boxplot of delay by binned distance.
+6) Create a boxplot of life expectancy by binned gdpPercap.
 
-7) Sort the dataset and find the shortest flight. Now consider the use of `which.min()` and why using that should be much quicker with large datasets.
+7) Sort the dataset and find the shortest life expectancy value. Now consider the use of `which.min()` and why using that should be much quicker with large datasets.
  
-8)  Suppose we have two categorical variables and we conduct a hypothesis test of independence. The chi-square statistic is: 
+8) Create a dataframe that has the total population across all the countries for each year.
+
+9) Merge the info from problem 8 back into the original gapminder dataset. Now plot life expectancy as a function of world population. 
+
+10)  Suppose we have two categorical variables and we conduct a hypothesis test of independence. The chi-square statistic is: 
 
 $$
 \chi^2 = \sum_{i=1}^{n}\sum_{j=1}^{m} \frac{(y_{ij} - e_{ij})^2}{e_{ij}}, 
@@ -1037,19 +1174,37 @@ b. How can you construct the *e* matrix? Hint: the numerator of *e* is just an *
 
 ### Advanced 
 
-9) For each combination of UniqueCarrier, Month, and DayOfWeek, find the 95th percentile of delay. 
+11) For each combination of year and continent, find the 95th percentile of life expectancy. 
 
-10) This requires a bit of setup. Run the following code:
+12) Here's a cool trick to pull off a particular element of a list of lists:
+
 
 ```r
-h <- air$DepTime %/% 100
-m <- air$DepTime %% 100
-h <- as.character(h)
-h[!is.na(h) & nchar(h) == 1] <- paste('0', h[!is.na(h) & nchar(h) == 1], sep = '')
-air$DepTimeChar <- paste(h, m, sep = '-')
+params <- list(a = list(mn = 7, sd = 3), b = list(mn = 6,sd = 1), 
+  c = list(mn = 2, sd = 1))
+sapply(params, "[[", 1)
 ```
 
-Now suppose the `DepTimeChar` field is the format the departure time field came in.
+```
+## a b c 
+## 7 6 2
+```
 
-Create hour and minute fields using `strsplit()` and `sapply()`. What format is the result of `strsplit()`. Why do you need `sapply()`? 
+Explain what that does and why it works.
 
+Hint:
+
+```r
+test <- list(5, 7, 3)
+test[[2]]
+```
+
+```
+## [1] 7
+```
+
+```r
+# `[[`(test, 2)  # need it commented or R Markdown processing messes it up...
+
+# `+`(3, 7)
+```

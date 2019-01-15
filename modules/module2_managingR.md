@@ -1,8 +1,132 @@
 % R bootcamp, Module 2: Managing R and R resources
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 
+
+# Managing your objects
+
+R has a number of functions for getting metadata about your objects. Some of this is built in to RStudio.
+
+
+```r
+v1 <- gap$year
+v2 <- gap$continent
+v3 <- gap$lifeExp
+
+length(v1)
+```
+
+```
+## [1] 1704
+```
+
+```r
+str(v1)
+```
+
+```
+##  int [1:1704] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+```
+
+```r
+class(v1)
+```
+
+```
+## [1] "integer"
+```
+
+```r
+typeof(v1)
+```
+
+```
+## [1] "integer"
+```
+
+```r
+class(v2)
+```
+
+```
+## [1] "character"
+```
+
+```r
+typeof(v2)
+```
+
+```
+## [1] "character"
+```
+
+```r
+class(v3)
+```
+
+```
+## [1] "numeric"
+```
+
+```r
+typeof(v3)
+```
+
+```
+## [1] "double"
+```
+
+```r
+is.vector(v1)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+is.list(v1)
+```
+
+```
+## [1] FALSE
+```
+
+```r
+# only present if code from module 1 run in this R session
+is.list(myList)
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'myList' not found
+```
+
+```r
+is.vector(myList)
+```
+
+```
+## Error in is.vector(myList): object 'myList' not found
+```
+
+```r
+is.data.frame(gap)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+is.list(gap)
+```
+
+```
+## [1] TRUE
+```
+
+**Question**: What have you learned? Does it make sense? 
 
 # Managing and saving the workspace
 
@@ -17,7 +141,7 @@ ls()  # search the user workspace (global environment)
 ```
 
 ```
-## [1] "air" "x"   "y"   "z"
+## [1] "gap" "v1"  "v2"  "v3"  "x"   "y"   "z"
 ```
 
 ```r
@@ -26,7 +150,7 @@ ls()
 ```
 
 ```
-## [1] "air" "y"   "z"
+## [1] "gap" "v1"  "v2"  "v3"  "y"   "z"
 ```
 
 ```r
@@ -34,36 +158,16 @@ ls.str() # list and describe variables
 ```
 
 ```
-## air : 'data.frame':	539895 obs. of  29 variables:
-##  $ Year             : int  2005 2005 2005 2005 2005 2005 2005 2005 2005 2005 ...
-##  $ Month            : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ DayofMonth       : int  1 2 3 4 5 6 7 8 9 10 ...
-##  $ DayOfWeek        : int  6 7 1 2 3 4 5 6 7 1 ...
-##  $ DepTime          : int  1211 1209 1213 NA 1211 1214 1330 1213 1206 1338 ...
-##  $ CRSDepTime       : int  1216 1216 1216 1216 1216 1215 1215 1215 1215 1215 ...
-##  $ ArrTime          : int  1451 1447 1454 NA 1504 1506 1620 1448 1443 1610 ...
-##  $ CRSArrTime       : int  1502 1502 1502 1502 1502 1505 1505 1505 1505 1505 ...
-##  $ UniqueCarrier    : chr  "UA" "UA" "UA" "UA" ...
-##  $ FlightNum        : int  548 548 548 548 548 548 548 548 548 548 ...
-##  $ TailNum          : chr  "N341UA" "N398UA" "N303UA" "000000" ...
-##  $ ActualElapsedTime: int  100 98 101 NA 113 112 110 95 97 92 ...
-##  $ CRSElapsedTime   : int  106 106 106 106 106 110 110 110 110 110 ...
-##  $ AirTime          : int  81 79 83 NA 85 95 85 72 77 78 ...
-##  $ ArrDelay         : int  -11 -15 -8 NA 2 1 75 -17 -22 65 ...
-##  $ DepDelay         : int  -5 -7 -3 NA -5 -1 75 -2 -9 83 ...
-##  $ Origin           : chr  "SFO" "SFO" "SFO" "SFO" ...
-##  $ Dest             : chr  "SLC" "SLC" "SLC" "SLC" ...
-##  $ Distance         : int  599 599 599 599 599 599 599 599 599 599 ...
-##  $ TaxiIn           : int  2 2 3 0 6 6 6 3 3 3 ...
-##  $ TaxiOut          : int  17 17 15 0 22 11 19 20 17 11 ...
-##  $ Cancelled        : int  0 0 0 1 0 0 0 0 0 0 ...
-##  $ CancellationCode : chr  "" "" "" "A" ...
-##  $ Diverted         : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ CarrierDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ WeatherDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ NASDelay         : int  0 0 0 0 0 0 3 0 0 0 ...
-##  $ SecurityDelay    : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ LateAircraftDelay: int  0 0 0 0 0 0 72 0 0 65 ...
+## gap : 'data.frame':	1704 obs. of  6 variables:
+##  $ country  : chr  "Afghanistan" "Afghanistan" "Afghanistan" "Afghanistan" ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
+##  $ continent: chr  "Asia" "Asia" "Asia" "Asia" ...
+##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+##  $ gdpPercap: num  779 821 853 836 740 ...
+## v1 :  int [1:1704] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+## v2 :  chr [1:1704] "Asia" "Asia" "Asia" "Asia" "Asia" "Asia" "Asia" "Asia" ...
+## v3 :  num [1:1704] 28.8 30.3 32 34 36.1 ...
 ## y :  int [1:3] 5 2 7
 ## z : List of 2
 ##  $ a: num 3
@@ -77,7 +181,7 @@ ls()
 ```
 
 ```
-## [1] "air" "y"   "z"
+## [1] "gap" "v1"  "v2"  "v3"  "y"   "z"
 ```
 
 ```r
@@ -224,27 +328,26 @@ lm(7)
 ```
 
 ```r
-x <- rnorm(10); y <- rnorm(10)
-lm(y ~ x)
+lm(gap$lifeExp ~ gap$gdpPercap)
 ```
 
 ```
-## y ~ x
-## <environment: 0x438bd58>
+## gap$lifeExp ~ gap$gdpPercap
+## <environment: 0x36cbb00>
 ```
 
 ```r
-stats::lm(y ~ x)
+stats::lm(gap$lifeExp ~ gap$gdpPercap)
 ```
 
 ```
 ## 
 ## Call:
-## stats::lm(formula = y ~ x)
+## stats::lm(formula = gap$lifeExp ~ gap$gdpPercap)
 ## 
 ## Coefficients:
-## (Intercept)            x  
-##      0.3736       0.9397
+##   (Intercept)  gap$gdpPercap  
+##     5.396e+01      7.649e-04
 ```
 
 ```r
@@ -294,19 +397,19 @@ To read and write from R, you need to have a firm grasp of where in the computer
 ```r
 getwd()  # what directory will R look in?
 # Linux/Mac specific
-setwd('~/Desktop/r-bootcamp-2018') # change the working directory
+setwd('~/Desktop/r-bootcamp-winter-2019') # change the working directory
 setwd('/Users/paciorek/Desktop') # absolute path
 getwd()
-setwd('r-bootcamp-2018/modules') # relative path
+setwd('r-bootcamp-winter-2019/modules') # relative path
 setwd('../tmp') # relative path, up and back down the tree
 
 # Windows - use either \\ or / to indicate directories
-# setwd('C:\\Users\\Your_username\\Desktop\\r-bootcamp-2018')
-# setwd('..\\r-bootcamp-2018')
+# setwd('C:\\Users\\Your_username\\Desktop\\r-bootcamp-winter-2019')
+# setwd('..\\r-bootcamp-winter-2019')
 
 # platform-agnostic
-setwd(file.path('~', 'Desktop', 'r-bootcamp-2018', 'modules')) # change the working directory
-setwd(file.path('/', 'Users', 'paciorek', 'Desktop', 'r-bootcamp-2018', 'modules')) # absolute path
+setwd(file.path('~', 'Desktop', 'r-bootcamp-winter-2019', 'modules')) # change the working directory
+setwd(file.path('/', 'Users', 'paciorek', 'Desktop', 'r-bootcamp-winter-2019', 'modules')) # absolute path
 getwd()
 setwd(file.path('..', 'data')) # relative path
 ```
@@ -401,35 +504,26 @@ dev.off()
 
 ```r
 library(xtable)
-print(xtable(table(air$UniqueCarrier, air$Cancelled)), type = "html")
+print(xtable(table(gap$year, gap$continent)), type = "html")
 ```
 
 ```
 ## <!-- html table generated in R 3.4.3 by xtable 1.8-2 package -->
-## <!-- Mon Aug 13 15:59:50 2018 -->
+## <!-- Mon Jan 14 17:24:52 2019 -->
 ## <table border=1>
-## <tr> <th>  </th> <th> 0 </th> <th> 1 </th>  </tr>
-##   <tr> <td align="right"> AA </td> <td align="right"> 49222 </td> <td align="right"> 1033 </td> </tr>
-##   <tr> <td align="right"> AS </td> <td align="right"> 20326 </td> <td align="right"> 282 </td> </tr>
-##   <tr> <td align="right"> B6 </td> <td align="right"> 3183 </td> <td align="right">  31 </td> </tr>
-##   <tr> <td align="right"> CO </td> <td align="right"> 18933 </td> <td align="right">  96 </td> </tr>
-##   <tr> <td align="right"> DH </td> <td align="right"> 469 </td> <td align="right">   1 </td> </tr>
-##   <tr> <td align="right"> DL </td> <td align="right"> 21446 </td> <td align="right"> 166 </td> </tr>
-##   <tr> <td align="right"> EV </td> <td align="right"> 711 </td> <td align="right">  31 </td> </tr>
-##   <tr> <td align="right"> F9 </td> <td align="right"> 8366 </td> <td align="right">  52 </td> </tr>
-##   <tr> <td align="right"> FL </td> <td align="right"> 3360 </td> <td align="right">   8 </td> </tr>
-##   <tr> <td align="right"> HA </td> <td align="right"> 1457 </td> <td align="right">   3 </td> </tr>
-##   <tr> <td align="right"> HP </td> <td align="right"> 4408 </td> <td align="right">  77 </td> </tr>
-##   <tr> <td align="right"> MQ </td> <td align="right"> 6862 </td> <td align="right"> 279 </td> </tr>
-##   <tr> <td align="right"> NW </td> <td align="right"> 15290 </td> <td align="right">  68 </td> </tr>
-##   <tr> <td align="right"> OH </td> <td align="right">  29 </td> <td align="right">   1 </td> </tr>
-##   <tr> <td align="right"> OO </td> <td align="right"> 156071 </td> <td align="right"> 3587 </td> </tr>
-##   <tr> <td align="right"> TZ </td> <td align="right"> 2304 </td> <td align="right">  17 </td> </tr>
-##   <tr> <td align="right"> UA </td> <td align="right"> 175569 </td> <td align="right"> 2977 </td> </tr>
-##   <tr> <td align="right"> US </td> <td align="right"> 24812 </td> <td align="right"> 288 </td> </tr>
-##   <tr> <td align="right"> WN </td> <td align="right"> 14923 </td> <td align="right"> 320 </td> </tr>
-##   <tr> <td align="right"> XE </td> <td align="right"> 2353 </td> <td align="right">  14 </td> </tr>
-##   <tr> <td align="right"> YV </td> <td align="right"> 456 </td> <td align="right">  14 </td> </tr>
+## <tr> <th>  </th> <th> Africa </th> <th> Americas </th> <th> Asia </th> <th> Europe </th> <th> Oceania </th>  </tr>
+##   <tr> <td align="right"> 1952 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1957 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1962 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1967 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1972 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1977 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1982 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1987 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1992 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 1997 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 2002 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
+##   <tr> <td align="right"> 2007 </td> <td align="right">  52 </td> <td align="right">  25 </td> <td align="right">  33 </td> <td align="right">  30 </td> <td align="right">   2 </td> </tr>
 ##    </table>
 ```
 
@@ -459,7 +553,7 @@ As you're gathering by now, I've used Git and Github to manage all the content f
 
 ### Making changes to a repository
 
-We'll go through a short example of making changes to the r-bootcamp-2018 repository. In this case you don't have permission to make changes so you'll just have to follow along as I do it. However, you could start your own repository and then you'd be able to do similar things.
+We'll go through a short example of making changes to the r-bootcamp-winter-2019 repository. In this case you don't have permission to make changes so you'll just have to follow along as I do it. However, you could start your own repository and then you'd be able to do similar things.
 
 Note that there are [graphical interfaces to Git](https://git-scm.com/downloads/guis) that you might want to check out, but here I'm just going to do it from the command line on my Mac.
 
@@ -522,7 +616,7 @@ You also want to include a short, focused, [reproducible](https://adv-r.had.co.n
 
 3) Put the *data/cpds.csv* file in some other directory on your computer, such as *Downloads*. Use `setwd()` to set your working directory to be that directory. Read the file in using `read.csv()`.  Now use `setwd()` to point to a different directory such as *Desktop*. Write the data frame out to a file without any row names and without quotes on the character strings.
 
-4) Make a plot with the airline data. Save it as a PDF in *Desktop*. Now see what happens if you set the *width* and *height* arguments to be very small and see how it affects the resulting PDF. Do the same but setting width and height to be very large.
+4) Make a plot with the gapminder data. Save it as a PDF in *Desktop*. Now see what happens if you set the *width* and *height* arguments to be very small and see how it affects the resulting PDF. Do the same but setting width and height to be very large.
 
 5) Figure out where (what directory) the *graphics* package is stored on your machine. Is it the same as where the *fields* package is stored?
 

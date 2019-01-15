@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="author" content="August 2018, UC Berkeley" />
+  <meta name="author" content="January 2019, UC Berkeley" />
   <title>R bootcamp, Module 10: Advanced topics</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -52,7 +52,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="slide titlepage">
   <h1 class="title">R bootcamp, Module 10: Advanced topics</h1>
   <p class="author">
-August 2018, UC Berkeley
+January 2019, UC Berkeley
   </p>
   <p class="date">Chris Paciorek</p>
 </div>
@@ -77,21 +77,67 @@ August 2018, UC Berkeley
 </div>
 <div id="working-with-s3-classes-and-methods" class="slide section level1">
 <h1>Working with S3 classes and methods</h1>
+<p>R has several approaches to object-oriented programming. These are widely used, albeit a bit klunky.</p>
+<p>The most basic is 'S3' objects. These objects are generally built upon lists.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span><span class="kw">lm</span>(gap$lifeExp ~<span class="st"> </span><span class="kw">log</span>(gap$gdpPercap))
+<span class="kw">class</span>(mod)</code></pre></div>
+<pre><code>## [1] &quot;lm&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.list</span>(mod)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(mod)</code></pre></div>
+<pre><code>##  [1] &quot;coefficients&quot;  &quot;residuals&quot;     &quot;effects&quot;       &quot;rank&quot;         
+##  [5] &quot;fitted.values&quot; &quot;assign&quot;        &quot;qr&quot;            &quot;df.residual&quot;  
+##  [9] &quot;xlevels&quot;       &quot;call&quot;          &quot;terms&quot;         &quot;model&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod$coefficients</code></pre></div>
+<pre><code>##        (Intercept) log(gap$gdpPercap) 
+##          -9.100889           8.405085</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod[[<span class="st">'coefficients'</span>]]</code></pre></div>
+<pre><code>##        (Intercept) log(gap$gdpPercap) 
+##          -9.100889           8.405085</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod[[<span class="dv">1</span>]]</code></pre></div>
+<pre><code>##        (Intercept) log(gap$gdpPercap) 
+##          -9.100889           8.405085</code></pre>
+<p>The magic of OOP here is that methods (i.e., functions) can be tailored to work specifically with specific kinds of objects.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(gap$lifeExp)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   23.60   48.20   60.71   59.47   70.85   82.60</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(mod)</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = gap$lifeExp ~ log(gap$gdpPercap))
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -32.778  -4.204   1.212   4.658  19.285 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         -9.1009     1.2277  -7.413 1.93e-13 ***
+## log(gap$gdpPercap)   8.4051     0.1488  56.500  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.62 on 1702 degrees of freedom
+## Multiple R-squared:  0.6522, Adjusted R-squared:  0.652 
+## F-statistic:  3192 on 1 and 1702 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><strong>Question</strong>: What do you think R is doing behind the scenes?</p>
+<p>Consider <code>summary.lm</code>.</p>
+</div>
+<div id="more-on-working-with-s3-classes-and-methods" class="slide section level1">
+<h1>More on working with S3 classes and methods</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(methods)
-sub &lt;-<span class="st"> </span>air[air$Month ==<span class="st"> </span><span class="dv">1</span>, ]  <span class="co"># to speed up the next steps</span>
-yb &lt;-<span class="st"> </span>sub$DepDelay &gt;<span class="st"> </span><span class="dv">15</span>
-yc &lt;-<span class="st"> </span>sub$DepDelay
-yc[yc &gt;<span class="st"> </span><span class="dv">180</span>] &lt;-<span class="st"> </span><span class="dv">180</span>
-x &lt;-<span class="st"> </span>sub$Distance
+yb &lt;-<span class="st"> </span>gap$lifeExp &gt;<span class="st"> </span><span class="dv">75</span>
+yc &lt;-<span class="st"> </span>gap$lifeExp
+x &lt;-<span class="st"> </span><span class="kw">log</span>(gap$gdpPercap)
 mod1 &lt;-<span class="st"> </span><span class="kw">lm</span>(yc ~<span class="st"> </span>x)
 mod2 &lt;-<span class="st"> </span><span class="kw">glm</span>(yb ~<span class="st"> </span>x, <span class="dt">family =</span> binomial)
 mod2$residuals[<span class="dv">1</span>:<span class="dv">20</span>] <span class="co"># access field with list-like syntax</span></code></pre></div>
-<pre><code>##         1         2         3         5         6         7         8 
-## -1.332485 -1.332485 -1.332485 -1.332485 -1.332485  4.007653 -1.332485 
-##         9        10        11        12        13        14        15 
-## -1.332485  4.007653 -1.332485 -1.332485 -1.332485 -1.332485 -1.332485 
-##        16        17        18        19        20        21 
-## -1.332485 -1.332485 -1.332485 -1.332485 -1.332485 -1.332485</code></pre>
+<pre><code>##         1         2         3         4         5         6         7 
+## -1.000026 -1.000031 -1.000035 -1.000033 -1.000022 -1.000027 -1.000054 
+##         8         9        10        11        12        13        14 
+## -1.000035 -1.000015 -1.000014 -1.000021 -1.000053 -1.000258 -1.000477 
+##        15        16        17        18        19        20 
+## -1.000832 -1.001461 -1.002613 -1.003204 -1.003496 -1.003838</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(mod2)</code></pre></div>
 <pre><code>## [1] &quot;glm&quot; &quot;lm&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is</span>(mod2, <span class="st">&quot;lm&quot;</span>)</code></pre></div>
@@ -106,10 +152,9 @@ mod2$residuals[<span class="dv">1</span>:<span class="dv">20</span>] <span class
 ## [13] &quot;iter&quot;              &quot;weights&quot;           &quot;prior.weights&quot;    
 ## [16] &quot;df.residual&quot;       &quot;df.null&quot;           &quot;y&quot;                
 ## [19] &quot;converged&quot;         &quot;boundary&quot;          &quot;model&quot;            
-## [22] &quot;na.action&quot;         &quot;call&quot;              &quot;formula&quot;          
-## [25] &quot;terms&quot;             &quot;data&quot;              &quot;offset&quot;           
-## [28] &quot;control&quot;           &quot;method&quot;            &quot;contrasts&quot;        
-## [31] &quot;xlevels&quot;</code></pre>
+## [22] &quot;call&quot;              &quot;formula&quot;           &quot;terms&quot;            
+## [25] &quot;data&quot;              &quot;offset&quot;            &quot;control&quot;          
+## [28] &quot;method&quot;            &quot;contrasts&quot;         &quot;xlevels&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">methods</span>(<span class="dt">class =</span> <span class="st">&quot;glm&quot;</span>)</code></pre></div>
 <pre><code>##  [1] add1           anova          coerce         confint       
 ##  [5] cooks.distance deviance       drop1          effects       
@@ -132,7 +177,7 @@ mod2$residuals[<span class="dv">1</span>:<span class="dv">20</span>] <span class
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predict</code></pre></div>
 <pre><code>## function (object, ...) 
 ## UseMethod(&quot;predict&quot;)
-## &lt;bytecode: 0x2be5f20&gt;
+## &lt;bytecode: 0x31a9778&gt;
 ## &lt;environment: namespace:stats&gt;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict.glm</span></code></pre></div>
 <p>When <code>predict()</code> is called on a GLM object, it first calls the generic <code>predict()</code>, which then recognizes that the first argument is of the class <em>glm</em> and immediately calls the right class-specific method, <code>predict.glm()</code> in this case.</p>
@@ -257,50 +302,46 @@ fm1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction ~<span c
 </div>
 <div id="why-we-need-to-try" class="slide section level1">
 <h1>Why we need to <code>try()</code></h1>
-<p>Suppose we tried to do a stratified analysis of delay on year and month within destinations. I'm going to do this as a for loop for pedagogical reasons, but again, it would be better to do this with dplyr/lapply/by type tools.</p>
+<p>Suppose we tried to do a stratified analysis of life expectancy on GDP within continents, for 2007. I'm going to do this as a for loop for pedagogical reasons, but again, it would be better to do this with dplyr/lapply/by type tools.</p>
+<p>For the purpose of illustration, I'm going to monkey a bit with the data such that there is an error in fitting Oceania. This is artificial, but when you stratify data into smaller groups it's not uncommon that the analysis can fail for one of the groups (often because of small sample size or missing data).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span><span class="kw">list</span>()
-Dests &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'LAX'</span>, <span class="st">'OAK'</span>, <span class="st">'DRO'</span>, <span class="st">'ORD'</span>)
-sub &lt;-<span class="st"> </span>air[air$Dest %in%<span class="st"> </span>Dests, ]
-sub$Month &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sub$Month)
-for(curDest in Dests) {
-            <span class="kw">cat</span>(<span class="st">&quot;Fitting model for destination &quot;</span>, curDest, <span class="st">&quot;.</span><span class="ch">\n</span><span class="st">&quot;</span>)
-            tmp &lt;-<span class="st"> </span><span class="kw">subset</span>(sub, Dest ==<span class="st"> </span>curDest)
-            mod[[curDest]] &lt;-<span class="st"> </span><span class="kw">lm</span>(DepDelay ~<span class="st"> </span>Year +<span class="st"> </span>Month, <span class="dt">data =</span> tmp)
+fakedat &lt;-<span class="st"> </span>gap[gap$year ==<span class="st"> </span><span class="dv">2007</span>, ]
+fakedat$gdpPercap[fakedat$continent ==<span class="st"> 'Oceania'</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
+
+for(cont in <span class="kw">c</span>(<span class="st">'Asia'</span>, <span class="st">'Oceania'</span>, <span class="st">'Europe'</span>, <span class="st">'Americas'</span>, <span class="st">'Africa'</span>)) {
+            <span class="kw">cat</span>(<span class="st">&quot;Fitting model for continent &quot;</span>, cont, <span class="st">&quot;.</span><span class="ch">\n</span><span class="st">&quot;</span>)
+            tmp &lt;-<span class="st"> </span><span class="kw">subset</span>(fakedat, continent ==<span class="st"> </span>cont)
+            mod[[cont]] &lt;-<span class="st"> </span><span class="kw">lm</span>(lifeExp ~<span class="st"> </span><span class="kw">log</span>(gdpPercap), <span class="dt">data =</span> tmp)
 }</code></pre></div>
-<pre><code>## Fitting model for destination  LAX .
-## Fitting model for destination  OAK .</code></pre>
-<pre><code>## Error in `contrasts&lt;-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels</code></pre>
+<pre><code>## Fitting model for continent  Asia .
+## Fitting model for continent  Oceania .</code></pre>
+<pre><code>## Error in lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...): 0 (non-NA) cases</code></pre>
 <p>What happened?</p>
 </div>
 <div id="how-we-can-try-harder" class="slide section level1">
 <h1>How we can <code>try()</code> harder</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span><span class="kw">list</span>()
-Dests &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'LAX'</span>, <span class="st">'OAK'</span>, <span class="st">'DRO'</span>, <span class="st">'ORD'</span>)
-sub &lt;-<span class="st"> </span>air[air$Dest %in%<span class="st"> </span>Dests, ]
-sub$Month &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sub$Month)
-for(curDest in Dests) {
-            <span class="kw">cat</span>(<span class="st">&quot;Fitting model for destination &quot;</span>, curDest, <span class="st">&quot;.</span><span class="ch">\n</span><span class="st">&quot;</span>)
-            tmp &lt;-<span class="st"> </span><span class="kw">subset</span>(sub, Dest ==<span class="st"> </span>curDest)
-            curMod &lt;-<span class="st"> </span><span class="kw">try</span>(<span class="kw">lm</span>(DepDelay ~<span class="st"> </span>Year +<span class="st"> </span>Month, <span class="dt">data =</span> tmp))
-            if(<span class="kw">is</span>(curMod, <span class="st">&quot;try-error&quot;</span>)) mod[[curDest]] &lt;-<span class="st"> </span><span class="ot">NA</span> 
-                       else mod[[curDest]] &lt;-<span class="st"> </span>curMod            
+
+for(cont in <span class="kw">c</span>(<span class="st">'Asia'</span>, <span class="st">'Oceania'</span>, <span class="st">'Europe'</span>, <span class="st">'Americas'</span>, <span class="st">'Africa'</span>)) {
+            <span class="kw">cat</span>(<span class="st">&quot;Fitting model for continent &quot;</span>, cont, <span class="st">&quot;.</span><span class="ch">\n</span><span class="st">&quot;</span>)
+            tmp &lt;-<span class="st"> </span><span class="kw">subset</span>(fakedat, continent ==<span class="st"> </span>cont)
+            curMod &lt;-<span class="st"> </span><span class="kw">try</span>(<span class="kw">lm</span>(lifeExp ~<span class="st"> </span><span class="kw">log</span>(gdpPercap), <span class="dt">data =</span> tmp))
+            if(<span class="kw">is</span>(curMod, <span class="st">&quot;try-error&quot;</span>)) mod[[cont]] &lt;-<span class="st"> </span><span class="ot">NA</span> 
+                       else mod[[cont]] &lt;-<span class="st"> </span>curMod            
 }</code></pre></div>
-<pre><code>## Fitting model for destination  LAX .
-## Fitting model for destination  OAK .
-## Fitting model for destination  DRO .
-## Fitting model for destination  ORD .</code></pre>
+<pre><code>## Fitting model for continent  Asia .
+## Fitting model for continent  Oceania .
+## Fitting model for continent  Europe .
+## Fitting model for continent  Americas .
+## Fitting model for continent  Africa .</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod[[<span class="dv">1</span>]]</code></pre></div>
 <pre><code>## 
 ## Call:
-## lm(formula = DepDelay ~ Year + Month, data = tmp)
+## lm(formula = lifeExp ~ log(gdpPercap), data = tmp)
 ## 
 ## Coefficients:
-## (Intercept)         Year       Month2       Month3       Month4  
-##  -4284.5640       2.1418      -1.1511      -4.9198      -6.8854  
-##      Month5       Month6       Month7       Month8       Month9  
-##     -5.8525      -0.7247      -2.9865      -5.0934      -6.8512  
-##     Month10      Month11      Month12  
-##     -5.1160      -3.4469       4.8093</code></pre>
+##    (Intercept)  log(gdpPercap)  
+##         25.650           5.157</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod[[<span class="dv">2</span>]]</code></pre></div>
 <pre><code>## [1] NA</code></pre>
 </div>
@@ -374,14 +415,14 @@ for(i in <span class="dv">1</span>:nVals) {
    results[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(tmp)
 }
 results</code></pre></div>
-<pre><code>## [1] 0.3811371 0.8510839 0.4592526</code></pre>
+<pre><code>## [1] -1.3915588  0.8259994  0.6297070</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varName</code></pre></div>
 <pre><code>## [1] &quot;x3&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp</code></pre></div>
-<pre><code>##  [1] 0.91588651 0.50656235 0.24779673 0.83475117 0.93116332 0.07026411
-##  [7] 0.05523560 0.20942187 0.27533311 0.12857957 0.34876161 0.18995973
-## [13] 0.58682236 0.71965297 0.05885632 0.57409878 0.28889264 0.55468608
-## [19] 0.87824438 0.81008230</code></pre>
+<pre><code>##  [1] 0.55089250 0.50756410 0.24900725 0.62677858 0.82471610 0.91894675
+##  [7] 0.87920546 0.84295661 0.07744592 0.99767171 0.99439075 0.86413991
+## [13] 0.06147607 0.81533943 0.91332589 0.24083864 0.11760057 0.35094561
+## [19] 0.85848173 0.90241575</code></pre>
 <p>Or suppose you needed to create &quot;x1&quot;, &quot;x2&quot;, &quot;x3&quot;, automatically.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nVals &lt;-<span class="st"> </span><span class="dv">3</span>
 results &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, nVals)
@@ -390,8 +431,8 @@ for(i in <span class="dv">1</span>:nVals) {
    <span class="kw">assign</span>(varName, <span class="kw">rnorm</span>(<span class="dv">10</span>))
 }
 x2</code></pre></div>
-<pre><code>##  [1]  1.0281381 -0.2399019  0.2946832  0.7134074  0.1789386 -0.9186264
-##  [7]  0.7141657  0.3252533 -0.8764861 -0.2111796</code></pre>
+<pre><code>##  [1] -1.4863458  1.2642560 -1.9662952  0.5274268 -0.1987055  0.2961828
+##  [7] -0.6414562  1.4037027  0.6701089 -0.7574894</code></pre>
 <p>Can you think of any uses of this ability for R to self-generate?</p>
 </div>
 <div id="file-encodings" class="slide section level1">
@@ -447,19 +488,19 @@ db &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(<span class="
 
 ## metadata
 <span class="kw">dbListTables</span>(db)</code></pre></div>
-<pre><code>## [1] &quot;answers&quot;          &quot;maxRepByQuestion&quot; &quot;questions&quot;       
-## [4] &quot;questionsAugment&quot; &quot;questions_tags&quot;   &quot;users&quot;</code></pre>
+<pre><code>## character(0)</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbListFields</span>(db, <span class="st">&quot;questions&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;questionid&quot;   &quot;creationdate&quot; &quot;score&quot;        &quot;viewcount&quot;   
-## [5] &quot;title&quot;        &quot;ownerid&quot;</code></pre>
+<pre><code>## Error in result_create(conn@ptr, statement): no such table: questions</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## simple filter operation
 popular &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(db, <span class="st">&quot;select * from questions </span>
-<span class="st">   where viewcount &gt; 10000&quot;</span>)
-## a join followed by a filter operation
+<span class="st">   where viewcount &gt; 10000&quot;</span>)</code></pre></div>
+<pre><code>## Error in result_create(conn@ptr, statement): no such table: questions</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## a join followed by a filter operation
 popularR &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(db, <span class="st">&quot;select * from questions join questions_tags</span>
 <span class="st">   on questions.questionid = questions_tags.questionid</span>
 <span class="st">   where viewcount &gt; 10000 and</span>
 <span class="st">   tag = 'r'&quot;</span>)</code></pre></div>
+<pre><code>## Error in result_create(conn@ptr, statement): no such table: questions</code></pre>
 </div>
 <div id="computer-architecture" class="slide section level1">
 <h1>Computer architecture</h1>
@@ -543,10 +584,13 @@ U &lt;-<span class="st"> </span><span class="kw">chol</span>(<span class="kw">cr
 <p>First, make sure your iterations are independent and don't involve sequential calculations!</p>
 <p>The <em>foreach</em> package provides a way to do a for loop using multiple cores. It can use a variety of 'back-ends' that handle the nitty-gritty of the parallelization.</p>
 <p>To use multiple cores on a single machine, use the <em>parallel</em> back-end from the <em>doParallel</em> package.</p>
+<p>We'll use a new dataset here, which is a dataset of airline departure times (in particular delays) for all flights from SFO over a period of several years. We'll do a stratified analysis, fitting a GAM (see Unit 7) for each of the destination airports.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># note to CJP: don't run in RStudio</span>
 <span class="kw">library</span>(parallel)
-<span class="kw">library</span>(doParallel)
-<span class="kw">library</span>(foreach)
+<span class="kw">library</span>(doParallel)</code></pre></div>
+<pre><code>## Loading required package: foreach</code></pre>
+<pre><code>## Loading required package: iterators</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(foreach)
 
 nCores &lt;-<span class="st"> </span><span class="dv">4</span>  <span class="co"># actually only 2 on my laptop, but appears hyperthreaded</span>
 <span class="kw">registerDoParallel</span>(nCores)
@@ -719,10 +763,72 @@ out[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <p>And here is <code>mclapply</code>, which is similar:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
 nCores &lt;-<span class="st"> </span><span class="dv">4</span>
-out2 &lt;-<span class="st"> </span><span class="kw">mclapply</span>(<span class="kw">unique</span>(air$Dest), fitFun, <span class="dt">mc.cores =</span> nCores)</code></pre></div>
-<pre><code>## Error in mcfork(): unable to fork, possible reason: Cannot allocate memory</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out2[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
-<pre><code>## Error in eval(expr, envir, enclos): object 'out2' not found</code></pre>
+out2 &lt;-<span class="st"> </span><span class="kw">mclapply</span>(<span class="kw">unique</span>(air$Dest), fitFun, <span class="dt">mc.cores =</span> nCores)
+out2[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
+<pre><code>## [[1]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 7.51 7.49  total = 23 
+## 
+## GCV score: 1051.858     
+## 
+## [[2]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 7.46 8.64  total = 24.1 
+## 
+## GCV score: 1325.755     
+## 
+## [[3]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 5.93 8.70  total = 22.63 
+## 
+## GCV score: 639.5956     
+## 
+## [[4]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 7.84 8.51  total = 24.35 
+## 
+## GCV score: 880.4363     
+## 
+## [[5]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 8.00 5.68  total = 21.69 
+## 
+## GCV score: 1367.66</code></pre>
 <p>One thing to keep in mind is whether the different tasks all take about the same amount of time or widely different times. In the latter case, one wants to sequentially dispatch tasks as earlier tasks finish, rather than dispatching a block of tasks to each core. Some of these parallel <em>apply</em> variants allow you to control this.</p>
 </div>
 <div id="parallelization-and-random-number-generation" class="slide section level1">

@@ -6,6 +6,7 @@
 # include any code here you don't want to show up in the document,
 # e.g. package and dataset loading
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
+gap <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 air <- read.csv(file.path('..', 'data', 'airline.csv'), stringsAsFactors = FALSE)
 ```
 
@@ -37,7 +38,7 @@ R has several approaches to object-oriented programming.  These are widely used,
 The most basic is 'S3' objects. These objects are generally built upon lists.
 
 ```{r}
-mod <- lm(air$DepDelay ~ air$Distance)  # illustration ONLY - poorly-specified model!
+mod <- lm(gap$lifeExp ~ log(gap$gdpPercap))
 class(mod)
 is.list(mod)
 names(mod)
@@ -49,7 +50,7 @@ mod[[1]]
 The magic of OOP here is that methods (i.e., functions) can be tailored to work specifically with specific kinds of objects.
 
 ```{r}
-summary(air$DepDelay)
+summary(gap$lifeExp)
 summary(mod)
 ```
 
@@ -61,11 +62,9 @@ Consider `summary.lm`.
 
 ```{r}
 library(methods)
-sub <- air[air$Month == 1, ]  # to speed up the next steps
-yb <- sub$DepDelay > 15
-yc <- sub$DepDelay
-yc[yc > 180] <- 180
-x <- sub$Distance
+yb <- gap$lifeExp > 75
+yc <- gap$lifeExp
+x <- log(gap$gdpPercap)
 mod1 <- lm(yc ~ x)
 mod2 <- glm(yb ~ x, family = binomial)
 mod2$residuals[1:20] # access field with list-like syntax
@@ -190,18 +189,20 @@ The `try()` function is a powerful tool here.
 
 # Why we need to `try()`
 
-Suppose we tried to do a stratified analysis of delay on year and month within destinations. I'm going to do this as a for loop for pedagogical reasons, but again, it would be better to do this with dplyr/lapply/by type tools.
+Suppose we tried to do a stratified analysis of life expectancy on GDP within continents, for 2007. I'm going to do this as a for loop for pedagogical reasons, but again, it would be better to do this with dplyr/lapply/by type tools.
+
+For the purpose of illustration, I'm going to monkey a bit with the data such that there is an error in fitting Oceania. This is artificial, but when you stratify data into smaller groups it's not uncommon that the analysis can fail for one of the groups (often because of small sample size or missing data).
 
 
 ```{r}
 mod <- list()
-Dests <- c('LAX', 'OAK', 'DRO', 'ORD')
-sub <- air[air$Dest %in% Dests, ]
-sub$Month <- as.factor(sub$Month)
-for(curDest in Dests) {
-            cat("Fitting model for destination ", curDest, ".\n")
-            tmp <- subset(sub, Dest == curDest)
-            mod[[curDest]] <- lm(DepDelay ~ Year + Month, data = tmp)
+fakedat <- gap[gap$year == 2007, ]
+fakedat$gdpPercap[fakedat$continent == 'Oceania'] <- NA
+
+for(cont in c('Asia', 'Oceania', 'Europe', 'Americas', 'Africa')) {
+            cat("Fitting model for continent ", cont, ".\n")
+            tmp <- subset(fakedat, continent == cont)
+            mod[[cont]] <- lm(lifeExp ~ log(gdpPercap), data = tmp)
 }
 ```
 
@@ -212,15 +213,13 @@ What happened?
 
 ```{r}
 mod <- list()
-Dests <- c('LAX', 'OAK', 'DRO', 'ORD')
-sub <- air[air$Dest %in% Dests, ]
-sub$Month <- as.factor(sub$Month)
-for(curDest in Dests) {
-            cat("Fitting model for destination ", curDest, ".\n")
-            tmp <- subset(sub, Dest == curDest)
-            curMod <- try(lm(DepDelay ~ Year + Month, data = tmp))
-            if(is(curMod, "try-error")) mod[[curDest]] <- NA 
-                       else mod[[curDest]] <- curMod            
+
+for(cont in c('Asia', 'Oceania', 'Europe', 'Americas', 'Africa')) {
+            cat("Fitting model for continent ", cont, ".\n")
+            tmp <- subset(fakedat, continent == cont)
+            curMod <- try(lm(lifeExp ~ log(gdpPercap), data = tmp))
+            if(is(curMod, "try-error")) mod[[cont]] <- NA 
+                       else mod[[cont]] <- curMod            
 }
 
 mod[[1]]
@@ -473,6 +472,8 @@ First, make sure your iterations are independent and don't involve sequential ca
 The *foreach* package provides a way to do a for loop using multiple cores. It can use a variety of 'back-ends' that handle the nitty-gritty of the parallelization. 
 
 To use multiple cores on a single machine, use the *parallel* back-end from the *doParallel* package.
+
+We'll use a new dataset here, which is a dataset of airline departure times (in particular delays) for all flights from SFO over a period of several years. We'll do a stratified analysis, fitting a GAM (see Unit 7) for each of the destination airports.
 
 ```{r cache=TRUE}
 # note to CJP: don't run in RStudio

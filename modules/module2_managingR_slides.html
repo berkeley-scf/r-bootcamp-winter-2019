@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="author" content="August 2018, UC Berkeley" />
+  <meta name="author" content="January 2019, UC Berkeley" />
   <title>R bootcamp, Module 2: Managing R and R resources</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -52,9 +52,47 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="slide titlepage">
   <h1 class="title">R bootcamp, Module 2: Managing R and R resources</h1>
   <p class="author">
-August 2018, UC Berkeley
+January 2019, UC Berkeley
   </p>
   <p class="date">Chris Paciorek</p>
+</div>
+<div id="managing-your-objects" class="slide section level1">
+<h1>Managing your objects</h1>
+<p>R has a number of functions for getting metadata about your objects. Some of this is built in to RStudio.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">v1 &lt;-<span class="st"> </span>gap$year
+v2 &lt;-<span class="st"> </span>gap$continent
+v3 &lt;-<span class="st"> </span>gap$lifeExp
+
+<span class="kw">length</span>(v1)</code></pre></div>
+<pre><code>## [1] 1704</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(v1)</code></pre></div>
+<pre><code>##  int [1:1704] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(v1)</code></pre></div>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(v1)</code></pre></div>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(v2)</code></pre></div>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(v2)</code></pre></div>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(v3)</code></pre></div>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(v3)</code></pre></div>
+<pre><code>## [1] &quot;double&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.vector</span>(v1)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.list</span>(v1)</code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># only present if code from module 1 run in this R session</span>
+<span class="kw">is.list</span>(myList)</code></pre></div>
+<pre><code>## Error in eval(expr, envir, enclos): object 'myList' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.vector</span>(myList)</code></pre></div>
+<pre><code>## Error in is.vector(myList): object 'myList' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.data.frame</span>(gap)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.list</span>(gap)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p><strong>Question</strong>: What have you learned? Does it make sense?</p>
 </div>
 <div id="managing-and-saving-the-workspace" class="slide section level1">
 <h1>Managing and saving the workspace</h1>
@@ -63,48 +101,28 @@ August 2018, UC Berkeley
 y &lt;-<span class="st"> </span><span class="kw">c</span>(5L, 2L, 7L)
 z &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a =</span> <span class="dv">3</span>, <span class="dt">b =</span> <span class="kw">c</span>(<span class="st">'sam'</span>, <span class="st">'yang'</span>))
 <span class="kw">ls</span>()  <span class="co"># search the user workspace (global environment)</span></code></pre></div>
-<pre><code>## [1] &quot;air&quot; &quot;x&quot;   &quot;y&quot;   &quot;z&quot;</code></pre>
+<pre><code>## [1] &quot;gap&quot; &quot;v1&quot;  &quot;v2&quot;  &quot;v3&quot;  &quot;x&quot;   &quot;y&quot;   &quot;z&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(x)    <span class="co"># delete a variable</span>
 <span class="kw">ls</span>()</code></pre></div>
-<pre><code>## [1] &quot;air&quot; &quot;y&quot;   &quot;z&quot;</code></pre>
+<pre><code>## [1] &quot;gap&quot; &quot;v1&quot;  &quot;v2&quot;  &quot;v3&quot;  &quot;y&quot;   &quot;z&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ls.str</span>() <span class="co"># list and describe variables</span></code></pre></div>
-<pre><code>## air : 'data.frame':  539895 obs. of  29 variables:
-##  $ Year             : int  2005 2005 2005 2005 2005 2005 2005 2005 2005 2005 ...
-##  $ Month            : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ DayofMonth       : int  1 2 3 4 5 6 7 8 9 10 ...
-##  $ DayOfWeek        : int  6 7 1 2 3 4 5 6 7 1 ...
-##  $ DepTime          : int  1211 1209 1213 NA 1211 1214 1330 1213 1206 1338 ...
-##  $ CRSDepTime       : int  1216 1216 1216 1216 1216 1215 1215 1215 1215 1215 ...
-##  $ ArrTime          : int  1451 1447 1454 NA 1504 1506 1620 1448 1443 1610 ...
-##  $ CRSArrTime       : int  1502 1502 1502 1502 1502 1505 1505 1505 1505 1505 ...
-##  $ UniqueCarrier    : chr  &quot;UA&quot; &quot;UA&quot; &quot;UA&quot; &quot;UA&quot; ...
-##  $ FlightNum        : int  548 548 548 548 548 548 548 548 548 548 ...
-##  $ TailNum          : chr  &quot;N341UA&quot; &quot;N398UA&quot; &quot;N303UA&quot; &quot;000000&quot; ...
-##  $ ActualElapsedTime: int  100 98 101 NA 113 112 110 95 97 92 ...
-##  $ CRSElapsedTime   : int  106 106 106 106 106 110 110 110 110 110 ...
-##  $ AirTime          : int  81 79 83 NA 85 95 85 72 77 78 ...
-##  $ ArrDelay         : int  -11 -15 -8 NA 2 1 75 -17 -22 65 ...
-##  $ DepDelay         : int  -5 -7 -3 NA -5 -1 75 -2 -9 83 ...
-##  $ Origin           : chr  &quot;SFO&quot; &quot;SFO&quot; &quot;SFO&quot; &quot;SFO&quot; ...
-##  $ Dest             : chr  &quot;SLC&quot; &quot;SLC&quot; &quot;SLC&quot; &quot;SLC&quot; ...
-##  $ Distance         : int  599 599 599 599 599 599 599 599 599 599 ...
-##  $ TaxiIn           : int  2 2 3 0 6 6 6 3 3 3 ...
-##  $ TaxiOut          : int  17 17 15 0 22 11 19 20 17 11 ...
-##  $ Cancelled        : int  0 0 0 1 0 0 0 0 0 0 ...
-##  $ CancellationCode : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;A&quot; ...
-##  $ Diverted         : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ CarrierDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ WeatherDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ NASDelay         : int  0 0 0 0 0 0 3 0 0 0 ...
-##  $ SecurityDelay    : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ LateAircraftDelay: int  0 0 0 0 0 0 72 0 0 65 ...
+<pre><code>## gap : 'data.frame':  1704 obs. of  6 variables:
+##  $ country  : chr  &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
+##  $ continent: chr  &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; ...
+##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+##  $ gdpPercap: num  779 821 853 836 740 ...
+## v1 :  int [1:1704] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+## v2 :  chr [1:1704] &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; ...
+## v3 :  num [1:1704] 28.8 30.3 32 34 36.1 ...
 ## y :  int [1:3] 5 2 7
 ## z : List of 2
 ##  $ a: num 3
 ##  $ b: chr [1:2] &quot;sam&quot; &quot;yang&quot;</code></pre>
 <p>Finally we can save the objects in our R session:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ls</span>()</code></pre></div>
-<pre><code>## [1] &quot;air&quot; &quot;y&quot;   &quot;z&quot;</code></pre>
+<pre><code>## [1] &quot;gap&quot; &quot;v1&quot;  &quot;v2&quot;  &quot;v3&quot;  &quot;y&quot;   &quot;z&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save.image</span>(<span class="st">'module2.Rda'</span>)
 <span class="kw">rm</span>(<span class="dt">list =</span> <span class="kw">ls</span>())
 <span class="kw">ls</span>()</code></pre></div>
@@ -188,18 +206,17 @@ z &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a 
 }
 <span class="kw">lm</span>(<span class="dv">7</span>) </code></pre></div>
 <pre><code>## [1] 7</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">10</span>); y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">10</span>)
-<span class="kw">lm</span>(y ~<span class="st"> </span>x)</code></pre></div>
-<pre><code>## y ~ x
-## &lt;environment: 0x37c3c58&gt;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stats::<span class="kw">lm</span>(y ~<span class="st"> </span>x)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lm</span>(gap$lifeExp ~<span class="st"> </span>gap$gdpPercap)</code></pre></div>
+<pre><code>## gap$lifeExp ~ gap$gdpPercap
+## &lt;environment: 0x2968e80&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stats::<span class="kw">lm</span>(gap$lifeExp ~<span class="st"> </span>gap$gdpPercap)</code></pre></div>
 <pre><code>## 
 ## Call:
-## stats::lm(formula = y ~ x)
+## stats::lm(formula = gap$lifeExp ~ gap$gdpPercap)
 ## 
 ## Coefficients:
-## (Intercept)            x  
-##      0.0475      -0.1123</code></pre>
+##   (Intercept)  gap$gdpPercap  
+##     5.396e+01      7.649e-04</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(lm)</code></pre></div>
 <p>Can you explain what is going on? Consider the results of <code>search()</code>.</p>
 <h3 id="looking-inside-a-package">Looking inside a package</h3>
@@ -230,19 +247,19 @@ z &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a 
 <p>To read and write from R, you need to have a firm grasp of where in the computer's filesystem you are reading and writing from.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()  <span class="co"># what directory will R look in?</span>
 <span class="co"># Linux/Mac specific</span>
-<span class="kw">setwd</span>(<span class="st">'~/Desktop/r-bootcamp-2018'</span>) <span class="co"># change the working directory</span>
+<span class="kw">setwd</span>(<span class="st">'~/Desktop/r-bootcamp-winter-2019'</span>) <span class="co"># change the working directory</span>
 <span class="kw">setwd</span>(<span class="st">'/Users/paciorek/Desktop'</span>) <span class="co"># absolute path</span>
 <span class="kw">getwd</span>()
-<span class="kw">setwd</span>(<span class="st">'r-bootcamp-2018/modules'</span>) <span class="co"># relative path</span>
+<span class="kw">setwd</span>(<span class="st">'r-bootcamp-winter-2019/modules'</span>) <span class="co"># relative path</span>
 <span class="kw">setwd</span>(<span class="st">'../tmp'</span>) <span class="co"># relative path, up and back down the tree</span>
 
 <span class="co"># Windows - use either \\ or / to indicate directories</span>
-<span class="co"># setwd('C:\\Users\\Your_username\\Desktop\\r-bootcamp-2018')</span>
-<span class="co"># setwd('..\\r-bootcamp-2018')</span>
+<span class="co"># setwd('C:\\Users\\Your_username\\Desktop\\r-bootcamp-winter-2019')</span>
+<span class="co"># setwd('..\\r-bootcamp-winter-2019')</span>
 
 <span class="co"># platform-agnostic</span>
-<span class="kw">setwd</span>(<span class="kw">file.path</span>(<span class="st">'~'</span>, <span class="st">'Desktop'</span>, <span class="st">'r-bootcamp-2018'</span>, <span class="st">'modules'</span>)) <span class="co"># change the working directory</span>
-<span class="kw">setwd</span>(<span class="kw">file.path</span>(<span class="st">'/'</span>, <span class="st">'Users'</span>, <span class="st">'paciorek'</span>, <span class="st">'Desktop'</span>, <span class="st">'r-bootcamp-2018'</span>, <span class="st">'modules'</span>)) <span class="co"># absolute path</span>
+<span class="kw">setwd</span>(<span class="kw">file.path</span>(<span class="st">'~'</span>, <span class="st">'Desktop'</span>, <span class="st">'r-bootcamp-winter-2019'</span>, <span class="st">'modules'</span>)) <span class="co"># change the working directory</span>
+<span class="kw">setwd</span>(<span class="kw">file.path</span>(<span class="st">'/'</span>, <span class="st">'Users'</span>, <span class="st">'paciorek'</span>, <span class="st">'Desktop'</span>, <span class="st">'r-bootcamp-winter-2019'</span>, <span class="st">'modules'</span>)) <span class="co"># absolute path</span>
 <span class="kw">getwd</span>()
 <span class="kw">setwd</span>(<span class="kw">file.path</span>(<span class="st">'..'</span>, <span class="st">'data'</span>)) <span class="co"># relative path</span></code></pre></div>
 <p>Many errors and much confusion result from you and R not being on the same page in terms of where in the directory structure you are.</p>
@@ -306,32 +323,23 @@ x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1
 ##   2</code></pre>
 <p><code>xtable()</code> formats tables for HTML and Latex (the default).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(xtable)
-<span class="kw">print</span>(<span class="kw">xtable</span>(<span class="kw">table</span>(air$UniqueCarrier, air$Cancelled)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<span class="kw">print</span>(<span class="kw">xtable</span>(<span class="kw">table</span>(gap$year, gap$continent)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
 <pre><code>## &lt;!-- html table generated in R 3.4.3 by xtable 1.8-2 package --&gt;
-## &lt;!-- Mon Aug 13 15:59:38 2018 --&gt;
+## &lt;!-- Mon Jan 14 17:24:48 2019 --&gt;
 ## &lt;table border=1&gt;
-## &lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; 0 &lt;/th&gt; &lt;th&gt; 1 &lt;/th&gt;  &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; AA &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 49222 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 1033 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; AS &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 20326 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 282 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; B6 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 3183 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  31 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; CO &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 18933 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  96 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; DH &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 469 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   1 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; DL &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 21446 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 166 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; EV &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 711 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  31 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; F9 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 8366 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; FL &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 3360 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   8 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; HA &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 1457 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   3 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; HP &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 4408 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  77 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; MQ &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 6862 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 279 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; NW &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 15290 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  68 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; OH &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  29 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   1 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; OO &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 156071 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 3587 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; TZ &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 2304 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  17 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; UA &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 175569 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 2977 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; US &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 24812 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 288 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; WN &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 14923 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 320 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; XE &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 2353 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  14 &lt;/td&gt; &lt;/tr&gt;
-##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; YV &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 456 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  14 &lt;/td&gt; &lt;/tr&gt;
+## &lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; Africa &lt;/th&gt; &lt;th&gt; Americas &lt;/th&gt; &lt;th&gt; Asia &lt;/th&gt; &lt;th&gt; Europe &lt;/th&gt; &lt;th&gt; Oceania &lt;/th&gt;  &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1952 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1957 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1962 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1967 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1972 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1977 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1982 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1987 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1992 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 1997 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 2002 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; 2007 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  52 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  25 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  33 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;  30 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt;   2 &lt;/td&gt; &lt;/tr&gt;
 ##    &lt;/table&gt;</code></pre>
 <p>Recall our discussion of the <code>summary()</code> function used on either a vector or a regression object. What do you think is going on with call to <code>print()</code> above?</p>
 </div>
@@ -351,7 +359,7 @@ x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1
 <p>In the introductory material, we've already seen how to get a copy of a Github repository on your local machine.</p>
 <p>As you're gathering by now, I've used Git and Github to manage all the content for this workshop.</p>
 <h3 id="making-changes-to-a-repository">Making changes to a repository</h3>
-<p>We'll go through a short example of making changes to the r-bootcamp-2018 repository. In this case you don't have permission to make changes so you'll just have to follow along as I do it. However, you could start your own repository and then you'd be able to do similar things.</p>
+<p>We'll go through a short example of making changes to the r-bootcamp-winter-2019 repository. In this case you don't have permission to make changes so you'll just have to follow along as I do it. However, you could start your own repository and then you'd be able to do similar things.</p>
 <p>Note that there are <a href="https://git-scm.com/downloads/guis">graphical interfaces to Git</a> that you might want to check out, but here I'm just going to do it from the command line on my Mac.</p>
 <p>The basic notion we need is a <em>commit</em>. As we make changes to our files, we want to commit those changes to the repository regularly. A <em>commit</em> is a set of changes recorded with Git. We will often then <em>push</em> those changes to a remote copy of the repository, such as on Github.</p>
 <p>Here's a basic workflow:</p>
@@ -399,7 +407,7 @@ x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1
 <h3 id="using-the-ideas">Using the ideas</h3>
 <ol start="3" style="list-style-type: decimal">
 <li><p>Put the <em>data/cpds.csv</em> file in some other directory on your computer, such as <em>Downloads</em>. Use <code>setwd()</code> to set your working directory to be that directory. Read the file in using <code>read.csv()</code>. Now use <code>setwd()</code> to point to a different directory such as <em>Desktop</em>. Write the data frame out to a file without any row names and without quotes on the character strings.</p></li>
-<li><p>Make a plot with the airline data. Save it as a PDF in <em>Desktop</em>. Now see what happens if you set the <em>width</em> and <em>height</em> arguments to be very small and see how it affects the resulting PDF. Do the same but setting width and height to be very large.</p></li>
+<li><p>Make a plot with the gapminder data. Save it as a PDF in <em>Desktop</em>. Now see what happens if you set the <em>width</em> and <em>height</em> arguments to be very small and see how it affects the resulting PDF. Do the same but setting width and height to be very large.</p></li>
 <li><p>Figure out where (what directory) the <em>graphics</em> package is stored on your machine. Is it the same as where the <em>fields</em> package is stored?</p></li>
 </ol>
 <h3 id="advanced">Advanced</h3>

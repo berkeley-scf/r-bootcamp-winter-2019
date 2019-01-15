@@ -6,7 +6,7 @@
 # include any code here you don't want to show up in the document,
 # e.g. package and dataset loading
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gap <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # R as a calculator
@@ -137,13 +137,13 @@ getwd()
 ## in the dataset from the 'data' directory. In the next
 ## command R finds that directory relative to the current
 ## working directory.
-gapminder <- read.csv("../data/gapminder-FiveYearData.csv",
+gap <- read.csv("../data/gapminder-FiveYearData.csv",
           stringsAsFactors = FALSE)
 #######################################################################
 
 ## create a simple vector from the Gapminder dataset
-gdp <- gapminder$gdpPercap
-lifeExp[1:10]
+gdp <- gap$gdpPercap
+gdp[1:10]
 
 ```
 We can substitute values into vectors
@@ -166,11 +166,12 @@ gdp[1:10]
 At the core of R is the idea of doing calculations on entire vectors.
 
 ```{r}
-gdpTotal <- gapminder$gdpPercap * gapminder$pop
+gdpTotal <- gap$gdpPercap * gap$pop
 
-gdpSubset <- gdp[1:10]
+tmp <- gdpTotal[gap$year == "2007"]
+gdpSubset <- tmp[1:20]
 
-gdpSubset >= 50000
+gdpSubset >= 1e6  # Dr. Evil's version of "a lot"
 
 vec1 <- rnorm(5)
 vec2 <- rnorm(5)
@@ -183,9 +184,9 @@ vec1 = vec2
 identical(vec1, vec2)
 
 ## using 'or'
-gdpSubset >= 100000 | gdpSubset <= 1000
+gdpSubset >= 1e12 | gdpSubset <= 1e10
 ## using 'and'
-gapminder$gdpPercap[1:10] >= 100000 & gapminder$continent[1:10] == "Asia"
+gap$lifeExp[1:10] < 75 & gap$continent[1:10] == "Americas"
 ```
 
 # R is a functional language
@@ -196,13 +197,13 @@ gapminder$gdpPercap[1:10] >= 100000 & gapminder$continent[1:10] == "Asia"
 ```{r}
 median
 class(median)
-median(delay)
+median(gap$lifeExp)
 ```
 
 Functions generally take arguments, some of which are often optional:
 ```{r}
-maxYear <- max(gapminder$year)
-lifeExp <- gapminder$lifeExp[gapminder$year == maxYear]
+maxYear <- max(gap$year)
+lifeExp <- gap$lifeExp[gap$year == maxYear]
 median(lifeExp)
 ```
 
@@ -237,15 +238,15 @@ Vectors of various types (numeric (i.e., decimal/floating point/double), integer
 Collections of columns of potentially different types
 
 ```{r}
-head(gapminder)
-dim(gapminder)
-nrow(gapminder)
-names(gapminder)
-class(gapminder)
-is.matrix(gapminder)
-class(gapminder$year)
-class(gapminder$lifeExp)
-class(gapminder$country)
+head(gap)
+dim(gap)
+nrow(gap)
+names(gap)
+class(gap)
+is.matrix(gap)
+class(gap$year)
+class(gap$lifeExp)
+class(gap$country)
 ```
 
 ### Lists
@@ -298,9 +299,9 @@ R has several different plotting systems:
 We'll see a little bit of *base* graphics here and then *lattice* and *ggplot2* tomorrow in Module 8.
 
 ```{r basic_plots, fig.cap =""}
-hist(gapminder$lifeExp)
-plot(gapminder$lifeExp ~ gapminder$gdpPercap)
-boxplot(gapminder$lifeExp ~ gapminder$year)
+hist(gap$lifeExp)
+plot(gap$lifeExp ~ gap$gdpPercap)
+boxplot(gap$lifeExp ~ gap$year)
 ```
 
 # Graphics options
@@ -308,7 +309,7 @@ boxplot(gapminder$lifeExp ~ gapminder$year)
 Check out `help(par)` for various [graphics settings](http://xkcd.com/833/); these are set via `par()` or within the specific graphics command (some can be set in either place), e.g.,
 ```{r, parstuff, fig.cap = ""}
 par(pch = 16)
-plot(gapminder$lifeExp ~ gapminder$gdpPercap, xlab = 'GDP per capita (dollars)',
+plot(gap$lifeExp ~ gap$gdpPercap, xlab = 'GDP per capita (dollars)',
    ylab = 'life expectancy (years)', log = 'x')
 ```
 
@@ -342,7 +343,7 @@ In general, your answers to any questions should involve writing code to manipul
 9) Consider the following regression model.  Figure out how to extract the $R^2$ and residual standard error and store in new R variables. 
 
 ```{r}
-mod <- lm(lifeExp ~ log(gdpPercap), data = gapminder)
+mod <- lm(lifeExp ~ log(gdpPercap), data = gap)
 summ <- summary(mod)
 ```
 

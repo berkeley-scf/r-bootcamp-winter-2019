@@ -1,16 +1,17 @@
 % R bootcamp, Module 3: Working with objects and data
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 
 
 # Matrices and Arrays
 
-Let's review matrices
+If you need to do numeric calculations on an entire non-vector object (dimension > 1), you generally want to use matrices and arrays, not data frames.
 
 - Matrices are two-dimensional collections of values of the same type
 - We can have numeric, integer, character, or logical matrices, character matrices.
 - You can't mix types within a matrix
+
 
 ```r
 mat <- matrix(rnorm(12), nrow = 3, ncol = 4)
@@ -19,9 +20,9 @@ mat
 
 ```
 ##            [,1]       [,2]       [,3]       [,4]
-## [1,] -1.7228439 -0.7207214 -0.2877622  0.5133103
-## [2,]  0.2321758  0.8871828  1.2808443 -0.5546136
-## [3,]  1.5920781  2.5924839 -1.6912609  0.0142042
+## [1,] -2.1249552 -0.4180123  0.7825093  0.1209508
+## [2,] -0.9027449  1.9308510  0.4292138  0.2174327
+## [3,]  1.2976135  1.6412740 -0.1760998 -2.2618083
 ```
 
 ```r
@@ -30,10 +31,10 @@ mat*4
 ```
 
 ```
-##           [,1]      [,2]      [,3]       [,4]
-## [1,] -6.891376 -2.882886 -1.151049  2.0532412
-## [2,]  0.928703  3.548731  5.123377 -2.2184545
-## [3,]  6.368312 10.369936 -6.765044  0.0568168
+##           [,1]      [,2]       [,3]       [,4]
+## [1,] -8.499821 -1.672049  3.1300371  0.4838033
+## [2,] -3.610980  7.723404  1.7168553  0.8697309
+## [3,]  5.190454  6.565096 -0.7043991 -9.0472330
 ```
 
 ```r
@@ -43,9 +44,41 @@ mat
 
 ```
 ##            [,1]       [,2]       [,3]       [,4] [,5]
-## [1,] -1.7228439 -0.7207214 -0.2877622  0.5133103    1
-## [2,]  0.2321758  0.8871828  1.2808443 -0.5546136    2
-## [3,]  1.5920781  2.5924839 -1.6912609  0.0142042    3
+## [1,] -2.1249552 -0.4180123  0.7825093  0.1209508    1
+## [2,] -0.9027449  1.9308510  0.4292138  0.2174327    2
+## [3,]  1.2976135  1.6412740 -0.1760998 -2.2618083    3
+```
+
+```r
+# Let's convert the gapminder dataframe to a matrix:
+gm_mat <- as.matrix(gap[ , c('lifeExp', 'gdpPercap')])
+head(gm_mat)
+```
+
+```
+##      lifeExp gdpPercap
+## [1,]  28.801  779.4453
+## [2,]  30.332  820.8530
+## [3,]  31.997  853.1007
+## [4,]  34.020  836.1971
+## [5,]  36.088  739.9811
+## [6,]  38.438  786.1134
+```
+
+```r
+# What do you think will happen?
+gm_mat <- as.matrix(gap)
+head(gm_mat)
+```
+
+```
+##      country       year   pop          continent lifeExp    gdpPercap    
+## [1,] "Afghanistan" "1952" "   8425333" "Asia"    "28.80100" "   779.4453"
+## [2,] "Afghanistan" "1957" "   9240934" "Asia"    "30.33200" "   820.8530"
+## [3,] "Afghanistan" "1962" "  10267083" "Asia"    "31.99700" "   853.1007"
+## [4,] "Afghanistan" "1967" "  11537966" "Asia"    "34.02000" "   836.1971"
+## [5,] "Afghanistan" "1972" "  13079460" "Asia"    "36.08800" "   739.9811"
+## [6,] "Afghanistan" "1977" "  14880372" "Asia"    "38.43800" "   786.1134"
 ```
 
 Arrays are like matrices but can have more or fewer than two dimensions.
@@ -58,27 +91,27 @@ arr
 ```
 ## , , 1
 ## 
-##            [,1]       [,2]        [,3]
-## [1,] -0.9071718 -0.9638432 -0.04292199
-## [2,]  0.3912341  1.4366121 -0.49244939
+##             [,1]       [,2]      [,3]
+## [1,]  1.23849852 -0.2372683 0.9478997
+## [2,] -0.03302339  0.2337014 0.6885227
 ## 
 ## , , 2
 ## 
-##            [,1]        [,2]        [,3]
-## [1,] -0.8790961 -0.09792996 -0.03015456
-## [2,] -0.1004457  1.13332547 -0.54939557
+##            [,1]       [,2]      [,3]
+## [1,] -0.1661863  0.6837635 1.0575009
+## [2,]  2.1078836 -0.5617945 0.2695333
 ## 
 ## , , 3
 ## 
-##            [,1]       [,2]        [,3]
-## [1,] -0.9071718 -0.9638432 -0.04292199
-## [2,]  0.3912341  1.4366121 -0.49244939
+##             [,1]       [,2]      [,3]
+## [1,]  1.23849852 -0.2372683 0.9478997
+## [2,] -0.03302339  0.2337014 0.6885227
 ## 
 ## , , 4
 ## 
-##            [,1]        [,2]        [,3]
-## [1,] -0.8790961 -0.09792996 -0.03015456
-## [2,] -0.1004457  1.13332547 -0.54939557
+##            [,1]       [,2]      [,3]
+## [1,] -0.1661863  0.6837635 1.0575009
+## [2,]  2.1078836 -0.5617945 0.2695333
 ```
 
 # Attributes
@@ -102,9 +135,9 @@ mat
 
 ```
 ##              [,1]       [,2]       [,3]       [,4] [,5]
-## first  -1.7228439 -0.7207214 -0.2877622  0.5133103    1
-## middle  0.2321758  0.8871828  1.2808443 -0.5546136    2
-## last    1.5920781  2.5924839 -1.6912609  0.0142042    3
+## first  -2.1249552 -0.4180123  0.7825093  0.1209508    1
+## middle -0.9027449  1.9308510  0.4292138  0.2174327    2
+## last    1.2976135  1.6412740 -0.1760998 -2.2618083    3
 ```
 
 ```r
@@ -124,7 +157,7 @@ attributes(mat)
 ```
 
 ```r
-names(attributes(air))
+names(attributes(gap))
 ```
 
 ```
@@ -132,24 +165,15 @@ names(attributes(air))
 ```
 
 ```r
-attributes(air)$names
+attributes(gap)$names
 ```
 
 ```
-##  [1] "Year"              "Month"             "DayOfMonth"       
-##  [4] "DayOfWeek"         "DepTime"           "CRSDepTime"       
-##  [7] "ArrTime"           "CRSArrTime"        "UniqueCarrier"    
-## [10] "FlightNum"         "TailNum"           "ActualElapsedTime"
-## [13] "CRSElapsedTime"    "AirTime"           "ArrDelay"         
-## [16] "DepDelay"          "Origin"            "Dest"             
-## [19] "Distance"          "TaxiIn"            "TaxiOut"          
-## [22] "Cancelled"         "CancellationCode"  "Diverted"         
-## [25] "CarrierDelay"      "WeatherDelay"      "NASDelay"         
-## [28] "SecurityDelay"     "LateAircraftDelay"
+## [1] "country"   "year"      "pop"       "continent" "lifeExp"   "gdpPercap"
 ```
 
 ```r
-attributes(air)$row.names[1:10]
+attributes(gap)$row.names[1:10]
 ```
 
 ```
@@ -164,7 +188,7 @@ mat[4]
 ```
 
 ```
-## [1] -0.7207214
+## [1] -0.4180123
 ```
 
 ```r
@@ -173,8 +197,8 @@ mat
 ```
 
 ```
-##  [1] -1.7228439  0.2321758  1.5920781 -0.7207214  0.8871828  2.5924839
-##  [7] -0.2877622  1.2808443 -1.6912609  0.5133103 -0.5546136  0.0142042
+##  [1] -2.1249552 -0.9027449  1.2976135 -0.4180123  1.9308510  1.6412740
+##  [7]  0.7825093  0.4292138 -0.1760998  0.1209508  0.2174327 -2.2618083
 ## [13]  1.0000000  2.0000000  3.0000000
 ```
 
@@ -248,8 +272,9 @@ vec
 ```
 
 ```
-##  [1]  2.3025243 -0.2552535         NA -0.6053567         NA  0.9591721
-##  [7]  1.2998584  0.7039802  0.7709010 -0.1919022 -0.3071393  0.9991563
+##  [1] -0.92232387  1.46135921          NA -0.04929972          NA
+##  [6]  2.29366872  0.40062427 -0.17539728 -0.79961066 -1.22702955
+## [11] -0.36409692 -0.77856974
 ```
 
 ```r
@@ -273,7 +298,7 @@ sum(vec, na.rm = TRUE)
 ```
 
 ```
-## [1] 5.67594
+## [1] -0.1606755
 ```
 
 ```r
@@ -349,8 +374,9 @@ vec
 ```
 
 ```
-##  [1]  2.3025243 -0.2552535         NA -0.6053567         NA  0.9591721
-##  [7]  1.2998584  0.7039802  0.7709010 -0.1919022 -0.3071393  0.9991563
+##  [1] -0.92232387  1.46135921          NA -0.04929972          NA
+##  [6]  2.29366872  0.40062427 -0.17539728 -0.79961066 -1.22702955
+## [11] -0.36409692 -0.77856974
 ```
 
 ```r
@@ -404,49 +430,118 @@ myList
 # Logical vectors
 
 ```r
-answers <- c(TRUE, TRUE, FALSE, FALSE)
-update <- c(TRUE, FALSE, TRUE, FALSE)
+gap2007 <- gap[gap$year == 2007, ]
 
-answers & update
+wealthy <- gap2007$gdpPercap > 40000
+healthy <- gap2007$lifeExp > 75
+
+head(wealthy)
 ```
 
 ```
-## [1]  TRUE FALSE FALSE FALSE
+## [1] FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
 ```r
-answers | update
+table(wealthy)
 ```
 
 ```
-## [1]  TRUE  TRUE  TRUE FALSE
+## wealthy
+## FALSE  TRUE 
+##   137     5
 ```
 
 ```r
 # note the vectorized boolean arithmetic
+gap2007[wealthy & healthy, ]
+```
 
+```
+##            country year       pop continent lifeExp gdpPercap
+## 756        Ireland 2007   4109086    Europe  78.885  40676.00
+## 864         Kuwait 2007   2505559      Asia  77.588  47306.99
+## 1152        Norway 2007   4627926    Europe  80.196  49357.19
+## 1368     Singapore 2007   4553009      Asia  79.972  47143.18
+## 1620 United States 2007 301139947  Americas  78.242  42951.65
+```
+
+```r
+gap2007[wealthy | healthy, ]
+```
+
+```
+##              country year       pop continent lifeExp gdpPercap
+## 24           Albania 2007   3600523    Europe  76.423  5937.030
+## 60         Argentina 2007  40301927  Americas  75.320 12779.380
+## 72         Australia 2007  20434176   Oceania  81.235 34435.367
+## 84           Austria 2007   8199783    Europe  79.829 36126.493
+## 96           Bahrain 2007    708573      Asia  75.635 29796.048
+## 120          Belgium 2007  10392226    Europe  79.441 33692.605
+## 252           Canada 2007  33390141  Americas  80.653 36319.235
+## 288            Chile 2007  16284741  Americas  78.553 13171.639
+## 360       Costa Rica 2007   4133884  Americas  78.782  9645.061
+## 384          Croatia 2007   4493312    Europe  75.748 14619.223
+## 396             Cuba 2007  11416987  Americas  78.273  8948.103
+## 408   Czech Republic 2007  10228744    Europe  76.486 22833.309
+## 420          Denmark 2007   5468120    Europe  78.332 35278.419
+## 528          Finland 2007   5238460    Europe  79.313 33207.084
+## 540           France 2007  61083916    Europe  80.657 30470.017
+## 576          Germany 2007  82400996    Europe  79.406 32170.374
+## 600           Greece 2007  10706290    Europe  79.483 27538.412
+## 672  Hong Kong China 2007   6980412      Asia  82.208 39724.979
+## 696          Iceland 2007    301931    Europe  81.757 36180.789
+## 756          Ireland 2007   4109086    Europe  78.885 40675.996
+## 768           Israel 2007   6426679      Asia  80.745 25523.277
+## 780            Italy 2007  58147733    Europe  80.546 28569.720
+## 804            Japan 2007 127467972      Asia  82.603 31656.068
+## 852       Korea Rep. 2007  49044790      Asia  78.623 23348.140
+## 864           Kuwait 2007   2505559      Asia  77.588 47306.990
+## 996           Mexico 2007 108700891  Americas  76.195 11977.575
+## 1092     Netherlands 2007  16570613    Europe  79.762 36797.933
+## 1104     New Zealand 2007   4115771   Oceania  80.204 25185.009
+## 1152          Norway 2007   4627926    Europe  80.196 49357.190
+## 1164            Oman 2007   3204897      Asia  75.640 22316.193
+## 1188          Panama 2007   3242173  Americas  75.537  9809.186
+## 1236          Poland 2007  38518241    Europe  75.563 15389.925
+## 1248        Portugal 2007  10642836    Europe  78.098 20509.648
+## 1260     Puerto Rico 2007   3942491  Americas  78.746 19328.709
+## 1272         Reunion 2007    798094    Africa  76.442  7670.123
+## 1368       Singapore 2007   4553009      Asia  79.972 47143.180
+## 1392        Slovenia 2007   2009245    Europe  77.926 25768.258
+## 1428           Spain 2007  40448191    Europe  80.941 28821.064
+## 1476          Sweden 2007   9031088    Europe  80.884 33859.748
+## 1488     Switzerland 2007   7554661    Europe  81.701 37506.419
+## 1512          Taiwan 2007  23174294      Asia  78.400 28718.277
+## 1608  United Kingdom 2007  60776238    Europe  79.425 33203.261
+## 1620   United States 2007 301139947  Americas  78.242 42951.653
+## 1632         Uruguay 2007   3447496  Americas  76.384 10611.463
+```
+
+```r
+gap2007[wealthy & !healthy, ]
+```
+
+```
+## [1] country   year      pop       continent lifeExp   gdpPercap
+## <0 rows> (or 0-length row.names)
+```
+
+```r
 # what am I doing here?
-sum(answers)
+sum(healthy)
 ```
 
 ```
-## [1] 2
-```
-
-```r
-mean(answers)
-```
-
-```
-## [1] 0.5
+## [1] 44
 ```
 
 ```r
-answers + update
+mean(healthy)
 ```
 
 ```
-## [1] 2 1 1 0
+## [1] 0.3098592
 ```
 
 **Question**: What do you think R is doing to do arithmetic on logical vectors?
@@ -455,7 +550,7 @@ Tricks with logicals...
 
 
 ```r
-identical(answers & update, as.logical(answers * update))
+identical(healthy & wealthy, as.logical(healthy * wealthy))
 ```
 
 ```
@@ -463,11 +558,11 @@ identical(answers & update, as.logical(answers * update))
 ```
 
 ```r
-identical(answers | update, as.logical(answers + update))
+identical(health | wealthy, as.logical(healthy + wealthy))
 ```
 
 ```
-## [1] TRUE
+## Error in identical(health | wealthy, as.logical(healthy + wealthy)): object 'health' not found
 ```
 
 # Data frames
@@ -480,8 +575,7 @@ A review from Module 1...
 
 
 ```r
-air <- read.csv('../data/airline.csv')
-class(air)
+class(gap)
 ```
 
 ```
@@ -489,89 +583,38 @@ class(air)
 ```
 
 ```r
-head(air)
+head(gap)
 ```
 
 ```
-##   Year Month DayOfMonth DayOfWeek DepTime CRSDepTime ArrTime CRSArrTime
-## 1 2005     1          1         6    1211       1216    1451       1502
-## 2 2005     1          2         7    1209       1216    1447       1502
-## 3 2005     1          3         1    1213       1216    1454       1502
-## 4 2005     1          4         2      NA       1216      NA       1502
-## 5 2005     1          5         3    1211       1216    1504       1502
-## 6 2005     1          6         4    1214       1215    1506       1505
-##   UniqueCarrier FlightNum TailNum ActualElapsedTime CRSElapsedTime AirTime
-## 1            UA       548  N341UA               100            106      81
-## 2            UA       548  N398UA                98            106      79
-## 3            UA       548  N303UA               101            106      83
-## 4            UA       548  000000                NA            106      NA
-## 5            UA       548  N917UA               113            106      85
-## 6            UA       548  N924UA               112            110      95
-##   ArrDelay DepDelay Origin Dest Distance TaxiIn TaxiOut Cancelled
-## 1      -11       -5    SFO  SLC      599      2      17         0
-## 2      -15       -7    SFO  SLC      599      2      17         0
-## 3       -8       -3    SFO  SLC      599      3      15         0
-## 4       NA       NA    SFO  SLC      599      0       0         1
-## 5        2       -5    SFO  SLC      599      6      22         0
-## 6        1       -1    SFO  SLC      599      6      11         0
-##   CancellationCode Diverted CarrierDelay WeatherDelay NASDelay
-## 1                         0            0            0        0
-## 2                         0            0            0        0
-## 3                         0            0            0        0
-## 4                A        0            0            0        0
-## 5                         0            0            0        0
-## 6                         0            0            0        0
-##   SecurityDelay LateAircraftDelay
-## 1             0                 0
-## 2             0                 0
-## 3             0                 0
-## 4             0                 0
-## 5             0                 0
-## 6             0                 0
+##       country year      pop continent lifeExp gdpPercap
+## 1 Afghanistan 1952  8425333      Asia  28.801  779.4453
+## 2 Afghanistan 1957  9240934      Asia  30.332  820.8530
+## 3 Afghanistan 1962 10267083      Asia  31.997  853.1007
+## 4 Afghanistan 1967 11537966      Asia  34.020  836.1971
+## 5 Afghanistan 1972 13079460      Asia  36.088  739.9811
+## 6 Afghanistan 1977 14880372      Asia  38.438  786.1134
 ```
 
 ```r
-str(air)
+str(gap)
 ```
 
 ```
-## 'data.frame':	539895 obs. of  29 variables:
-##  $ Year             : int  2005 2005 2005 2005 2005 2005 2005 2005 2005 2005 ...
-##  $ Month            : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ DayOfMonth       : int  1 2 3 4 5 6 7 8 9 10 ...
-##  $ DayOfWeek        : int  6 7 1 2 3 4 5 6 7 1 ...
-##  $ DepTime          : int  1211 1209 1213 NA 1211 1214 1330 1213 1206 1338 ...
-##  $ CRSDepTime       : int  1216 1216 1216 1216 1216 1215 1215 1215 1215 1215 ...
-##  $ ArrTime          : int  1451 1447 1454 NA 1504 1506 1620 1448 1443 1610 ...
-##  $ CRSArrTime       : int  1502 1502 1502 1502 1502 1505 1505 1505 1505 1505 ...
-##  $ UniqueCarrier    : Factor w/ 21 levels "AA","AS","B6",..: 17 17 17 17 17 17 17 17 17 17 ...
-##  $ FlightNum        : int  548 548 548 548 548 548 548 548 548 548 ...
-##  $ TailNum          : Factor w/ 3983 levels "","0","000000",..: 1033 1387 756 3 3777 3812 3840 1065 1387 3834 ...
-##  $ ActualElapsedTime: int  100 98 101 NA 113 112 110 95 97 92 ...
-##  $ CRSElapsedTime   : int  106 106 106 106 106 110 110 110 110 110 ...
-##  $ AirTime          : int  81 79 83 NA 85 95 85 72 77 78 ...
-##  $ ArrDelay         : int  -11 -15 -8 NA 2 1 75 -17 -22 65 ...
-##  $ DepDelay         : int  -5 -7 -3 NA -5 -1 75 -2 -9 83 ...
-##  $ Origin           : Factor w/ 1 level "SFO": 1 1 1 1 1 1 1 1 1 1 ...
-##  $ Dest             : Factor w/ 82 levels "ABQ","ACV","ANC",..: 76 76 76 76 76 76 76 76 76 76 ...
-##  $ Distance         : int  599 599 599 599 599 599 599 599 599 599 ...
-##  $ TaxiIn           : int  2 2 3 0 6 6 6 3 3 3 ...
-##  $ TaxiOut          : int  17 17 15 0 22 11 19 20 17 11 ...
-##  $ Cancelled        : int  0 0 0 1 0 0 0 0 0 0 ...
-##  $ CancellationCode : Factor w/ 5 levels "","A","B","C",..: 1 1 1 2 1 1 1 1 1 1 ...
-##  $ Diverted         : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ CarrierDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ WeatherDelay     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ NASDelay         : int  0 0 0 0 0 0 3 0 0 0 ...
-##  $ SecurityDelay    : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ LateAircraftDelay: int  0 0 0 0 0 0 72 0 0 65 ...
+## 'data.frame':	1704 obs. of  6 variables:
+##  $ country  : chr  "Afghanistan" "Afghanistan" "Afghanistan" "Afghanistan" ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
+##  $ continent: chr  "Asia" "Asia" "Asia" "Asia" ...
+##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+##  $ gdpPercap: num  779 821 853 836 740 ...
 ```
 
 # Data frames are (special) lists!
 
 
 ```r
-is.list(air)
+is.list(gap)
 ```
 
 ```
@@ -579,112 +622,43 @@ is.list(air)
 ```
 
 ```r
-length(air)
+length(gap)
 ```
 
 ```
-## [1] 29
-```
-
-```r
-air[[3]][1:5]
-```
-
-```
-## [1] 1 2 3 4 5
+## [1] 6
 ```
 
 ```r
-lapply(air, class) 
+gap[[3]][1:5]
 ```
 
 ```
-## $Year
+## [1]  8425333  9240934 10267083 11537966 13079460
+```
+
+```r
+lapply(gap, class) 
+```
+
+```
+## $country
+## [1] "character"
+## 
+## $year
 ## [1] "integer"
 ## 
-## $Month
-## [1] "integer"
+## $pop
+## [1] "numeric"
 ## 
-## $DayOfMonth
-## [1] "integer"
+## $continent
+## [1] "character"
 ## 
-## $DayOfWeek
-## [1] "integer"
+## $lifeExp
+## [1] "numeric"
 ## 
-## $DepTime
-## [1] "integer"
-## 
-## $CRSDepTime
-## [1] "integer"
-## 
-## $ArrTime
-## [1] "integer"
-## 
-## $CRSArrTime
-## [1] "integer"
-## 
-## $UniqueCarrier
-## [1] "factor"
-## 
-## $FlightNum
-## [1] "integer"
-## 
-## $TailNum
-## [1] "factor"
-## 
-## $ActualElapsedTime
-## [1] "integer"
-## 
-## $CRSElapsedTime
-## [1] "integer"
-## 
-## $AirTime
-## [1] "integer"
-## 
-## $ArrDelay
-## [1] "integer"
-## 
-## $DepDelay
-## [1] "integer"
-## 
-## $Origin
-## [1] "factor"
-## 
-## $Dest
-## [1] "factor"
-## 
-## $Distance
-## [1] "integer"
-## 
-## $TaxiIn
-## [1] "integer"
-## 
-## $TaxiOut
-## [1] "integer"
-## 
-## $Cancelled
-## [1] "integer"
-## 
-## $CancellationCode
-## [1] "factor"
-## 
-## $Diverted
-## [1] "integer"
-## 
-## $CarrierDelay
-## [1] "integer"
-## 
-## $WeatherDelay
-## [1] "integer"
-## 
-## $NASDelay
-## [1] "integer"
-## 
-## $SecurityDelay
-## [1] "integer"
-## 
-## $LateAircraftDelay
-## [1] "integer"
+## $gdpPercap
+## [1] "numeric"
 ```
 
 `lapply()` is a function used on lists; it works here to apply the `class()` function to each element of the list, which in this case is each field/column.
@@ -693,30 +667,30 @@ lapply(air, class)
 
 
 ```r
-length(air)
+length(gap)
 ```
 
 ```
-## [1] 29
+## [1] 6
 ```
 
 ```r
-someFields <- air[c(3,5)]
+someFields <- gap[c(3,5)]
 head(someFields)
 ```
 
 ```
-##   DayOfMonth DepTime
-## 1          1    1211
-## 2          2    1209
-## 3          3    1213
-## 4          4      NA
-## 5          5    1211
-## 6          6    1214
+##        pop lifeExp
+## 1  8425333  28.801
+## 2  9240934  30.332
+## 3 10267083  31.997
+## 4 11537966  34.020
+## 5 13079460  36.088
+## 6 14880372  38.438
 ```
 
 ```r
-identical(air[c(3,5)], air[ , c(3,5)])
+identical(gap[c(3,5)], gap[ , c(3,5)])
 ```
 
 ```
@@ -730,56 +704,36 @@ In general the placement of commas in R is crucial, but here, two different oper
 
 
 ```r
-class(air$Dest)
+class(gap$continent)
 ```
 
 ```
-## [1] "factor"
-```
-
-```r
-head(air$Dest) # What order are the factors in?
-```
-
-```
-## [1] SLC SLC SLC SLC SLC SLC
-## 82 Levels: ABQ ACV ANC ASE ATL AUS BFL BIL BOI BOS BUR BWI BZN CEC ... TWF
+## [1] "character"
 ```
 
 ```r
-levels(air[["Dest"]])  # note alternate way to get the variable
+head(gap$continent) # What order are the factors in?
 ```
 
 ```
-##  [1] "ABQ" "ACV" "ANC" "ASE" "ATL" "AUS" "BFL" "BIL" "BOI" "BOS" "BUR"
-## [12] "BWI" "BZN" "CEC" "CIC" "CLE" "CLT" "COS" "CVG" "DEN" "DFW" "DRO"
-## [23] "DTW" "EGE" "ELP" "EUG" "EWR" "FAT" "FCA" "GJT" "HNL" "IAD" "IAH"
-## [34] "IDA" "IND" "JFK" "KOA" "LAS" "LAX" "LGB" "LIH" "LMT" "MCO" "MDW"
-## [45] "MEM" "MFR" "MIA" "MKE" "MOD" "MRY" "MSO" "MSP" "MSY" "OAK" "OGG"
-## [56] "ONT" "ORD" "OTH" "PDX" "PHL" "PHX" "PIH" "PIT" "PMD" "PSC" "PSP"
-## [67] "RDD" "RDM" "RNO" "SAN" "SAT" "SBA" "SBP" "SEA" "SJC" "SLC" "SMF"
-## [78] "SMX" "SNA" "STL" "TUS" "TWF"
+## [1] "Asia" "Asia" "Asia" "Asia" "Asia" "Asia"
 ```
 
 ```r
-summary(air$Dest)
+levels(gap[["continent"]])  # note alternate way to get the variable
 ```
 
 ```
-##   ABQ   ACV   ANC   ASE   ATL   AUS   BFL   BIL   BOI   BOS   BUR   BWI 
-##  2467 10402   613   166 13374  1705  3824    13  8338 10191  9052  1890 
-##   BZN   CEC   CIC   CLE   CLT   COS   CVG   DEN   DFW   DRO   DTW   EGE 
-##    43  2192  5102  1930  5313  1859  3957 20545 15694     2  4554    16 
-##   ELP   EUG   EWR   FAT   FCA   GJT   HNL   IAD   IAH   IDA   IND   JFK 
-##     1  8928 11741 10587    12     3 11644 11778 10582     2   752 24047 
-##   KOA   LAS   LAX   LGB   LIH   LMT   MCO   MDW   MEM   MFR   MIA   MKE 
-##  2741 24210 44265   209  2460   348  1593  2490   993 10829  4381   115 
-##   MOD   MRY   MSO   MSP   MSY   OAK   OGG   ONT   ORD   OTH   PDX   PHL 
-##  6334 10011    12  7935   251     1  4610  4409 22984   354 12707  9390 
-##   PHX   PIH   PIT   PMD   PSC   PSP   RDD   RDM   RNO   SAN   SAT   SBA 
-## 16313     2  1850  1119     1  5792  7382  4111  9114 18114  1367 12651 
-##   SBP   SEA   SJC   SLC   SMF   SMX   SNA   STL   TUS   TWF 
-##  6945 22283     2 15925 10806    13 15180  2797  1164    13
+## NULL
+```
+
+```r
+summary(gap$continent)
+```
+
+```
+##    Length     Class      Mode 
+##      1704 character character
 ```
 
 - What if we don't like the order these are in? Factor order is important for all kinds of things like plotting, analysis of variance, regression output, and more
@@ -789,46 +743,36 @@ summary(air$Dest)
 - This is a useful shortcut when we want to preserve some of the meaning provided by the order
 - Think ordinal data
 
+This example is a bit artificial as 'continent' doesn't really have a natural ordering.
+
 
 ```r
-# first let's do some pre-processing to get set up for the example
-air$DepDelayCens <- air$DepDelay
-air$DepDelayCens[air$DepDelayCens > 60] <- 60
-air$DepDelayCens[air$DepDelayCens < 0] <- 0
-air$DayOfWeek <- as.factor(air$DayOfWeek)
-air$DayOfWeekSun <- ordered(air$DayOfWeek, 
-     levels = levels(air$DayOfWeek)[c(7,1,2,3,4,5,6)])
+gap$continent2 <- ordered(gap$continent, 
+     levels = levels(gap$continent)[c(2,1,3,4,5)])
 
-# alternative coding
-# air <- within(air, 
-#     DayOfWeekSun <- ordered(DayOfWeek, 
-#        levels = levels(DayOfWeek)[c(7,1,2,3,4,5,6)])
-#)
-
-head(air$DayOfWeekSun)
+head(gap$continent2)
 ```
 
 ```
-## [1] 6 7 1 2 3 4
-## Levels: 7 < 1 < 2 < 3 < 4 < 5 < 6
+## [1] <NA> <NA> <NA> <NA> <NA> <NA>
+## Levels:
 ```
 
 ```r
-levels(air$DayOfWeekSun)
+levels(gap$continent2)
 ```
 
 ```
-## [1] "7" "1" "2" "3" "4" "5" "6"
+## character(0)
 ```
 
 ```r
-levels(air$DayOfWeekSun) <- c("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
-boxplot(DepDelayCens ~ DayOfWeekSun, data = air)
+boxplot(lifeExp ~ continent2, data = gap)
 ```
 
-![](figure/orderedfac-1.png)
-
-**Challenge**: Try to decipher what I just did with that complicated single line of code starting with `within`.
+```
+## Error in boxplot.default(split(mf[[response]], mf[-response], drop = drop, : invalid first argument
+```
 
 # Reclassifying Factors
 - Turning factors into other data types can be tricky. All factors have an underlying numeric structure.
@@ -905,18 +849,33 @@ There are many ways to select subsets in R. The syntax below is useful for vecto
 
 
 ```r
-vec <- rnorm(20)
+vec <- gm_2007$lifeExp
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'gm_2007' not found
+```
+
+```r
 mat <- matrix(vec, 4, 5)
+```
+
+```
+## Warning in matrix(vec, 4, 5): data length [12] is not a sub-multiple or
+## multiple of the number of columns [5]
+```
+
+```r
 rownames(mat) <- letters[1:4]
 mat
 ```
 
 ```
-##         [,1]       [,2]        [,3]        [,4]       [,5]
-## a  0.9388063 -0.1578055 -0.63870678 -1.48048466 -0.3953748
-## b -1.2129332 -0.6416316 -1.49569066  0.02969633 -0.3237404
-## c  1.3533546 -0.5549230 -0.07178203  1.55374227  1.7648537
-## d -0.5986032  0.1630123  0.21077843  1.58435976 -0.4144714
+##          [,1]       [,2]       [,3]        [,4]       [,5]
+## a -0.92232387         NA -0.7996107 -0.92232387         NA
+## b  1.46135921  2.2936687 -1.2270296  1.46135921  2.2936687
+## c          NA  0.4006243 -0.3640969          NA  0.4006243
+## d -0.04929972 -0.1753973 -0.7785697 -0.04929972 -0.1753973
 ```
 1) by direct indexing
 
@@ -926,7 +885,7 @@ vec[c(3, 5, 12:14)]
 ```
 
 ```
-## [1]  1.35335459 -0.15780554  0.21077843 -1.48048466  0.02969633
+## [1]         NA         NA -0.7785697         NA         NA
 ```
 
 ```r
@@ -934,19 +893,24 @@ vec[-c(3,5)]
 ```
 
 ```
-##  [1]  0.93880627 -1.21293324 -0.59860321 -0.64163157 -0.55492299
-##  [6]  0.16301234 -0.63870678 -1.49569066 -0.07178203  0.21077843
-## [11] -1.48048466  0.02969633  1.55374227  1.58435976 -0.39537483
-## [16] -0.32374035  1.76485365 -0.41447143
+##  [1] -0.92232387  1.46135921 -0.04929972  2.29366872  0.40062427
+##  [6] -0.17539728 -0.79961066 -1.22702955 -0.36409692 -0.77856974
 ```
 
 ```r
-mat[c(2,4), 5]
+gap[c(2,4), 5]
 ```
 
 ```
-##          b          d 
-## -0.3237404 -0.4144714
+## [1] 30.332 34.020
+```
+
+```r
+gap[c(2,4), 'lifeExp']
+```
+
+```
+## [1] 30.332 34.020
 ```
 
 ```r
@@ -964,11 +928,11 @@ elemInd
 ```
 
 ```r
-mat[elemInd]
+gap[elemInd]
 ```
 
 ```
-## [1] -0.1578055 -0.5549230 -0.5986032
+## [1] "1952"        "1962"        "Afghanistan"
 ```
 
 Note the last usage where we give it a 2-column matrix of indices
@@ -977,110 +941,20 @@ Note the last usage where we give it a 2-column matrix of indices
 
 
 ```r
-cond <- vec > 0
-vec[cond]
+wealthy <- gap$gdpPercap > 50000
+gap$gdpPercap[wealthy]
 ```
 
 ```
-## [1] 0.93880627 1.35335459 0.16301234 0.21077843 0.02969633 1.55374227
-## [7] 1.58435976 1.76485365
+## [1] 108382.35 113523.13  95458.11  80894.88 109347.87  59265.48
 ```
 
 ```r
-air[air$DepDelay > 60*12 & !is.na(air$DepDelay), ]
+gap[wealth, ]
 ```
 
 ```
-##        Year Month DayOfMonth DayOfWeek DepTime CRSDepTime ArrTime
-## 71351  2005     7         23         6     633       1545    1212
-## 80042  2005     8         20         6    2237       1030     122
-## 115794 2005    11          2         3    1009        630    1526
-## 168750 2006     4         11         2    1001       1543    1505
-## 258029 2006    12         28         4    2232        845     216
-## 258288 2006    12         14         4    1118       2156    1908
-## 290635 2007     3         22         4     729       1545    1257
-## 333067 2007     7         16         1    1200       2021    1522
-## 337213 2007     7         16         1     858       1410    1805
-## 372929 2007    10         28         7    2155        835      37
-## 396990 2007    12         31         1     745       1225    1318
-## 415550 2008     2          9         6    1003       1605    1302
-## 449626 2008     5         10         6     735       1820    1005
-## 454313 2008     5         15         4    2243        850      50
-##        CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
-## 71351        2113            NW       354  N586NW               219
-## 80042        1301            TZ      4603  N561TZ               345
-## 115794       1207            NW       368  N552NW               197
-## 168750       2112            NW       354  N541US               184
-## 258029       1205            HA        11  N587HA               344
-## 258288        527            NW       346  N539US               290
-## 290635       2115            NW       354  N504US               208
-## 333067       2359            UA       595  N535UA               262
-## 337213       2245            AA       194  N5EVAA               367
-## 372929       1045            HA        11  N585HA               162
-## 396990       1809            NW       360  N525US               213
-## 415550       1946            UA        77  N667UA               299
-## 449626       2041            UA        39  N669UA               330
-## 454313       1055            HA        11  N596HA               307
-##        CRSElapsedTime AirTime ArrDelay DepDelay Origin Dest Distance
-## 71351             208     184      899      888    SFO  MSP     1589
-## 80042             331     323      741      727    SFO  LIH     2447
-## 115794            217     175     1639     1659    SFO  MSP     1589
-## 168750            209     165     1073     1098    SFO  MSP     1589
-## 258029            320     189      851      827    SFO  HNL     2398
-## 258288            271     228      821      802    SFO  DTW     2079
-## 290635            210     188      942      944    SFO  MSP     1589
-## 333067            278     235      923      939    SFO  ANC     2018
-## 337213            335     323     1160     1128    SFO  BOS     2704
-## 372929            130     123      832      800    SFO  HNL     2398
-## 396990            224     191     1149     1160    SFO  MSP     1589
-## 415550            341     272     1036     1078    SFO  HNL     2398
-## 449626            321     299      804      795    SFO  OGG     2338
-## 454313            305     286      835      833    SFO  HNL     2398
-##        TaxiIn TaxiOut Cancelled CancellationCode Diverted CarrierDelay
-## 71351      13      22         0                         0          888
-## 80042       5      17         0                         0          652
-## 115794      3      19         0                         0         1639
-## 168750      5      14         0                         0         1048
-## 258029      8      27         0                         0          827
-## 258288     33      29         0                         0          802
-## 290635      4      16         0                         0          884
-## 333067      4      23         0                         0          844
-## 337213     25      19         0                         0          993
-## 372929      6      33         0                         0          800
-## 396990      9      13         0                         0         1106
-## 415550      2      25         0                         0          710
-## 449626      6      25         0                         0          795
-## 454313      7      14         0                         0          835
-##        WeatherDelay NASDelay SecurityDelay LateAircraftDelay DepDelayCens
-## 71351             0       11             0                 0           60
-## 80042             0       14             0                75           60
-## 115794            0        0             0                 0           60
-## 168750            6        0             0                19           60
-## 258029            0        0             0                24           60
-## 258288            0       19             0                 0           60
-## 290635            0        0             0                58           60
-## 333067            0        0             0                79           60
-## 337213            0       32             0               135           60
-## 372929            0        0             0                32           60
-## 396990            0        0             0                43           60
-## 415550            0        0             0               326           60
-## 449626            0        9             0                 0           60
-## 454313            0        0             0                 0           60
-##        DayOfWeekSun
-## 71351           Sat
-## 80042           Sat
-## 115794          Wed
-## 168750          Tue
-## 258029          Thu
-## 258288          Thu
-## 290635          Thu
-## 333067          Mon
-## 337213          Mon
-## 372929          Sun
-## 396990          Mon
-## 415550          Sat
-## 449626          Sat
-## 454313          Thu
+## Error in `[.data.frame`(gap, wealth, ): object 'wealth' not found
 ```
 
 What happened in the last subsetting operation?
@@ -1092,112 +966,30 @@ mat[c('a', 'd', 'a'), ]
 ```
 
 ```
-##         [,1]       [,2]       [,3]      [,4]       [,5]
-## a  0.9388063 -0.1578055 -0.6387068 -1.480485 -0.3953748
-## d -0.5986032  0.1630123  0.2107784  1.584360 -0.4144714
-## a  0.9388063 -0.1578055 -0.6387068 -1.480485 -0.3953748
+##          [,1]       [,2]       [,3]        [,4]       [,5]
+## a -0.92232387         NA -0.7996107 -0.92232387         NA
+## d -0.04929972 -0.1753973 -0.7785697 -0.04929972 -0.1753973
+## a -0.92232387         NA -0.7996107 -0.92232387         NA
 ```
+
 4) using *subset()*
 
 
 ```r
-subset(air, DepDelay > 60*12)
+subset(gap, gdpPercap > 50000)
 ```
 
 ```
-##        Year Month DayOfMonth DayOfWeek DepTime CRSDepTime ArrTime
-## 71351  2005     7         23         6     633       1545    1212
-## 80042  2005     8         20         6    2237       1030     122
-## 115794 2005    11          2         3    1009        630    1526
-## 168750 2006     4         11         2    1001       1543    1505
-## 258029 2006    12         28         4    2232        845     216
-## 258288 2006    12         14         4    1118       2156    1908
-## 290635 2007     3         22         4     729       1545    1257
-## 333067 2007     7         16         1    1200       2021    1522
-## 337213 2007     7         16         1     858       1410    1805
-## 372929 2007    10         28         7    2155        835      37
-## 396990 2007    12         31         1     745       1225    1318
-## 415550 2008     2          9         6    1003       1605    1302
-## 449626 2008     5         10         6     735       1820    1005
-## 454313 2008     5         15         4    2243        850      50
-##        CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
-## 71351        2113            NW       354  N586NW               219
-## 80042        1301            TZ      4603  N561TZ               345
-## 115794       1207            NW       368  N552NW               197
-## 168750       2112            NW       354  N541US               184
-## 258029       1205            HA        11  N587HA               344
-## 258288        527            NW       346  N539US               290
-## 290635       2115            NW       354  N504US               208
-## 333067       2359            UA       595  N535UA               262
-## 337213       2245            AA       194  N5EVAA               367
-## 372929       1045            HA        11  N585HA               162
-## 396990       1809            NW       360  N525US               213
-## 415550       1946            UA        77  N667UA               299
-## 449626       2041            UA        39  N669UA               330
-## 454313       1055            HA        11  N596HA               307
-##        CRSElapsedTime AirTime ArrDelay DepDelay Origin Dest Distance
-## 71351             208     184      899      888    SFO  MSP     1589
-## 80042             331     323      741      727    SFO  LIH     2447
-## 115794            217     175     1639     1659    SFO  MSP     1589
-## 168750            209     165     1073     1098    SFO  MSP     1589
-## 258029            320     189      851      827    SFO  HNL     2398
-## 258288            271     228      821      802    SFO  DTW     2079
-## 290635            210     188      942      944    SFO  MSP     1589
-## 333067            278     235      923      939    SFO  ANC     2018
-## 337213            335     323     1160     1128    SFO  BOS     2704
-## 372929            130     123      832      800    SFO  HNL     2398
-## 396990            224     191     1149     1160    SFO  MSP     1589
-## 415550            341     272     1036     1078    SFO  HNL     2398
-## 449626            321     299      804      795    SFO  OGG     2338
-## 454313            305     286      835      833    SFO  HNL     2398
-##        TaxiIn TaxiOut Cancelled CancellationCode Diverted CarrierDelay
-## 71351      13      22         0                         0          888
-## 80042       5      17         0                         0          652
-## 115794      3      19         0                         0         1639
-## 168750      5      14         0                         0         1048
-## 258029      8      27         0                         0          827
-## 258288     33      29         0                         0          802
-## 290635      4      16         0                         0          884
-## 333067      4      23         0                         0          844
-## 337213     25      19         0                         0          993
-## 372929      6      33         0                         0          800
-## 396990      9      13         0                         0         1106
-## 415550      2      25         0                         0          710
-## 449626      6      25         0                         0          795
-## 454313      7      14         0                         0          835
-##        WeatherDelay NASDelay SecurityDelay LateAircraftDelay DepDelayCens
-## 71351             0       11             0                 0           60
-## 80042             0       14             0                75           60
-## 115794            0        0             0                 0           60
-## 168750            6        0             0                19           60
-## 258029            0        0             0                24           60
-## 258288            0       19             0                 0           60
-## 290635            0        0             0                58           60
-## 333067            0        0             0                79           60
-## 337213            0       32             0               135           60
-## 372929            0        0             0                32           60
-## 396990            0        0             0                43           60
-## 415550            0        0             0               326           60
-## 449626            0        9             0                 0           60
-## 454313            0        0             0                 0           60
-##        DayOfWeekSun
-## 71351           Sat
-## 80042           Sat
-## 115794          Wed
-## 168750          Tue
-## 258029          Thu
-## 258288          Thu
-## 290635          Thu
-## 333067          Mon
-## 337213          Mon
-## 372929          Sun
-## 396990          Mon
-## 415550          Sat
-## 449626          Sat
-## 454313          Thu
+##     country year     pop continent lifeExp gdpPercap continent2
+## 853  Kuwait 1952  160000      Asia  55.565 108382.35       <NA>
+## 854  Kuwait 1957  212846      Asia  58.033 113523.13       <NA>
+## 855  Kuwait 1962  358266      Asia  60.470  95458.11       <NA>
+## 856  Kuwait 1967  575003      Asia  64.624  80894.88       <NA>
+## 857  Kuwait 1972  841934      Asia  67.712 109347.87       <NA>
+## 858  Kuwait 1977 1140357      Asia  69.343  59265.48       <NA>
 ```
 
-5) using *dplyr* tools such as *filter()* and *select()* -- more in Module 5
+5) using *dplyr* tools such as *filter()* and *select()* -- more in Module 6
 
 # Assignment into subsets
 
@@ -1205,6 +997,7 @@ We can assign into subsets by using similar syntax, as we saw with vectors.
 
 
 ```r
+vec <- rnorm(20)
 vec[c(3, 5, 12:14)] <- 1:5
 mat[2, 3:5] <- rnorm(3)
 mat[mat[,1] > 0, ] <- -Inf
@@ -1258,40 +1051,131 @@ strsplit("This is the R bootcamp", split = " ")
 ```
 
 ```r
-substring(chars, 2, 3)
+countries <- as.character(gap2007$country)
+substring(countries, 1, 3)
 ```
 
 ```
-## [1] "i"  "al" "ot" "at" "e "
+##   [1] "Afg" "Alb" "Alg" "Ang" "Arg" "Aus" "Aus" "Bah" "Ban" "Bel" "Ben"
+##  [12] "Bol" "Bos" "Bot" "Bra" "Bul" "Bur" "Bur" "Cam" "Cam" "Can" "Cen"
+##  [23] "Cha" "Chi" "Chi" "Col" "Com" "Con" "Con" "Cos" "Cot" "Cro" "Cub"
+##  [34] "Cze" "Den" "Dji" "Dom" "Ecu" "Egy" "El " "Equ" "Eri" "Eth" "Fin"
+##  [45] "Fra" "Gab" "Gam" "Ger" "Gha" "Gre" "Gua" "Gui" "Gui" "Hai" "Hon"
+##  [56] "Hon" "Hun" "Ice" "Ind" "Ind" "Ira" "Ira" "Ire" "Isr" "Ita" "Jam"
+##  [67] "Jap" "Jor" "Ken" "Kor" "Kor" "Kuw" "Leb" "Les" "Lib" "Lib" "Mad"
+##  [78] "Mal" "Mal" "Mal" "Mau" "Mau" "Mex" "Mon" "Mon" "Mor" "Moz" "Mya"
+##  [89] "Nam" "Nep" "Net" "New" "Nic" "Nig" "Nig" "Nor" "Oma" "Pak" "Pan"
+## [100] "Par" "Per" "Phi" "Pol" "Por" "Pue" "Reu" "Rom" "Rwa" "Sao" "Sau"
+## [111] "Sen" "Ser" "Sie" "Sin" "Slo" "Slo" "Som" "Sou" "Spa" "Sri" "Sud"
+## [122] "Swa" "Swe" "Swi" "Syr" "Tai" "Tan" "Tha" "Tog" "Tri" "Tun" "Tur"
+## [133] "Uga" "Uni" "Uni" "Uru" "Ven" "Vie" "Wes" "Yem" "Zam" "Zim"
 ```
 
 ```r
-chars2 <- chars
-substring(chars2, 2, 3) <- "ZZ"
-chars2
+tmp <- countries
+substring(tmp, 5, 10) <- "______"
+tmp
 ```
 
 ```
-## [1] "hZ"              "hZZlo"           "mZZher's"        "fZZher's"       
-## [5] "HZZsaid, \"hi\""
+##   [1] "Afgh______n"              "Alba___"                 
+##   [3] "Alge___"                  "Ango__"                  
+##   [5] "Arge_____"                "Aust_____"               
+##   [7] "Aust___"                  "Bahr___"                 
+##   [9] "Bang______"               "Belg___"                 
+##  [11] "Beni_"                    "Boli___"                 
+##  [13] "Bosn______ Herzegovina"   "Bots____"                
+##  [15] "Braz__"                   "Bulg____"                
+##  [17] "Burk______so"             "Buru___"                 
+##  [19] "Camb____"                 "Came____"                
+##  [21] "Cana__"                   "Cent______rican Republic"
+##  [23] "Chad"                     "Chil_"                   
+##  [25] "Chin_"                    "Colo____"                
+##  [27] "Como___"                  "Cong______ Rep."         
+##  [29] "Cong______"               "Cost______"              
+##  [31] "Cote______ire"            "Croa___"                 
+##  [33] "Cuba"                     "Czec______blic"          
+##  [35] "Denm___"                  "Djib____"                
+##  [37] "Domi______Republic"       "Ecua___"                 
+##  [39] "Egyp_"                    "El S______r"             
+##  [41] "Equa______ Guinea"        "Erit___"                 
+##  [43] "Ethi____"                 "Finl___"                 
+##  [45] "Fran__"                   "Gabo_"                   
+##  [47] "Gamb__"                   "Germ___"                 
+##  [49] "Ghan_"                    "Gree__"                  
+##  [51] "Guat_____"                "Guin__"                  
+##  [53] "Guin______sau"            "Hait_"                   
+##  [55] "Hond____"                 "Hong______China"         
+##  [57] "Hung___"                  "Icel___"                 
+##  [59] "Indi_"                    "Indo_____"               
+##  [61] "Iran"                     "Iraq"                    
+##  [63] "Irel___"                  "Isra__"                  
+##  [65] "Ital_"                    "Jama___"                 
+##  [67] "Japa_"                    "Jord__"                  
+##  [69] "Keny_"                    "Kore______ Rep."         
+##  [71] "Kore______"               "Kuwa__"                  
+##  [73] "Leba___"                  "Leso___"                 
+##  [75] "Libe___"                  "Liby_"                   
+##  [77] "Mada______"               "Mala__"                  
+##  [79] "Mala____"                 "Mali"                    
+##  [81] "Maur______"               "Maur_____"               
+##  [83] "Mexi__"                   "Mong____"                
+##  [85] "Mont______"               "Moro___"                 
+##  [87] "Moza______"               "Myan___"                 
+##  [89] "Nami___"                  "Nepa_"                   
+##  [91] "Neth______s"              "New ______d"             
+##  [93] "Nica_____"                "Nige_"                   
+##  [95] "Nige___"                  "Norw__"                  
+##  [97] "Oman"                     "Paki____"                
+##  [99] "Pana__"                   "Para____"                
+## [101] "Peru"                     "Phil______s"             
+## [103] "Pola__"                   "Port____"                
+## [105] "Puer______o"              "Reun___"                 
+## [107] "Roma___"                  "Rwan__"                  
+## [109] "Sao ______nd Principe"    "Saud______ia"            
+## [111] "Sene___"                  "Serb__"                  
+## [113] "Sier______ne"             "Sing_____"               
+## [115] "Slov______ublic"          "Slov____"                
+## [117] "Soma___"                  "Sout______ca"            
+## [119] "Spai_"                    "Sri _____"               
+## [121] "Suda_"                    "Swaz_____"               
+## [123] "Swed__"                   "Swit______d"             
+## [125] "Syri_"                    "Taiw__"                  
+## [127] "Tanz____"                 "Thai____"                
+## [129] "Togo"                     "Trin______nd Tobago"     
+## [131] "Tuni___"                  "Turk__"                  
+## [133] "Ugan__"                   "Unit______gdom"          
+## [135] "Unit______tes"            "Urug___"                 
+## [137] "Vene_____"                "Viet___"                 
+## [139] "West______and Gaza"       "Yeme______"              
+## [141] "Zamb__"                   "Zimb____"
 ```
 We can search for patterns in character vectors and replace patterns (both vectorized!)
 
 ```r
-grep("ther", chars)
+indexes <- grep("Korea", countries)
+indexes
 ```
 
 ```
-## [1] 3 4
+## [1] 70 71
 ```
 
 ```r
-gsub("hi", "Hi", chars)
+countries[indexes]
 ```
 
 ```
-## [1] "Hi"              "hallo"           "mother's"        "father's"       
-## [5] "He said, \"Hi\""
+## [1] "Korea Dem. Rep." "Korea Rep."
+```
+
+```r
+countries2 <- gsub("Korea Dem. Rep.", "North Korea", countries)
+countries2[indexes]
+```
+
+```
+## [1] "North Korea" "Korea Rep."
 ```
 
 # Regular expressions (regex or regexp)
@@ -1466,30 +1350,28 @@ The *read.table()* family of functions just skims the surface of things...
 
 ### Basics
 
-1) Extract the 5th row from the airline dataset.
+1) Extract the 5th row from the gapminder dataset.
 
-2) Extract the last row from the airline dataset.
+2) Extract the last row from the gapminder dataset.
 
-3) Count the number of NAs in the departure delay field of the airline dataset.
+3) Count the number of gdpPercap values greater than 50000 in the gapminder dataset.
 
-4) Set all of the extreme delays (more than 300 minutes) to NA.
+4) Set all of the gdpPercap values greater than 50000 to NA.
 
-5) Consider the first row of the airline dataset, which has UA flight number 548. How do I create a string "UA-548" using `air$UniqueCarrier[1]` and `air$FlightNum[1]`? 
+5) Consider the first row of the gapminder dataset, which has Afghanistan for 1952. How do I create a string "Afghanistan-1952" using `gap$country[1]` and `gap$year[1]`? 
 
 ### Using the ideas
 
-6) Create a character string using `paste()` that tells the user how many rows there are in the data frame - do this programmatically such that it would work for any data frame regardless of how many rows it has. The result should look like this: "There are 56,234,234 rows in the dataset"
+6) Create a character string using `paste()` that tells the user how many rows there are in the data frame - do this programmatically such that it would work for any data frame regardless of how many rows it has. The result should look like this: "There are 1704 rows in the dataset"
 
-7) If you didn't do it this way already, extract the last row from the airline dataset without typing the number '539895'.
+7) If you didn't do it this way already, extract the last row from the gapminder dataset without typing the number '1704'.
 
-8) Create a boolean vector indicating if flight on the carrier WN (Southwest) and distance is less than 1000 miles and calculate the proportion of all the flights these represent.
+8) Create a boolean vector indicating if the life expectancy is greater than 75 and the gdpPercap is less than 10000 and calculate the proportion of all the records these represent.
 
 9) Use that vector to create a new data frame that is a subset of the original data frame.
 
-10) Consider the attributes of the *air* dataset. What kind of R object is the set of attributes?
+10) Consider the attributes of the gapminder dataset. What kind of R object is the set of attributes?
 
 ### Advanced
 
-11) Make the destination variable a factor variable and reorder the levels by the number of arrivals from SFO at the destinations. Now create a boxplot of departure delay by destination for January, 2005.
-
-12) Create row names for the data frame based on concatenating the Year, Month, DayOfMonth, UniqueCarrier and FlightNum fields. You may run into a problem with the data that you need to resolve before you're able to do this...
+11) Create row names for the data frame based on concatenating the Continent, Country, and Year fields.

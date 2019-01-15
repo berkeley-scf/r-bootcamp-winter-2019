@@ -1,5 +1,5 @@
 % R bootcamp, Module 10: Advanced topics
-% August 2018, UC Berkeley
+% January 2019, UC Berkeley
 % Chris Paciorek
 
 
@@ -27,26 +27,126 @@ Objects have fields, analogous to the components of a list. For S4 and reference
 
 # Working with S3 classes and methods
 
+R has several approaches to object-oriented programming.  These are widely used, albeit a bit klunky. 
+
+The most basic is 'S3' objects. These objects are generally built upon lists.
+
+
+```r
+mod <- lm(gap$lifeExp ~ log(gap$gdpPercap))
+class(mod)
+```
+
+```
+## [1] "lm"
+```
+
+```r
+is.list(mod)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+names(mod)
+```
+
+```
+##  [1] "coefficients"  "residuals"     "effects"       "rank"         
+##  [5] "fitted.values" "assign"        "qr"            "df.residual"  
+##  [9] "xlevels"       "call"          "terms"         "model"
+```
+
+```r
+mod$coefficients
+```
+
+```
+##        (Intercept) log(gap$gdpPercap) 
+##          -9.100889           8.405085
+```
+
+```r
+mod[['coefficients']]
+```
+
+```
+##        (Intercept) log(gap$gdpPercap) 
+##          -9.100889           8.405085
+```
+
+```r
+mod[[1]]
+```
+
+```
+##        (Intercept) log(gap$gdpPercap) 
+##          -9.100889           8.405085
+```
+
+The magic of OOP here is that methods (i.e., functions) can be tailored to work specifically with specific kinds of objects.
+
+
+```r
+summary(gap$lifeExp)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   23.60   48.20   60.71   59.47   70.85   82.60
+```
+
+```r
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = gap$lifeExp ~ log(gap$gdpPercap))
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -32.778  -4.204   1.212   4.658  19.285 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)         -9.1009     1.2277  -7.413 1.93e-13 ***
+## log(gap$gdpPercap)   8.4051     0.1488  56.500  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.62 on 1702 degrees of freedom
+## Multiple R-squared:  0.6522,	Adjusted R-squared:  0.652 
+## F-statistic:  3192 on 1 and 1702 DF,  p-value: < 2.2e-16
+```
+
+**Question**: What do you think R is doing behind the scenes?
+
+Consider `summary.lm`.
+
+# More on working with S3 classes and methods 
+
 
 ```r
 library(methods)
-sub <- air[air$Month == 1, ]  # to speed up the next steps
-yb <- sub$DepDelay > 15
-yc <- sub$DepDelay
-yc[yc > 180] <- 180
-x <- sub$Distance
+yb <- gap$lifeExp > 75
+yc <- gap$lifeExp
+x <- log(gap$gdpPercap)
 mod1 <- lm(yc ~ x)
 mod2 <- glm(yb ~ x, family = binomial)
 mod2$residuals[1:20] # access field with list-like syntax
 ```
 
 ```
-##         1         2         3         5         6         7         8 
-## -1.332485 -1.332485 -1.332485 -1.332485 -1.332485  4.007653 -1.332485 
-##         9        10        11        12        13        14        15 
-## -1.332485  4.007653 -1.332485 -1.332485 -1.332485 -1.332485 -1.332485 
-##        16        17        18        19        20        21 
-## -1.332485 -1.332485 -1.332485 -1.332485 -1.332485 -1.332485
+##         1         2         3         4         5         6         7 
+## -1.000026 -1.000031 -1.000035 -1.000033 -1.000022 -1.000027 -1.000054 
+##         8         9        10        11        12        13        14 
+## -1.000035 -1.000015 -1.000014 -1.000021 -1.000053 -1.000258 -1.000477 
+##        15        16        17        18        19        20 
+## -1.000832 -1.001461 -1.002613 -1.003204 -1.003496 -1.003838
 ```
 
 ```r
@@ -85,10 +185,9 @@ names(mod2)
 ## [13] "iter"              "weights"           "prior.weights"    
 ## [16] "df.residual"       "df.null"           "y"                
 ## [19] "converged"         "boundary"          "model"            
-## [22] "na.action"         "call"              "formula"          
-## [25] "terms"             "data"              "offset"           
-## [28] "control"           "method"            "contrasts"        
-## [31] "xlevels"
+## [22] "call"              "formula"           "terms"            
+## [25] "data"              "offset"            "control"          
+## [28] "method"            "contrasts"         "xlevels"
 ```
 
 ```r
@@ -112,24 +211,30 @@ methods(predict)
 
 ```
 ##  [1] predict.ar*                predict.Arima*            
-##  [3] predict.arima0*            predict.bs*               
-##  [5] predict.bSpline*           predict.glm               
-##  [7] predict.glmmPQL*           predict.gls*              
-##  [9] predict.gnls*              predict.HoltWinters*      
-## [11] predict.lda*               predict.lm                
-## [13] predict.lme*               predict.lmList*           
-## [15] predict.lmList4*           predict.loess*            
-## [17] predict.lqs*               predict.mca*              
-## [19] predict.merMod*            predict.mlm*              
-## [21] predict.nbSpline*          predict.nlme*             
-## [23] predict.nls*               predict.npolySpline*      
-## [25] predict.ns*                predict.pbSpline*         
-## [27] predict.polr*              predict.poly*             
-## [29] predict.polySpline*        predict.ppolySpline*      
-## [31] predict.ppr*               predict.prcomp*           
-## [33] predict.princomp*          predict.qda*              
-## [35] predict.rlm*               predict.smooth.spline*    
-## [37] predict.smooth.spline.fit* predict.StructTS*         
+##  [3] predict.arima0*            predict.bam               
+##  [5] predict.bs*                predict.bSpline*          
+##  [7] predict.fastTps            predict.gam               
+##  [9] predict.glm                predict.glmmPQL*          
+## [11] predict.gls*               predict.gnls*             
+## [13] predict.HoltWinters*       predict.interp.surface    
+## [15] predict.jam*               predict.Krig              
+## [17] predict.lda*               predict.lm                
+## [19] predict.lme*               predict.lmList*           
+## [21] predict.lmList4*           predict.loess*            
+## [23] predict.lqs*               predict.mca*              
+## [25] predict.merMod*            predict.mKrig             
+## [27] predict.mlm*               predict.nbSpline*         
+## [29] predict.nlme*              predict.nls*              
+## [31] predict.npolySpline*       predict.ns*               
+## [33] predict.pbSpline*          predict.polr*             
+## [35] predict.poly*              predict.polySpline*       
+## [37] predict.ppolySpline*       predict.ppr*              
+## [39] predict.prcomp*            predict.princomp*         
+## [41] predict.qda*               predict.qsreg             
+## [43] predict.rlm*               predict.smooth.spline*    
+## [45] predict.smooth.spline.fit* predict.sreg              
+## [47] predict.StructTS*          predict.surface           
+## [49] predict.surface.default    predict.Tps               
 ## see '?methods' for accessing help and source code
 ```
 
@@ -140,7 +245,7 @@ predict
 ```
 ## function (object, ...) 
 ## UseMethod("predict")
-## <bytecode: 0x2be5f20>
+## <bytecode: 0x31a9778>
 ## <environment: namespace:stats>
 ```
 
@@ -385,29 +490,31 @@ The `try()` function is a powerful tool here.
 
 # Why we need to `try()`
 
-Suppose we tried to do a stratified analysis of delay on year and month within destinations. I'm going to do this as a for loop for pedagogical reasons, but again, it would be better to do this with dplyr/lapply/by type tools.
+Suppose we tried to do a stratified analysis of life expectancy on GDP within continents, for 2007. I'm going to do this as a for loop for pedagogical reasons, but again, it would be better to do this with dplyr/lapply/by type tools.
+
+For the purpose of illustration, I'm going to monkey a bit with the data such that there is an error in fitting Oceania. This is artificial, but when you stratify data into smaller groups it's not uncommon that the analysis can fail for one of the groups (often because of small sample size or missing data).
 
 
 
 ```r
 mod <- list()
-Dests <- c('LAX', 'OAK', 'DRO', 'ORD')
-sub <- air[air$Dest %in% Dests, ]
-sub$Month <- as.factor(sub$Month)
-for(curDest in Dests) {
-            cat("Fitting model for destination ", curDest, ".\n")
-            tmp <- subset(sub, Dest == curDest)
-            mod[[curDest]] <- lm(DepDelay ~ Year + Month, data = tmp)
+fakedat <- gap[gap$year == 2007, ]
+fakedat$gdpPercap[fakedat$continent == 'Oceania'] <- NA
+
+for(cont in c('Asia', 'Oceania', 'Europe', 'Americas', 'Africa')) {
+            cat("Fitting model for continent ", cont, ".\n")
+            tmp <- subset(fakedat, continent == cont)
+            mod[[cont]] <- lm(lifeExp ~ log(gdpPercap), data = tmp)
 }
 ```
 
 ```
-## Fitting model for destination  LAX .
-## Fitting model for destination  OAK .
+## Fitting model for continent  Asia .
+## Fitting model for continent  Oceania .
 ```
 
 ```
-## Error in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels
+## Error in lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...): 0 (non-NA) cases
 ```
 
 What happened?
@@ -418,23 +525,22 @@ What happened?
 
 ```r
 mod <- list()
-Dests <- c('LAX', 'OAK', 'DRO', 'ORD')
-sub <- air[air$Dest %in% Dests, ]
-sub$Month <- as.factor(sub$Month)
-for(curDest in Dests) {
-            cat("Fitting model for destination ", curDest, ".\n")
-            tmp <- subset(sub, Dest == curDest)
-            curMod <- try(lm(DepDelay ~ Year + Month, data = tmp))
-            if(is(curMod, "try-error")) mod[[curDest]] <- NA 
-                       else mod[[curDest]] <- curMod            
+
+for(cont in c('Asia', 'Oceania', 'Europe', 'Americas', 'Africa')) {
+            cat("Fitting model for continent ", cont, ".\n")
+            tmp <- subset(fakedat, continent == cont)
+            curMod <- try(lm(lifeExp ~ log(gdpPercap), data = tmp))
+            if(is(curMod, "try-error")) mod[[cont]] <- NA 
+                       else mod[[cont]] <- curMod            
 }
 ```
 
 ```
-## Fitting model for destination  LAX .
-## Fitting model for destination  OAK .
-## Fitting model for destination  DRO .
-## Fitting model for destination  ORD .
+## Fitting model for continent  Asia .
+## Fitting model for continent  Oceania .
+## Fitting model for continent  Europe .
+## Fitting model for continent  Americas .
+## Fitting model for continent  Africa .
 ```
 
 ```r
@@ -444,15 +550,11 @@ mod[[1]]
 ```
 ## 
 ## Call:
-## lm(formula = DepDelay ~ Year + Month, data = tmp)
+## lm(formula = lifeExp ~ log(gdpPercap), data = tmp)
 ## 
 ## Coefficients:
-## (Intercept)         Year       Month2       Month3       Month4  
-##  -4284.5640       2.1418      -1.1511      -4.9198      -6.8854  
-##      Month5       Month6       Month7       Month8       Month9  
-##     -5.8525      -0.7247      -2.9865      -5.0934      -6.8512  
-##     Month10      Month11      Month12  
-##     -5.1160      -3.4469       4.8093
+##    (Intercept)  log(gdpPercap)  
+##         25.650           5.157
 ```
 
 ```r
@@ -734,8 +836,7 @@ dbListTables(db)
 ```
 
 ```
-## [1] "answers"          "maxRepByQuestion" "questions"       
-## [4] "questionsAugment" "questions_tags"   "users"
+## character(0)
 ```
 
 ```r
@@ -743,19 +844,29 @@ dbListFields(db, "questions")
 ```
 
 ```
-## [1] "questionid"   "creationdate" "score"        "viewcount"   
-## [5] "title"        "ownerid"
+## Error in result_create(conn@ptr, statement): no such table: questions
 ```
 
 ```r
 ## simple filter operation
 popular <- dbGetQuery(db, "select * from questions 
    where viewcount > 10000")
+```
+
+```
+## Error in result_create(conn@ptr, statement): no such table: questions
+```
+
+```r
 ## a join followed by a filter operation
 popularR <- dbGetQuery(db, "select * from questions join questions_tags
    on questions.questionid = questions_tags.questionid
    where viewcount > 10000 and
    tag = 'r'")
+```
+
+```
+## Error in result_create(conn@ptr, statement): no such table: questions
 ```
 
 # Computer architecture
@@ -849,11 +960,24 @@ The *foreach* package provides a way to do a for loop using multiple cores. It c
 
 To use multiple cores on a single machine, use the *parallel* back-end from the *doParallel* package.
 
+We'll use a new dataset here, which is a dataset of airline departure times (in particular delays) for all flights from SFO over a period of several years. We'll do a stratified analysis, fitting a GAM (see Unit 7) for each of the destination airports.
+
 
 ```r
 # note to CJP: don't run in RStudio
 library(parallel)
 library(doParallel)
+```
+
+```
+## Loading required package: foreach
+```
+
+```
+## Loading required package: iterators
+```
+
+```r
 library(foreach)
 
 nCores <- 4  # actually only 2 on my laptop, but appears hyperthreaded
@@ -1059,18 +1183,74 @@ And here is `mclapply`, which is similar:
 library(parallel)
 nCores <- 4
 out2 <- mclapply(unique(air$Dest), fitFun, mc.cores = nCores)
-```
-
-```
-## Error in mcfork(): unable to fork, possible reason: Cannot allocate memory
-```
-
-```r
 out2[1:5]
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'out2' not found
+## [[1]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 7.51 7.49  total = 23 
+## 
+## GCV score: 1051.858     
+## 
+## [[2]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 7.46 8.64  total = 24.1 
+## 
+## GCV score: 1325.755     
+## 
+## [[3]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 5.93 8.70  total = 22.63 
+## 
+## GCV score: 639.5956     
+## 
+## [[4]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 7.84 8.51  total = 24.35 
+## 
+## GCV score: 880.4363     
+## 
+## [[5]]
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## DepDelay ~ Year + s(Month) + s(Hour) + as.factor(DayOfWeek)
+## 
+## Estimated degrees of freedom:
+## 8.00 5.68  total = 21.69 
+## 
+## GCV score: 1367.66
 ```
 
 One thing to keep in mind is whether the different tasks all take about the same amount of time or widely different times. In the latter case, one wants to sequentially dispatch tasks as earlier tasks finish, rather than dispatching a block of tasks to each core. Some of these parallel *apply* variants allow you to control this. 

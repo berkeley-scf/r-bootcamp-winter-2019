@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="author" content="August 2018, UC Berkeley" />
+  <meta name="author" content="January 2019, UC Berkeley" />
   <title>R bootcamp, Module 4: Calculations</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -52,9 +52,54 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="slide titlepage">
   <h1 class="title">R bootcamp, Module 4: Calculations</h1>
   <p class="author">
-August 2018, UC Berkeley
+January 2019, UC Berkeley
   </p>
-  <p class="date">Sean Wu (based on materials developed by Chris Paciorek)</p>
+  <p class="date">Chris Paciorek</p>
+</div>
+<div id="reminder-vectorized-calculations-and-comparisons" class="slide section level1">
+<h1>Reminder: Vectorized calculations and comparisons</h1>
+<p>At the core of R is the idea of doing calculations on entire vectors.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdpTotal &lt;-<span class="st"> </span>gap$gdpPercap *<span class="st"> </span>gap$pop
+
+gdpSubset &lt;-<span class="st"> </span>gdp[<span class="dv">1</span>:<span class="dv">10</span>]</code></pre></div>
+<pre><code>## Error in eval(expr, envir, enclos): object 'gdp' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdpSubset &gt;=<span class="st"> </span><span class="dv">50000</span></code></pre></div>
+<pre><code>## Error in eval(expr, envir, enclos): object 'gdpSubset' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec1 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">5</span>)
+vec2 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">5</span>)
+vec1 &gt;<span class="st"> </span>vec2</code></pre></div>
+<pre><code>## [1] FALSE  TRUE FALSE FALSE  TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec1 ==<span class="st"> </span>vec2</code></pre></div>
+<pre><code>## [1] FALSE FALSE FALSE FALSE FALSE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec1 !=<span class="st"> </span>vec2</code></pre></div>
+<pre><code>## [1] TRUE TRUE TRUE TRUE TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## careful: 
+vec1 =<span class="st"> </span>vec2
+<span class="kw">identical</span>(vec1, vec2)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## using 'or'
+gdpSubset &gt;=<span class="st"> </span><span class="dv">100000</span> |<span class="st"> </span>gdpSubset &lt;=<span class="st"> </span><span class="dv">1000</span></code></pre></div>
+<pre><code>## Error in eval(expr, envir, enclos): object 'gdpSubset' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## using 'and'
+gap$gdpPercap[<span class="dv">1</span>:<span class="dv">10</span>] &gt;=<span class="st"> </span><span class="dv">100000</span> &amp;<span class="st"> </span>gap$continent[<span class="dv">1</span>:<span class="dv">10</span>] ==<span class="st"> &quot;Asia&quot;</span></code></pre></div>
+<pre><code>##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
+<p>An important related concept is that of recycling</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec10 &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">10</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+vec3 &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">3</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+vec5 &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">5</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+vec10</code></pre></div>
+<pre><code>##  [1] 9 4 6 5 5 5 4 8 5 4</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec3</code></pre></div>
+<pre><code>## [1] 7 9 1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec5</code></pre></div>
+<pre><code>## [1] 4 4 6 8 1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec10 +<span class="st"> </span>vec5</code></pre></div>
+<pre><code>##  [1] 13  8 12 13  6  9  8 14 13  5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec10 +<span class="st"> </span>vec3</code></pre></div>
+<pre><code>## Warning in vec10 + vec3: longer object length is not a multiple of shorter
+## object length</code></pre>
+<pre><code>##  [1] 16 13  7 12 14  6 11 17  6 11</code></pre>
+<p><strong>Question</strong>: Tell me what's going on. What choices were made by the R developers?</p>
 </div>
 <div id="vectorized-calculations" class="slide section level1">
 <h1>Vectorized calculations</h1>
@@ -73,17 +118,19 @@ chi2_df1000 &lt;-<span class="st"> </span><span class="kw">sum</span>(chi2vals)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vals &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="fl">1e6</span>)
 <span class="kw">system.time</span>(trunc &lt;-<span class="st"> </span><span class="kw">ifelse</span>(vals &gt;<span class="st"> </span><span class="dv">0</span>, vals, <span class="dv">0</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.068   0.000   0.066</code></pre>
+##   0.228   0.020   0.246</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(vals &lt;-<span class="st"> </span>vals *<span class="st"> </span>(vals &gt;<span class="st"> </span><span class="dv">0</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
 ##   0.004   0.000   0.005</code></pre>
 <p><strong>Question</strong>: What am I doing with <code>vals * (vals &gt; 0)</code> ? What happens behind the scenes in R?</p>
 <p>If you use a trick like this, having a comment in your code is a good idea.</p>
 <p>Lots of functions in R are vectorized, such as some we've already used.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp &lt;-<span class="st"> </span><span class="kw">as.character</span>(air$DepTime)
-air$DepHour &lt;-<span class="st"> </span><span class="kw">substring</span>(tmp, <span class="dv">1</span>, <span class="dv">2</span>)
-<span class="kw">head</span>(air$DepHour)</code></pre></div>
-<pre><code>## [1] &quot;12&quot; &quot;12&quot; &quot;12&quot; NA   &quot;12&quot; &quot;12&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp &lt;-<span class="st"> </span><span class="kw">as.character</span>(air$year)</code></pre></div>
+<pre><code>## Error in eval(expr, envir, enclos): object 'air' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap$year2 &lt;-<span class="st"> </span><span class="kw">substring</span>(tmp, <span class="dv">3</span>, <span class="dv">4</span>)</code></pre></div>
+<pre><code>## Error in substring(tmp, 3, 4): object 'tmp' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gap$year2)</code></pre></div>
+<pre><code>## NULL</code></pre>
 <p>Question: Note the code above runs and the syntax is perfectly good R syntax, but in terms of what it does, there is a bug in it. See if you can see what it is.</p>
 </div>
 <div id="linear-algebra" class="slide section level1">
@@ -174,7 +221,7 @@ for(i in <span class="dv">1</span>:n)
       vals &lt;-<span class="st"> </span><span class="kw">c</span>(vals, i)
 })</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   2.640   0.016   2.655</code></pre>
+##   2.892   0.008   2.900</code></pre>
 <p>The same holds for using <code>rbind()</code>, <code>cbind()</code>, or adding to a list, one element at a time.</p>
 <p>This is both slow and unclear (in the sense that it appears the code has a bug, but it works):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vals &lt;-<span class="st"> </span><span class="dv">0</span>
@@ -184,7 +231,7 @@ for(i in <span class="dv">1</span>:n)
       vals[i] &lt;-<span class="st"> </span>i
 })</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.044   0.000   0.045</code></pre>
+##   0.040   0.000   0.039</code></pre>
 <p><strong>Question</strong>: Thoughts on why these are so slow? Think about what R might be doing behind the scenes</p>
 </div>
 <div id="the-answer-is-to-pre-allocate-memory" class="slide section level1">
@@ -236,33 +283,19 @@ col_sum &lt;-<span class="st"> </span><span class="kw">colSums</span>(mat)</code
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myList &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">rnorm</span>(<span class="dv">3</span>), <span class="kw">rnorm</span>(<span class="dv">3</span>), <span class="kw">rnorm</span>(<span class="dv">5</span>))
 <span class="kw">lapply</span>(myList, min)</code></pre></div>
 <pre><code>## [[1]]
-## [1] -0.213107
+## [1] -0.8286919
 ## 
 ## [[2]]
-## [1] -1.263107
+## [1] -1.543495
 ## 
 ## [[3]]
-## [1] -0.5841702</code></pre>
+## [1] -0.07627372</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(myList, min)</code></pre></div>
-<pre><code>## [1] -0.2131070 -1.2631070 -0.5841702</code></pre>
+<pre><code>## [1] -0.82869190 -1.54349527 -0.07627372</code></pre>
 <p>Note that we don't generally want to use <code>apply()</code> on a data frame.</p>
 <p>You can use <code>lapply()</code> and <code>sapply()</code> on regular vectors, such as vectors of indices, which can come in handy, though this is a silly example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(<span class="dv">1</span>:<span class="dv">10</span>, function(x) x^<span class="dv">2</span>)</code></pre></div>
 <pre><code>##  [1]   1   4   9  16  25  36  49  64  81 100</code></pre>
-<p>Here's a cool trick to pull off a particular element of a list of lists:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">params &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a =</span> <span class="kw">list</span>(<span class="dt">mn =</span> <span class="dv">7</span>, <span class="dt">sd =</span> <span class="dv">3</span>), <span class="dt">b =</span> <span class="kw">list</span>(<span class="dt">mn =</span> <span class="dv">6</span>,<span class="dt">sd =</span> <span class="dv">1</span>), 
-  <span class="dt">c =</span> <span class="kw">list</span>(<span class="dt">mn =</span> <span class="dv">2</span>, <span class="dt">sd =</span> <span class="dv">1</span>))
-<span class="kw">sapply</span>(params, <span class="st">&quot;[[&quot;</span>, <span class="dv">1</span>)</code></pre></div>
-<pre><code>## a b c 
-## 7 6 2</code></pre>
-<p><strong>Challenge</strong>: Think about why this works.</p>
-<p>Hint:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">3</span>)
-test[[<span class="dv">2</span>]]</code></pre></div>
-<pre><code>## [1] 7</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># `[[`(test, 2)  # need it commented or R Markdown processing messes it up...</span>
-
-<span class="co"># `+`(3, 7)</span></code></pre></div>
 </div>
 <div id="and-more-applys" class="slide section level1">
 <h1>And more <code>apply()</code>s</h1>
@@ -277,490 +310,510 @@ test[[<span class="dv">2</span>]]</code></pre></div>
 <ul>
 <li>Sometimes we need to do some basic checking for the number of observations or types of observations in our dataset</li>
 <li>To do this quickly and easily, <code>table()</code> is our friend</li>
-<li>Let's look at our observations by year and airline</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(air$UniqueCarrier)</code></pre></div>
-<pre><code>##  [1] &quot;UA&quot; &quot;US&quot; &quot;NW&quot; &quot;OH&quot; &quot;OO&quot; &quot;TZ&quot; &quot;DL&quot; &quot;FL&quot; &quot;HA&quot; &quot;HP&quot; &quot;MQ&quot; &quot;AA&quot; &quot;AS&quot; &quot;CO&quot;
-## [15] &quot;EV&quot; &quot;F9&quot; &quot;DH&quot; &quot;YV&quot; &quot;B6&quot; &quot;XE&quot; &quot;WN&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tbl &lt;-<span class="st"> </span><span class="kw">table</span>(air$UniqueCarrier, air$Year)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tbl &lt;-<span class="st"> </span><span class="kw">table</span>(gap$country, gap$continent)
 tbl</code></pre></div>
-<pre><code>##     
-##       2005  2006  2007  2008
-##   AA 12734 12770 12743 12008
-##   AS  4525  4933  6088  5062
-##   B6     0     0  1291  1923
-##   CO  4557  4752  4919  4801
-##   DH   470     0     0     0
-##   DL  6338  5487  5212  4575
-##   EV   179   140   423     0
-##   F9  1196  2643  2893  1686
-##   FL   642   815   960   951
-##   HA   365   364   365   366
-##   HP  4485     0     0     0
-##   MQ  1922  1711  1766  1742
-##   NW  3784  3928  3819  3827
-##   OH    30     0     0     0
-##   OO 38869 40407 41355 39027
-##   TZ  1846   475     0     0
-##   UA 43769 45766 45275 43736
-##   US  3262  7454  7272  7112
-##   WN     0     0  2675 12568
-##   XE     0     0  1164  1203
-##   YV     0   199   271     0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">prop.table</span>(tbl, <span class="dt">margin =</span> <span class="dv">2</span>), <span class="dv">3</span>)</code></pre></div>
-<pre><code>##     
-##       2005  2006  2007  2008
-##   AA 0.099 0.097 0.092 0.085
-##   AS 0.035 0.037 0.044 0.036
-##   B6 0.000 0.000 0.009 0.014
-##   CO 0.035 0.036 0.036 0.034
-##   DH 0.004 0.000 0.000 0.000
-##   DL 0.049 0.042 0.038 0.033
-##   EV 0.001 0.001 0.003 0.000
-##   F9 0.009 0.020 0.021 0.012
-##   FL 0.005 0.006 0.007 0.007
-##   HA 0.003 0.003 0.003 0.003
-##   HP 0.035 0.000 0.000 0.000
-##   MQ 0.015 0.013 0.013 0.012
-##   NW 0.029 0.030 0.028 0.027
-##   OH 0.000 0.000 0.000 0.000
-##   OO 0.301 0.306 0.299 0.278
-##   TZ 0.014 0.004 0.000 0.000
-##   UA 0.339 0.347 0.327 0.311
-##   US 0.025 0.057 0.053 0.051
-##   WN 0.000 0.000 0.019 0.089
-##   XE 0.000 0.000 0.008 0.009
-##   YV 0.000 0.002 0.002 0.000</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(air$UniqueCarrier, air$Month, air$Cancelled)</code></pre></div>
-<pre><code>## , ,  = 0
-## 
-##     
-##          1     2     3     4     5     6     7     8     9    10    11
-##   AA  3967  3542  3963  4089  4295  4200  4394  4370  4116  4260  4005
-##   AS  1703  1579  1740  1683  1733  1706  1816  1775  1573  1604  1691
-##   B6   154   143   154   150   352   349   336   344   297   305   296
-##   CO  1438  1285  1482  1448  1580  1761  1875  1887  1536  1620  1442
-##   DH     0     0     0     0    61    89    93    93    65    50    18
-##   DL  1692  1518  1712  1674  1808  1933  2030  2032  1820  1845  1698
-##   EV    88   105   113   114    84    25    23    27    24    30    28
-##   F9   592   544   612   569   741   776   883   834   712   730   679
-##   FL   138   113   152   218   299   403   480   485   325   310   220
-##   HA   123   113   124   120   124   120   124   124   120   122   120
-##   HP   398   351   393   383   396   364   355   361   352   361   348
-##   MQ   563   516   582   587   612   592   597   604   567   587   520
-##   NW  1139  1018  1125  1192  1358  1553  1651  1479  1205  1249  1123
-##   OH    29     0     0     0     0     0     0     0     0     0     0
-##   OO 12650 11942 13445 12757 13156 13138 13495 13790 12972 13449 12512
-##   TZ   338   270   272   250   157   151   163   157   126   143   135
-##   UA 14169 13110 14722 14474 15045 15050 15539 15719 14304 14884 14108
-##   US  1986  1814  2013  1983  2150  2177  2333  2317  2055  2104  1926
-##   WN   749   736   974  1000  1084  1061  1082  1185  1657  1705  1817
-##   XE   143   123   145   140   142   268   354   336   184   182   174
-##   YV    51    33    56    54    59    51    27    39    27    24    24
-##     
-##         12
-##   AA  4021
-##   AS  1723
-##   B6   303
-##   CO  1579
-##   DH     0
-##   DL  1684
-##   EV    50
-##   F9   694
-##   FL   217
-##   HA   123
-##   HP   346
-##   MQ   535
-##   NW  1198
-##   OH     0
-##   OO 12765
-##   TZ   142
-##   UA 14445
-##   US  1954
-##   WN  1873
-##   XE   162
-##   YV    11
-## 
-## , ,  = 1
-## 
-##     
-##          1     2     3     4     5     6     7     8     9    10    11
-##   AA   137   157   115   113    54    70    53    60    56    49    62
-##   AS    52    28    20    19    17    16    17    23    12    10    25
-##   B6     1     2     1     0     0     7     6     6     0     0     1
-##   CO     6    11    13     0     2     4     6     2    31     3     1
-##   DH     0     0     0     0     0     1     0     0     0     0     0
-##   DL    32    24    13    11    11    11    10     4     9     7     7
-##   EV     4     3     7     2     5     1     1     0     1     0     0
-##   F9     0     6     2     1     2     1     3     2     4     3     4
-##   FL     0     0     0     0     0     2     5     1     0     0     0
-##   HA     1     0     0     0     0     0     0     0     0     2     0
-##   HP     4     9     6     2     4     7     6     3     4     6     6
-##   MQ    36    33    17    10    16    13    27    21    18    20    32
-##   NW     7     9     4     5     2     6     7    13     4     2     4
-##   OH     1     0     0     0     0     0     0     0     0     0     0
-##   OO   624   373   247   191   155   159   217   162   177   252   392
-##   TZ     5     5     2     2     0     0     1     0     0     1     0
-##   UA   357   269   231   249   205   255   326   253   179   178   153
-##   US    37    29    36    17    10    28    29    18    16    16    26
-##   WN    44    18    18    22     9    24    26    17    17    28    44
-##   XE     5     0     0     0     0     3     1     1     0     0     2
-##   YV     2     1     1     2     0     4     0     0     2     2     0
-##     
-##         12
-##   AA   107
-##   AS    43
-##   B6     7
-##   CO    17
-##   DH     0
-##   DL    27
-##   EV     7
-##   F9    24
-##   FL     0
-##   HA     0
-##   HP    20
-##   MQ    36
-##   NW     5
-##   OH     0
-##   OO   638
-##   TZ     1
-##   UA   322
-##   US    26
-##   WN    53
-##   XE     2
-##   YV     0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">with</span>(air[air$UniqueCarrier ==<span class="st"> 'UA'</span>, ], <span class="kw">table</span>(Month, Cancelled))</code></pre></div>
-<pre><code>##      Cancelled
-## Month     0     1
-##    1  14169   357
-##    2  13110   269
-##    3  14722   231
-##    4  14474   249
-##    5  15045   205
-##    6  15050   255
-##    7  15539   326
-##    8  15719   253
-##    9  14304   179
-##    10 14884   178
-##    11 14108   153
-##    12 14445   322</code></pre>
+<pre><code>##                           
+##                            Africa Americas Asia Europe Oceania
+##   Afghanistan                   0        0   12      0       0
+##   Albania                       0        0    0     12       0
+##   Algeria                      12        0    0      0       0
+##   Angola                       12        0    0      0       0
+##   Argentina                     0       12    0      0       0
+##   Australia                     0        0    0      0      12
+##   Austria                       0        0    0     12       0
+##   Bahrain                       0        0   12      0       0
+##   Bangladesh                    0        0   12      0       0
+##   Belgium                       0        0    0     12       0
+##   Benin                        12        0    0      0       0
+##   Bolivia                       0       12    0      0       0
+##   Bosnia and Herzegovina        0        0    0     12       0
+##   Botswana                     12        0    0      0       0
+##   Brazil                        0       12    0      0       0
+##   Bulgaria                      0        0    0     12       0
+##   Burkina Faso                 12        0    0      0       0
+##   Burundi                      12        0    0      0       0
+##   Cambodia                      0        0   12      0       0
+##   Cameroon                     12        0    0      0       0
+##   Canada                        0       12    0      0       0
+##   Central African Republic     12        0    0      0       0
+##   Chad                         12        0    0      0       0
+##   Chile                         0       12    0      0       0
+##   China                         0        0   12      0       0
+##   Colombia                      0       12    0      0       0
+##   Comoros                      12        0    0      0       0
+##   Congo Dem. Rep.              12        0    0      0       0
+##   Congo Rep.                   12        0    0      0       0
+##   Costa Rica                    0       12    0      0       0
+##   Cote d'Ivoire                12        0    0      0       0
+##   Croatia                       0        0    0     12       0
+##   Cuba                          0       12    0      0       0
+##   Czech Republic                0        0    0     12       0
+##   Denmark                       0        0    0     12       0
+##   Djibouti                     12        0    0      0       0
+##   Dominican Republic            0       12    0      0       0
+##   Ecuador                       0       12    0      0       0
+##   Egypt                        12        0    0      0       0
+##   El Salvador                   0       12    0      0       0
+##   Equatorial Guinea            12        0    0      0       0
+##   Eritrea                      12        0    0      0       0
+##   Ethiopia                     12        0    0      0       0
+##   Finland                       0        0    0     12       0
+##   France                        0        0    0     12       0
+##   Gabon                        12        0    0      0       0
+##   Gambia                       12        0    0      0       0
+##   Germany                       0        0    0     12       0
+##   Ghana                        12        0    0      0       0
+##   Greece                        0        0    0     12       0
+##   Guatemala                     0       12    0      0       0
+##   Guinea                       12        0    0      0       0
+##   Guinea-Bissau                12        0    0      0       0
+##   Haiti                         0       12    0      0       0
+##   Honduras                      0       12    0      0       0
+##   Hong Kong China               0        0   12      0       0
+##   Hungary                       0        0    0     12       0
+##   Iceland                       0        0    0     12       0
+##   India                         0        0   12      0       0
+##   Indonesia                     0        0   12      0       0
+##   Iran                          0        0   12      0       0
+##   Iraq                          0        0   12      0       0
+##   Ireland                       0        0    0     12       0
+##   Israel                        0        0   12      0       0
+##   Italy                         0        0    0     12       0
+##   Jamaica                       0       12    0      0       0
+##   Japan                         0        0   12      0       0
+##   Jordan                        0        0   12      0       0
+##   Kenya                        12        0    0      0       0
+##   Korea Dem. Rep.               0        0   12      0       0
+##   Korea Rep.                    0        0   12      0       0
+##   Kuwait                        0        0   12      0       0
+##   Lebanon                       0        0   12      0       0
+##   Lesotho                      12        0    0      0       0
+##   Liberia                      12        0    0      0       0
+##   Libya                        12        0    0      0       0
+##   Madagascar                   12        0    0      0       0
+##   Malawi                       12        0    0      0       0
+##   Malaysia                      0        0   12      0       0
+##   Mali                         12        0    0      0       0
+##   Mauritania                   12        0    0      0       0
+##   Mauritius                    12        0    0      0       0
+##   Mexico                        0       12    0      0       0
+##   Mongolia                      0        0   12      0       0
+##   Montenegro                    0        0    0     12       0
+##   Morocco                      12        0    0      0       0
+##   Mozambique                   12        0    0      0       0
+##   Myanmar                       0        0   12      0       0
+##   Namibia                      12        0    0      0       0
+##   Nepal                         0        0   12      0       0
+##   Netherlands                   0        0    0     12       0
+##   New Zealand                   0        0    0      0      12
+##   Nicaragua                     0       12    0      0       0
+##   Niger                        12        0    0      0       0
+##   Nigeria                      12        0    0      0       0
+##   Norway                        0        0    0     12       0
+##   Oman                          0        0   12      0       0
+##   Pakistan                      0        0   12      0       0
+##   Panama                        0       12    0      0       0
+##   Paraguay                      0       12    0      0       0
+##   Peru                          0       12    0      0       0
+##   Philippines                   0        0   12      0       0
+##   Poland                        0        0    0     12       0
+##   Portugal                      0        0    0     12       0
+##   Puerto Rico                   0       12    0      0       0
+##   Reunion                      12        0    0      0       0
+##   Romania                       0        0    0     12       0
+##   Rwanda                       12        0    0      0       0
+##   Sao Tome and Principe        12        0    0      0       0
+##   Saudi Arabia                  0        0   12      0       0
+##   Senegal                      12        0    0      0       0
+##   Serbia                        0        0    0     12       0
+##   Sierra Leone                 12        0    0      0       0
+##   Singapore                     0        0   12      0       0
+##   Slovak Republic               0        0    0     12       0
+##   Slovenia                      0        0    0     12       0
+##   Somalia                      12        0    0      0       0
+##   South Africa                 12        0    0      0       0
+##   Spain                         0        0    0     12       0
+##   Sri Lanka                     0        0   12      0       0
+##   Sudan                        12        0    0      0       0
+##   Swaziland                    12        0    0      0       0
+##   Sweden                        0        0    0     12       0
+##   Switzerland                   0        0    0     12       0
+##   Syria                         0        0   12      0       0
+##   Taiwan                        0        0   12      0       0
+##   Tanzania                     12        0    0      0       0
+##   Thailand                      0        0   12      0       0
+##   Togo                         12        0    0      0       0
+##   Trinidad and Tobago           0       12    0      0       0
+##   Tunisia                      12        0    0      0       0
+##   Turkey                        0        0    0     12       0
+##   Uganda                       12        0    0      0       0
+##   United Kingdom                0        0    0     12       0
+##   United States                 0       12    0      0       0
+##   Uruguay                       0       12    0      0       0
+##   Venezuela                     0       12    0      0       0
+##   Vietnam                       0        0   12      0       0
+##   West Bank and Gaza            0        0   12      0       0
+##   Yemen Rep.                    0        0   12      0       0
+##   Zambia                       12        0    0      0       0
+##   Zimbabwe                     12        0    0      0       0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rowSums</span>(tbl)</code></pre></div>
+<pre><code>##              Afghanistan                  Albania                  Algeria 
+##                       12                       12                       12 
+##                   Angola                Argentina                Australia 
+##                       12                       12                       12 
+##                  Austria                  Bahrain               Bangladesh 
+##                       12                       12                       12 
+##                  Belgium                    Benin                  Bolivia 
+##                       12                       12                       12 
+##   Bosnia and Herzegovina                 Botswana                   Brazil 
+##                       12                       12                       12 
+##                 Bulgaria             Burkina Faso                  Burundi 
+##                       12                       12                       12 
+##                 Cambodia                 Cameroon                   Canada 
+##                       12                       12                       12 
+## Central African Republic                     Chad                    Chile 
+##                       12                       12                       12 
+##                    China                 Colombia                  Comoros 
+##                       12                       12                       12 
+##          Congo Dem. Rep.               Congo Rep.               Costa Rica 
+##                       12                       12                       12 
+##            Cote d'Ivoire                  Croatia                     Cuba 
+##                       12                       12                       12 
+##           Czech Republic                  Denmark                 Djibouti 
+##                       12                       12                       12 
+##       Dominican Republic                  Ecuador                    Egypt 
+##                       12                       12                       12 
+##              El Salvador        Equatorial Guinea                  Eritrea 
+##                       12                       12                       12 
+##                 Ethiopia                  Finland                   France 
+##                       12                       12                       12 
+##                    Gabon                   Gambia                  Germany 
+##                       12                       12                       12 
+##                    Ghana                   Greece                Guatemala 
+##                       12                       12                       12 
+##                   Guinea            Guinea-Bissau                    Haiti 
+##                       12                       12                       12 
+##                 Honduras          Hong Kong China                  Hungary 
+##                       12                       12                       12 
+##                  Iceland                    India                Indonesia 
+##                       12                       12                       12 
+##                     Iran                     Iraq                  Ireland 
+##                       12                       12                       12 
+##                   Israel                    Italy                  Jamaica 
+##                       12                       12                       12 
+##                    Japan                   Jordan                    Kenya 
+##                       12                       12                       12 
+##          Korea Dem. Rep.               Korea Rep.                   Kuwait 
+##                       12                       12                       12 
+##                  Lebanon                  Lesotho                  Liberia 
+##                       12                       12                       12 
+##                    Libya               Madagascar                   Malawi 
+##                       12                       12                       12 
+##                 Malaysia                     Mali               Mauritania 
+##                       12                       12                       12 
+##                Mauritius                   Mexico                 Mongolia 
+##                       12                       12                       12 
+##               Montenegro                  Morocco               Mozambique 
+##                       12                       12                       12 
+##                  Myanmar                  Namibia                    Nepal 
+##                       12                       12                       12 
+##              Netherlands              New Zealand                Nicaragua 
+##                       12                       12                       12 
+##                    Niger                  Nigeria                   Norway 
+##                       12                       12                       12 
+##                     Oman                 Pakistan                   Panama 
+##                       12                       12                       12 
+##                 Paraguay                     Peru              Philippines 
+##                       12                       12                       12 
+##                   Poland                 Portugal              Puerto Rico 
+##                       12                       12                       12 
+##                  Reunion                  Romania                   Rwanda 
+##                       12                       12                       12 
+##    Sao Tome and Principe             Saudi Arabia                  Senegal 
+##                       12                       12                       12 
+##                   Serbia             Sierra Leone                Singapore 
+##                       12                       12                       12 
+##          Slovak Republic                 Slovenia                  Somalia 
+##                       12                       12                       12 
+##             South Africa                    Spain                Sri Lanka 
+##                       12                       12                       12 
+##                    Sudan                Swaziland                   Sweden 
+##                       12                       12                       12 
+##              Switzerland                    Syria                   Taiwan 
+##                       12                       12                       12 
+##                 Tanzania                 Thailand                     Togo 
+##                       12                       12                       12 
+##      Trinidad and Tobago                  Tunisia                   Turkey 
+##                       12                       12                       12 
+##                   Uganda           United Kingdom            United States 
+##                       12                       12                       12 
+##                  Uruguay                Venezuela                  Vietnam 
+##                       12                       12                       12 
+##       West Bank and Gaza               Yemen Rep.                   Zambia 
+##                       12                       12                       12 
+##                 Zimbabwe 
+##                       12</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all</span>(<span class="kw">rowSums</span>(tbl) ==<span class="st"> </span><span class="dv">12</span>)</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
 <p><strong>Challenge</strong>: Can you figure out what <code>with()</code> does just by example?</p>
+</div>
+<div id="discretization" class="slide section level1">
+<h1>Discretization</h1>
+<p>You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by life expectancy:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap2007$lifeExpBin &lt;-<span class="st"> </span><span class="kw">cut</span>(gap2007$lifeExp, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">70</span>, <span class="dv">75</span>, <span class="dv">80</span>, <span class="ot">Inf</span>))
+tbl &lt;-<span class="st"> </span><span class="kw">table</span>(gap2007$continent, gap2007$lifeExpBin)
+<span class="kw">round</span>( <span class="kw">prop.table</span>(tbl, <span class="dt">margin =</span> <span class="dv">1</span>), <span class="dv">2</span> )</code></pre></div>
+<pre><code>##           
+##            (0,40] (40,50] (50,60] (60,70] (70,75] (75,80] (80,Inf]
+##   Africa     0.02    0.33    0.42    0.10    0.12    0.02     0.00
+##   Americas   0.00    0.00    0.00    0.12    0.48    0.36     0.04
+##   Asia       0.00    0.03    0.06    0.24    0.39    0.18     0.09
+##   Europe     0.00    0.00    0.00    0.00    0.27    0.50     0.23
+##   Oceania    0.00    0.00    0.00    0.00    0.00    0.00     1.00</code></pre>
 </div>
 <div id="stratified-analyses-i" class="slide section level1">
 <h1>Stratified analyses I</h1>
 <p>Often we want to do individual analyses within subsets or clusters of our data.</p>
 <p>As a first step, we might want to just split our dataset by a stratifying variable.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># restrict to a few destinations</span>
-DestSubset &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'LAX'</span>,<span class="st">'SEA'</span>,<span class="st">'PHX'</span>,<span class="st">'DEN'</span>,<span class="st">'MSP'</span>,<span class="st">'JFK'</span>,<span class="st">'ATL'</span>,<span class="st">'DFW'</span>,<span class="st">'IAH'</span>, <span class="st">'ORD'</span>) 
-airSmall &lt;-<span class="st"> </span><span class="kw">subset</span>(air, Dest %in%<span class="st"> </span>DestSubset)
-airSmall$DepDelay[airSmall$DepDelay &gt;<span class="st"> </span><span class="dv">60</span>] &lt;-<span class="st"> </span><span class="dv">60</span>
-subsets &lt;-<span class="st"> </span><span class="kw">split</span>(airSmall, airSmall$Dest)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">subsets &lt;-<span class="st"> </span><span class="kw">split</span>(gap,  gap$year)
 <span class="kw">length</span>(subsets)</code></pre></div>
-<pre><code>## [1] 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(subsets[[<span class="st">'LAX'</span>]])</code></pre></div>
-<pre><code>## [1] 44265    30</code></pre>
+<pre><code>## [1] 12</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(subsets[[<span class="st">'2007'</span>]])</code></pre></div>
+<pre><code>## [1] 142   6</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
-<span class="kw">boxplot</span>(DepDelay ~<span class="st"> </span>Month, <span class="dt">data =</span> subsets[[<span class="st">'IAH'</span>]], <span class="dt">main =</span> <span class="st">'Houston'</span>)
+<span class="kw">plot</span>(lifeExp ~<span class="st"> </span>gdpPercap, <span class="dt">data =</span> subsets[[<span class="st">'1952'</span>]], <span class="dt">main =</span> <span class="st">'1952'</span>)
 <span class="kw">abline</span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">col =</span> <span class="st">'grey'</span>)
-<span class="kw">boxplot</span>(DepDelay ~<span class="st"> </span>Month, <span class="dt">data =</span> subsets[[<span class="st">'ORD'</span>]], <span class="dt">main =</span> <span class="st">'Chicago'</span>)
+<span class="kw">plot</span>(lifeExp ~<span class="st"> </span>gdpPercap, <span class="dt">data =</span> subsets[[<span class="st">'2007'</span>]], <span class="dt">main =</span> <span class="st">'2007'</span>)
 <span class="kw">abline</span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">col =</span> <span class="st">'grey'</span>)</code></pre></div>
 <div class="figure">
-<img src="data:image/png;base64,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" />
+<img src="data:image/png;base64,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" />
 
 </div>
-<p>Note the use of the <code>%in%</code> operator can also be helpful.</p>
+<p>Obviously, we'd want to iterate to improve that plot given the outlier.</p>
 </div>
 <div id="stratified-analyses-ii" class="slide section level1">
 <h1>Stratified analyses II</h1>
 <p>Often we want to do individual analyses within subsets or clusters of our data. R has a variety of tools for this; for now we'll look at <code>aggregate()</code> and <code>by()</code>. These are wrappers of <code>tapply()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">airSmallNum &lt;-<span class="st"> </span>airSmall[ , <span class="kw">c</span>(<span class="st">'DepDelay'</span>, <span class="st">'ArrDelay'</span>, <span class="st">'TaxiIn'</span>, <span class="st">'TaxiOut'</span>)]
-<span class="kw">aggregate</span>(airSmallNum, <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">destination =</span> airSmall$Dest), <span class="dt">FUN =</span> median, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>##    destination DepDelay ArrDelay TaxiIn TaxiOut
-## 1          ATL       -1       -2      8      16
-## 2          DEN       -1       -1      7      15
-## 3          DFW       -1       -2      9      15
-## 4          IAH       -2       -1      7      15
-## 5          JFK       -2        1      9      17
-## 6          LAX       -2       -1      9      16
-## 7          MSP       -4       -3      6      15
-## 8          ORD        0        0      7      17
-## 9          PHX       -1       -2      6      14
-## 10         SEA       -1        0      5      16</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">aggregate</span>(DepDelay ~<span class="st"> </span>Dest, <span class="dt">data =</span> airSmall, <span class="dt">FUN =</span> median)</code></pre></div>
-<pre><code>##    Dest DepDelay
-## 1   ATL       -1
-## 2   DEN       -1
-## 3   DFW       -1
-## 4   IAH       -2
-## 5   JFK       -2
-## 6   LAX       -2
-## 7   MSP       -4
-## 8   ORD        0
-## 9   PHX       -1
-## 10  SEA       -1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">agg &lt;-<span class="st"> </span><span class="kw">aggregate</span>(DepDelay ~<span class="st"> </span>Dest +<span class="st"> </span>Month, <span class="dt">data =</span> airSmall, <span class="dt">FUN =</span> median)
-<span class="kw">xtabs</span>(DepDelay ~<span class="st"> </span>., <span class="dt">data =</span> agg)</code></pre></div>
-<pre><code>##      Month
-## Dest   1  2  3  4  5  6  7  8  9 10 11 12
-##   ATL -1  0  0 -2 -2  1  0 -1 -2 -2 -1  1
-##   DEN -2 -1 -1 -1 -1  1 -1 -1 -2 -2 -2  1
-##   DFW -1 -1 -1 -1 -1  0 -1 -1 -2 -2 -2  0
-##   IAH -3 -3 -2 -2 -2  0 -1 -1 -3 -2 -2  0
-##   JFK -2 -2 -2 -2 -2  0 -1 -1 -2 -2 -2  0
-##   LAX -2 -2 -2 -2 -2 -1 -2 -2 -3 -2 -2  0
-##   MSP -4 -4 -4 -5 -5 -4 -5 -4 -4 -4 -3 -2
-##   ORD  0  0  1  0 -1  2  0  0 -1 -1 -1  2
-##   PHX -1 -1 -1 -2 -2  0 -1 -1 -2 -2 -2  0
-##   SEA -2 -1 -1 -2 -1  1  0 -1 -3 -3 -2  1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gmSmall &lt;-<span class="st"> </span>gap[ , <span class="kw">c</span>(<span class="st">'lifeExp'</span>, <span class="st">'gdpPercap'</span>)]  <span class="co"># reduce to only numeric columns</span>
+<span class="kw">aggregate</span>(gmSmall, <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">year =</span> gap$year), <span class="dt">FUN =</span> median, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="co"># na.rm not needed here but illustrates use of additional arguments to FUN</span></code></pre></div>
+<pre><code>##    year lifeExp gdpPercap
+## 1  1952 45.1355  1968.528
+## 2  1957 48.3605  2173.220
+## 3  1962 50.8810  2335.440
+## 4  1967 53.8250  2678.335
+## 5  1972 56.5300  3339.129
+## 6  1977 59.6720  3798.609
+## 7  1982 62.4415  4216.228
+## 8  1987 65.8340  4280.300
+## 9  1992 67.7030  4386.086
+## 10 1997 69.3940  4781.825
+## 11 2002 70.8255  5319.805
+## 12 2007 71.9355  6124.371</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">aggregate</span>(lifeExp ~<span class="st"> </span>year +<span class="st"> </span>continent, <span class="dt">data =</span> gap, <span class="dt">FUN =</span> median)</code></pre></div>
+<pre><code>##    year continent lifeExp
+## 1  1952    Africa 38.8330
+## 2  1957    Africa 40.5925
+## 3  1962    Africa 42.6305
+## 4  1967    Africa 44.6985
+## 5  1972    Africa 47.0315
+## 6  1977    Africa 49.2725
+## 7  1982    Africa 50.7560
+## 8  1987    Africa 51.6395
+## 9  1992    Africa 52.4290
+## 10 1997    Africa 52.7590
+## 11 2002    Africa 51.2355
+## 12 2007    Africa 52.9265
+## 13 1952  Americas 54.7450
+## 14 1957  Americas 56.0740
+## 15 1962  Americas 58.2990
+## 16 1967  Americas 60.5230
+## 17 1972  Americas 63.4410
+## 18 1977  Americas 66.3530
+## 19 1982  Americas 67.4050
+## 20 1987  Americas 69.4980
+## 21 1992  Americas 69.8620
+## 22 1997  Americas 72.1460
+## 23 2002  Americas 72.0470
+## 24 2007  Americas 72.8990
+## 25 1952      Asia 44.8690
+## 26 1957      Asia 48.2840
+## 27 1962      Asia 49.3250
+## 28 1967      Asia 53.6550
+## 29 1972      Asia 56.9500
+## 30 1977      Asia 60.7650
+## 31 1982      Asia 63.7390
+## 32 1987      Asia 66.2950
+## 33 1992      Asia 68.6900
+## 34 1997      Asia 70.2650
+## 35 2002      Asia 71.0280
+## 36 2007      Asia 72.3960
+## 37 1952    Europe 65.9000
+## 38 1957    Europe 67.6500
+## 39 1962    Europe 69.5250
+## 40 1967    Europe 70.6100
+## 41 1972    Europe 70.8850
+## 42 1977    Europe 72.3350
+## 43 1982    Europe 73.4900
+## 44 1987    Europe 74.8150
+## 45 1992    Europe 75.4510
+## 46 1997    Europe 76.1160
+## 47 2002    Europe 77.5365
+## 48 2007    Europe 78.6085
+## 49 1952   Oceania 69.2550
+## 50 1957   Oceania 70.2950
+## 51 1962   Oceania 71.0850
+## 52 1967   Oceania 71.3100
+## 53 1972   Oceania 71.9100
+## 54 1977   Oceania 72.8550
+## 55 1982   Oceania 74.2900
+## 56 1987   Oceania 75.3200
+## 57 1992   Oceania 76.9450
+## 58 1997   Oceania 78.1900
+## 59 2002   Oceania 79.7400
+## 60 2007   Oceania 80.7195</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">agg &lt;-<span class="st"> </span><span class="kw">aggregate</span>(lifeExp ~<span class="st"> </span>year +<span class="st"> </span>continent , <span class="dt">data =</span> gap, <span class="dt">FUN =</span> median)
+<span class="kw">xtabs</span>(lifeExp ~<span class="st"> </span>., <span class="dt">data =</span> agg)</code></pre></div>
+<pre><code>##       continent
+## year    Africa Americas    Asia  Europe Oceania
+##   1952 38.8330  54.7450 44.8690 65.9000 69.2550
+##   1957 40.5925  56.0740 48.2840 67.6500 70.2950
+##   1962 42.6305  58.2990 49.3250 69.5250 71.0850
+##   1967 44.6985  60.5230 53.6550 70.6100 71.3100
+##   1972 47.0315  63.4410 56.9500 70.8850 71.9100
+##   1977 49.2725  66.3530 60.7650 72.3350 72.8550
+##   1982 50.7560  67.4050 63.7390 73.4900 74.2900
+##   1987 51.6395  69.4980 66.2950 74.8150 75.3200
+##   1992 52.4290  69.8620 68.6900 75.4510 76.9450
+##   1997 52.7590  72.1460 70.2650 76.1160 78.1900
+##   2002 51.2355  72.0470 71.0280 77.5365 79.7400
+##   2007 52.9265  72.8990 72.3960 78.6085 80.7195</code></pre>
 <p>Notice the 'long' vs. 'wide' formats. You'll see more about that sort of thing in Module 6.</p>
-</div>
-<div id="discretization" class="slide section level1">
-<h1>Discretization</h1>
-<p>You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by departure delay severity:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">air$delayStatus &lt;-<span class="st"> </span><span class="kw">cut</span>(air$DepDelay, <span class="dt">breaks =</span> <span class="kw">c</span>(-<span class="ot">Inf</span>, -<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">30</span>, <span class="dv">60</span>, <span class="dv">180</span>, <span class="ot">Inf</span>))
-<span class="kw">levels</span>(air$delayStatus) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'early'</span>,<span class="st">'on-time'</span>,<span class="st">'slight'</span>,
-                        <span class="st">'short'</span>,<span class="st">'medium'</span>,<span class="st">'long'</span>,<span class="st">'hair-pulling'</span>)
-tbl &lt;-<span class="st"> </span><span class="kw">table</span>(air$UniqueCarrier, air$delayStatus)
-<span class="kw">round</span>( <span class="kw">prop.table</span>(tbl, <span class="dt">margin =</span> <span class="dv">1</span>), <span class="dv">2</span> )</code></pre></div>
-<pre><code>##     
-##      early on-time slight short medium long hair-pulling
-##   AA  0.23    0.48   0.09  0.06   0.07 0.07         0.01
-##   AS  0.36    0.28   0.10  0.09   0.08 0.08         0.01
-##   B6  0.31    0.36   0.09  0.07   0.07 0.09         0.01
-##   CO  0.29    0.42   0.09  0.07   0.06 0.05         0.01
-##   DH  0.23    0.51   0.13  0.05   0.04 0.03         0.01
-##   DL  0.25    0.50   0.11  0.07   0.04 0.03         0.00
-##   EV  0.17    0.55   0.10  0.06   0.05 0.07         0.00
-##   F9  0.40    0.33   0.10  0.07   0.06 0.04         0.00
-##   FL  0.29    0.43   0.09  0.08   0.06 0.06         0.01
-##   HA  0.28    0.49   0.08  0.05   0.04 0.04         0.02
-##   HP  0.23    0.50   0.11  0.06   0.05 0.04         0.00
-##   MQ  0.36    0.40   0.07  0.06   0.06 0.04         0.00
-##   NW  0.45    0.36   0.06  0.05   0.04 0.04         0.01
-##   OH  0.21    0.48   0.03  0.07   0.17 0.03         0.00
-##   OO  0.25    0.40   0.11  0.08   0.08 0.08         0.00
-##   TZ  0.38    0.39   0.07  0.05   0.05 0.04         0.01
-##   UA  0.24    0.48   0.09  0.06   0.06 0.06         0.01
-##   US  0.20    0.49   0.14  0.07   0.06 0.04         0.00
-##   WN  0.11    0.59   0.09  0.06   0.07 0.08         0.01
-##   XE  0.37    0.34   0.08  0.06   0.07 0.07         0.01
-##   YV  0.25    0.48   0.08  0.04   0.07 0.07         0.00</code></pre>
 </div>
 <div id="stratified-analyses-iii" class="slide section level1">
 <h1>Stratified analyses III</h1>
 <p><code>aggregate()</code> works fine when the output is univariate, but what about more complicated analyses than computing the median, such as fitting a set of regressions?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">airSmall$late &lt;-<span class="st"> </span>airSmall$DepDelay &gt;=<span class="st"> </span><span class="dv">15</span>
-airSmall$Month &lt;-<span class="st"> </span><span class="kw">as.factor</span>(airSmall$Month)
-airSmall$Month &lt;-<span class="st"> </span><span class="kw">relevel</span>(airSmall$Month, <span class="st">&quot;5&quot;</span>)
-airSmall$Dest &lt;-<span class="st"> </span><span class="kw">as.character</span>(airSmall$Dest)
-
-out &lt;-<span class="st"> </span><span class="kw">by</span>(airSmall, airSmall$Dest, 
-    function(x) {
-      if(<span class="kw">sum</span>(!<span class="kw">is.na</span>(x$late))) 
-        <span class="co"># fit logistic regression</span>
-        <span class="kw">glm</span>(late ~<span class="st"> </span>Month, <span class="dt">family =</span> binomial, <span class="dt">data =</span> x) 
-      else <span class="ot">NA</span>
-    }
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out &lt;-<span class="st"> </span><span class="kw">by</span>(gap, gap$year, 
+    function(sub) {
+      <span class="kw">lm</span>(lifeExp ~<span class="st"> </span><span class="kw">log</span>(gdpPercap), <span class="dt">data =</span> sub)
+    }          
 )
 <span class="kw">length</span>(out)</code></pre></div>
-<pre><code>## [1] 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(out[[<span class="st">'IAH'</span>]])</code></pre></div>
+<pre><code>## [1] 12</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(out[[<span class="st">'2007'</span>]])</code></pre></div>
 <pre><code>## 
 ## Call:
-## glm(formula = late ~ Month, family = binomial, data = x)
+## lm(formula = lifeExp ~ log(gdpPercap), data = sub)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7365  -0.6121  -0.5750  -0.5252   2.2963  
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -25.947  -2.661   1.215   4.469  13.115 
 ## 
 ## Coefficients:
-##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept) -1.816777   0.096439 -18.839  &lt; 2e-16 ***
-## Month1       0.100730   0.136079   0.740   0.4592    
-## Month2       0.204195   0.136910   1.491   0.1358    
-## Month3       0.329094   0.129520   2.541   0.0111 *  
-## Month4       0.153730   0.133867   1.148   0.2508    
-## Month6       0.568904   0.124816   4.558 5.17e-06 ***
-## Month7       0.237044   0.129051   1.837   0.0662 .  
-## Month8       0.136570   0.131184   1.041   0.2978    
-## Month9      -0.745516   0.166948  -4.466 7.99e-06 ***
-## Month10      0.002425   0.136671   0.018   0.9858    
-## Month11     -0.094463   0.140825  -0.671   0.5024    
-## Month12      0.650724   0.124100   5.244 1.58e-07 ***
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      4.9496     3.8577   1.283    0.202    
+## log(gdpPercap)   7.2028     0.4423  16.283   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 9334.1  on 10533  degrees of freedom
-## Residual deviance: 9199.0  on 10522  degrees of freedom
-##   (48 observations deleted due to missingness)
-## AIC: 9223
-## 
-## Number of Fisher Scoring iterations: 5</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(out[[<span class="st">'ORD'</span>]])</code></pre></div>
+## Residual standard error: 7.122 on 140 degrees of freedom
+## Multiple R-squared:  0.6544, Adjusted R-squared:  0.652 
+## F-statistic: 265.2 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(out[[<span class="st">'1952'</span>]])</code></pre></div>
 <pre><code>## 
 ## Call:
-## glm(formula = late ~ Month, family = binomial, data = x)
+## lm(formula = lifeExp ~ log(gdpPercap), data = sub)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8681  -0.7585  -0.7065  -0.6374   1.8404  
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -28.9571  -5.7319   0.7517   6.5770  13.7361 
 ## 
 ## Coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept) -1.36737    0.05601 -24.414  &lt; 2e-16 ***
-## Month1       0.34839    0.07732   4.506 6.61e-06 ***
-## Month2       0.33658    0.07946   4.236 2.28e-05 ***
-## Month3       0.26875    0.07777   3.456 0.000549 ***
-## Month4       0.10664    0.07912   1.348 0.177701    
-## Month6       0.48219    0.07538   6.397 1.59e-10 ***
-## Month7       0.15244    0.07742   1.969 0.048939 *  
-## Month8       0.12886    0.07773   1.658 0.097355 .  
-## Month9      -0.11699    0.08168  -1.432 0.152086    
-## Month10     -0.12304    0.08087  -1.521 0.128169    
-## Month11      0.11599    0.07911   1.466 0.142599    
-## Month12      0.58578    0.07505   7.805 5.95e-15 ***
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    -17.8457     5.0668  -3.522 0.000578 ***
+## log(gdpPercap)   8.8298     0.6626  13.326  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 24639  on 22500  degrees of freedom
-## Residual deviance: 24453  on 22489  degrees of freedom
-##   (483 observations deleted due to missingness)
-## AIC: 24477
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-<p><strong>Question</strong>: What's the business with the <code>if</code> statement? Why is this good practice?</p>
+## Residual standard error: 8.146 on 140 degrees of freedom
+## Multiple R-squared:  0.5592, Adjusted R-squared:  0.556 
+## F-statistic: 177.6 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div id="sorting" class="slide section level1">
 <h1>Sorting</h1>
 <p><code>sort()</code> applied to a vector does what you expect.</p>
 <p>Sorting a matrix or dataframe based on one or more columns is a somewhat manual process, but once you get the hang of it, it's not bad.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ord &lt;-<span class="st"> </span><span class="kw">order</span>(air$DepDelay, air$ArrDelay, <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ord &lt;-<span class="st"> </span><span class="kw">order</span>(gap$year, gap$lifeExp, <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)
 ord[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
-<pre><code>## [1] 115794 396990 337213 168750 415550</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">air_ordered &lt;-<span class="st"> </span>air[ord, ]
-<span class="kw">head</span>(air_ordered)</code></pre></div>
-<pre><code>##        Year Month DayofMonth DayOfWeek DepTime CRSDepTime ArrTime
-## 115794 2005    11          2         3    1009        630    1526
-## 396990 2007    12         31         1     745       1225    1318
-## 337213 2007     7         16         1     858       1410    1805
-## 168750 2006     4         11         2    1001       1543    1505
-## 415550 2008     2          9         6    1003       1605    1302
-## 290635 2007     3         22         4     729       1545    1257
-##        CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
-## 115794       1207            NW       368  N552NW               197
-## 396990       1809            NW       360  N525US               213
-## 337213       2245            AA       194  N5EVAA               367
-## 168750       2112            NW       354  N541US               184
-## 415550       1946            UA        77  N667UA               299
-## 290635       2115            NW       354  N504US               208
-##        CRSElapsedTime AirTime ArrDelay DepDelay Origin Dest Distance
-## 115794            217     175     1639     1659    SFO  MSP     1589
-## 396990            224     191     1149     1160    SFO  MSP     1589
-## 337213            335     323     1160     1128    SFO  BOS     2704
-## 168750            209     165     1073     1098    SFO  MSP     1589
-## 415550            341     272     1036     1078    SFO  HNL     2398
-## 290635            210     188      942      944    SFO  MSP     1589
-##        TaxiIn TaxiOut Cancelled CancellationCode Diverted CarrierDelay
-## 115794      3      19         0                         0         1639
-## 396990      9      13         0                         0         1106
-## 337213     25      19         0                         0          993
-## 168750      5      14         0                         0         1048
-## 415550      2      25         0                         0          710
-## 290635      4      16         0                         0          884
-##        WeatherDelay NASDelay SecurityDelay LateAircraftDelay DepHour
-## 115794            0        0             0                 0      10
-## 396990            0        0             0                43      74
-## 337213            0       32             0               135      85
-## 168750            6        0             0                19      10
-## 415550            0        0             0               326      10
-## 290635            0        0             0                58      72
-##         delayStatus
-## 115794 hair-pulling
-## 396990 hair-pulling
-## 337213 hair-pulling
-## 168750 hair-pulling
-## 415550 hair-pulling
-## 290635 hair-pulling</code></pre>
+<pre><code>## [1]  804  672  696 1488   72</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gm_ord &lt;-<span class="st"> </span>gap[ord, ]
+<span class="kw">head</span>(gm_ord)</code></pre></div>
+<pre><code>##              country year       pop continent lifeExp gdpPercap
+## 804            Japan 2007 127467972      Asia  82.603  31656.07
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
+## 696          Iceland 2007    301931    Europe  81.757  36180.79
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
+## 72         Australia 2007  20434176   Oceania  81.235  34435.37
+## 1428           Spain 2007  40448191    Europe  80.941  28821.06</code></pre>
 <p>You could of course write your own <em>sort</em> function that uses <code>order()</code>. More in Module 6.</p>
 </div>
 <div id="merging-data" class="slide section level1">
 <h1>Merging Data</h1>
 <p>We often need to combine data across multiple data frames, merging on common fields (i.e., <em>keys</em>). In database terminology, this is a <em>join</em> operation.</p>
-<p>Here's an example where we want to add a column indicating the number of flights to the given destination.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">numFlights &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">table</span>(air$Dest))
-<span class="kw">head</span>(numFlights)</code></pre></div>
-<pre><code>##   Var1  Freq
-## 1  ABQ  2467
-## 2  ACV 10402
-## 3  ANC   613
-## 4  ASE   166
-## 5  ATL 13374
-## 6  AUS  1705</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">air2 &lt;-<span class="st"> </span><span class="kw">merge</span>(air, numFlights, <span class="dt">by.x =</span> <span class="st">'Dest'</span>, <span class="dt">by.y =</span> <span class="st">'Var1'</span>,
-     <span class="dt">all.x =</span> <span class="ot">TRUE</span>, <span class="dt">all.y =</span> <span class="ot">FALSE</span>)
-<span class="kw">dim</span>(air)</code></pre></div>
-<pre><code>## [1] 539895     31</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(air2)</code></pre></div>
-<pre><code>## [1] 539895     32</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(air2)</code></pre></div>
-<pre><code>##   Dest Year Month DayofMonth DayOfWeek DepTime CRSDepTime ArrTime
-## 1  ABQ 2007     3          3         6    1208       1218    1525
-## 2  ABQ 2007     4         24         2    2030       2025    2333
-## 3  ABQ 2007     9         13         4    2036       2042    2348
-## 4  ABQ 2007    12         18         2    2315       2100     227
-## 5  ABQ 2008     1         29         2    1327       1230    1653
-## 6  ABQ 2007     9         12         3    1346       1218    1704
-##   CRSArrTime UniqueCarrier FlightNum TailNum ActualElapsedTime
-## 1       1539            OO      6416  N969SW               137
-## 2       2341            OO      5588  N728SK               123
-## 3       2356            OO      6422  N738SK               132
-## 4         16            OO      6422  N978SW               132
-## 5       1548            OO      6416  N405SW               146
-## 6       1535            OO      6416  N923SW               138
-##   CRSElapsedTime AirTime ArrDelay DepDelay Origin Distance TaxiIn TaxiOut
-## 1            141     120      -14      -10    SFO      896      5      12
-## 2            136     107       -8        5    SFO      896      4      12
-## 3            134     111       -8       -6    SFO      896      5      16
-## 4            136     110      131      135    SFO      896      6      16
-## 5            138     102       65       57    SFO      896      6      38
-## 6            137     118       89       88    SFO      896      6      14
-##   Cancelled CancellationCode Diverted CarrierDelay WeatherDelay NASDelay
-## 1         0                         0            0            0        0
-## 2         0                         0            0            0        0
-## 3         0                         0            0            0        0
-## 4         0                         0          131            0        0
-## 5         0                         0            0            0        0
-## 6         0                         0            0            0        0
-##   SecurityDelay LateAircraftDelay DepHour delayStatus Freq
-## 1             0                 0      12       early 2467
-## 2             0                 0      20     on-time 2467
-## 3             0                 0      20       early 2467
-## 4             0                 0      23        long 2467
-## 5             0                65      13      medium 2467
-## 6             0                89      13        long 2467</code></pre>
+<p>Suppose that our dataset did not have 'continent' in it, but that we had a separate data frame that matches country to continent.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ignore the 'wizard' behind the curtain...</span>
+c2c &lt;-<span class="st"> </span><span class="kw">unique</span>(gap[ , <span class="kw">c</span>(<span class="st">'country'</span>, <span class="st">'continent'</span>)])
+gapSave &lt;-<span class="st"> </span>gap
+gap &lt;-<span class="st"> </span>gap[ , -<span class="kw">which</span>(<span class="kw">names</span>(gap) ==<span class="st"> &quot;continent&quot;</span>)]</code></pre></div>
+<p>Now let's add the continent info in:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(c2c)</code></pre></div>
+<pre><code>##        country continent
+## 1  Afghanistan      Asia
+## 13     Albania    Europe
+## 25     Algeria    Africa
+## 37      Angola    Africa
+## 49   Argentina  Americas
+## 61   Australia   Oceania</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gap)</code></pre></div>
+<pre><code>##       country year      pop lifeExp gdpPercap
+## 1 Afghanistan 1952  8425333  28.801  779.4453
+## 2 Afghanistan 1957  9240934  30.332  820.8530
+## 3 Afghanistan 1962 10267083  31.997  853.1007
+## 4 Afghanistan 1967 11537966  34.020  836.1971
+## 5 Afghanistan 1972 13079460  36.088  739.9811
+## 6 Afghanistan 1977 14880372  38.438  786.1134</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap &lt;-<span class="st"> </span><span class="kw">merge</span>(gap, c2c, <span class="dt">by.x =</span> <span class="st">'country'</span>, <span class="dt">by.y =</span> <span class="st">'country'</span>,
+                   <span class="dt">all.x =</span> <span class="ot">TRUE</span>, <span class="dt">all.y =</span> <span class="ot">FALSE</span>)
+
+<span class="kw">dim</span>(gapSave)</code></pre></div>
+<pre><code>## [1] 1704    6</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(gap)</code></pre></div>
+<pre><code>## [1] 1704    6</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">identical</span>(gapSave, gap)</code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">identical</span>(gapSave, gap[ , <span class="kw">names</span>(gapSave)])</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
 <p>What's the deal with the <code>all.x</code> and <code>all.y</code> ? We can tell R whether we want to keep all of the <code>x</code> observations, all the <code>y</code> observations, or neither, or both, when there may be rows in either of the datasets that don't match the other dataset.</p>
 </div>
 <div id="breakout" class="slide section level1">
 <h1>Breakout</h1>
 <h3 id="basics">Basics</h3>
 <ol style="list-style-type: decimal">
-<li><p>Create a vector that concatenates the Dest and Origin to create a 'Route' variable in a vectorized way using the string processing functions.</p></li>
-<li><p>Use <code>table()</code> to figure out the number of flights for each year.</p></li>
+<li><p>Create a vector that concatenates the country and year to create a 'country-year' variable in a vectorized way using the string processing functions.</p></li>
+<li><p>Use <code>table()</code> to figure out the number of countries available for each continent.</p></li>
 </ol>
 <h3 id="using-the-ideas">Using the ideas</h3>
 <ol start="3" style="list-style-type: decimal">
-<li><p>Compute the number of NAs in each column of the <em>air</em> dataset using <code>sapply()</code> and making use of the <code>is.na()</code> function.</p></li>
-<li><p>Merge the info from data/carriers.csv with the airline dataset so that we have the full names of the airlines as a new column in the data frame.</p></li>
-<li><p>Discretize distance into some bins and create a Dist_binned variable. Count the number of flights in each bin.</p></li>
-<li><p>Create a boxplot of delay by binned distance.</p></li>
-<li><p>Sort the dataset and find the shortest flight. Now consider the use of <code>which.min()</code> and why using that should be much quicker with large datasets.</p></li>
+<li><p>Explain the steps of what this code is doing: <code>tmp &lt;- gap[ , -which(names(gap) == &quot;continent&quot;)]</code>.</p></li>
+<li><p>Compute the number of NAs in each column of the gapminder dataset using <code>sapply()</code> and making use of the <code>is.na()</code> function.</p></li>
+<li><p>Discretize gdpPercap into some bins and create a gdpPercap_binned variable. Count the number of values in each bin.</p></li>
+<li><p>Create a boxplot of life expectancy by binned gdpPercap.</p></li>
+<li><p>Sort the dataset and find the shortest life expectancy value. Now consider the use of <code>which.min()</code> and why using that should be much quicker with large datasets.</p></li>
+<li><p>Create a dataframe that has the total population across all the countries for each year.</p></li>
+<li><p>Merge the info from problem 8 back into the original gapminder dataset. Now plot life expectancy as a function of world population.</p></li>
 <li><p>Suppose we have two categorical variables and we conduct a hypothesis test of independence. The chi-square statistic is:</p></li>
 </ol>
-<p><br /><img style="vertical-align:middle" src="data:image/png;base64,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" alt="
+<p><br /><img style="vertical-align:middle" src="data:image/png;base64,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" alt="
 \chi^2 = \sum_{i=1}^{n}\sum_{j=1}^{m} \frac{(y_{ij} - e_{ij})^2}{e_{ij}}, 
 " title="
 \chi^2 = \sum_{i=1}^{n}\sum_{j=1}^{m} \frac{(y_{ij} - e_{ij})^2}{e_{ij}}, 
@@ -775,17 +828,23 @@ ord[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <li>How can you construct the <em>e</em> matrix? Hint: the numerator of <em>e</em> is just an <em>outer product</em> for which the <code>outer()</code> function can be used.</li>
 </ol>
 <h3 id="advanced">Advanced</h3>
-<ol start="9" style="list-style-type: decimal">
-<li><p>For each combination of UniqueCarrier, Month, and DayOfWeek, find the 95th percentile of delay.</p></li>
-<li><p>This requires a bit of setup. Run the following code:</p></li>
+<ol start="11" style="list-style-type: decimal">
+<li><p>For each combination of year and continent, find the 95th percentile of life expectancy.</p></li>
+<li><p>Here's a cool trick to pull off a particular element of a list of lists:</p></li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">h &lt;-<span class="st"> </span>air$DepTime %/%<span class="st"> </span><span class="dv">100</span>
-m &lt;-<span class="st"> </span>air$DepTime %%<span class="st"> </span><span class="dv">100</span>
-h &lt;-<span class="st"> </span><span class="kw">as.character</span>(h)
-h[!<span class="kw">is.na</span>(h) &amp;<span class="st"> </span><span class="kw">nchar</span>(h) ==<span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">'0'</span>, h[!<span class="kw">is.na</span>(h) &amp;<span class="st"> </span><span class="kw">nchar</span>(h) ==<span class="st"> </span><span class="dv">1</span>], <span class="dt">sep =</span> <span class="st">''</span>)
-air$DepTimeChar &lt;-<span class="st"> </span><span class="kw">paste</span>(h, m, <span class="dt">sep =</span> <span class="st">'-'</span>)</code></pre></div>
-<p>Now suppose the <code>DepTimeChar</code> field is the format the departure time field came in.</p>
-<p>Create hour and minute fields using <code>strsplit()</code> and <code>sapply()</code>. What format is the result of <code>strsplit()</code>. Why do you need <code>sapply()</code>?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">params &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a =</span> <span class="kw">list</span>(<span class="dt">mn =</span> <span class="dv">7</span>, <span class="dt">sd =</span> <span class="dv">3</span>), <span class="dt">b =</span> <span class="kw">list</span>(<span class="dt">mn =</span> <span class="dv">6</span>,<span class="dt">sd =</span> <span class="dv">1</span>), 
+  <span class="dt">c =</span> <span class="kw">list</span>(<span class="dt">mn =</span> <span class="dv">2</span>, <span class="dt">sd =</span> <span class="dv">1</span>))
+<span class="kw">sapply</span>(params, <span class="st">&quot;[[&quot;</span>, <span class="dv">1</span>)</code></pre></div>
+<pre><code>## a b c 
+## 7 6 2</code></pre>
+<p>Explain what that does and why it works.</p>
+<p>Hint:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">3</span>)
+test[[<span class="dv">2</span>]]</code></pre></div>
+<pre><code>## [1] 7</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># `[[`(test, 2)  # need it commented or R Markdown processing messes it up...</span>
+
+<span class="co"># `+`(3, 7)</span></code></pre></div>
 </div>
 </body>
 </html>

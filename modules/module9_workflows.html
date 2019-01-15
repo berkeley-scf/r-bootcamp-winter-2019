@@ -318,29 +318,17 @@ will give you an idea of the power of these tools.</p>
 buggyFun(air)
 </code></pre>
 
-<pre><code>##  [1] &quot;Year&quot;              &quot;Month&quot;             &quot;DayofMonth&quot;       
-##  [4] &quot;DayOfWeek&quot;         &quot;DepTime&quot;           &quot;CRSDepTime&quot;       
-##  [7] &quot;ArrTime&quot;           &quot;CRSArrTime&quot;        &quot;UniqueCarrier&quot;    
-## [10] &quot;FlightNum&quot;         &quot;TailNum&quot;           &quot;ActualElapsedTime&quot;
-## [13] &quot;CRSElapsedTime&quot;    &quot;AirTime&quot;           &quot;ArrDelay&quot;         
-## [16] &quot;DepDelay&quot;          &quot;Origin&quot;            &quot;Dest&quot;             
-## [19] &quot;Distance&quot;          &quot;TaxiIn&quot;            &quot;TaxiOut&quot;          
-## [22] &quot;Cancelled&quot;         &quot;CancellationCode&quot;  &quot;Diverted&quot;         
-## [25] &quot;CarrierDelay&quot;      &quot;WeatherDelay&quot;      &quot;NASDelay&quot;         
-## [28] &quot;SecurityDelay&quot;     &quot;LateAircraftDelay&quot;
-</code></pre>
-
-<pre><code>## Error in base::rowSums(x, na.rm = na.rm, dims = dims, ...): &#39;x&#39; must be numeric
+<pre><code>## Error in print(names(myDF)): object &#39;air&#39; not found
 </code></pre>
 
 <pre><code class="r">if(FALSE) {
   traceback()
   debug(buggyFun)
-  buggyFun(air)
+  buggyFun(gap)
 
   undebug(buggyFun)
   options(error = recover)
-  buggyFun(air)
+  buggyFun(gap)
 }
 </code></pre>
 
@@ -385,7 +373,7 @@ execution, and reporting.  For more information, see Bioconductor&#39;s <a href=
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   0.800   0.024   0.825
+##   0.872   0.016   0.887
 </code></pre>
 
 <pre><code class="r">library(rbenchmark)
@@ -396,8 +384,8 @@ benchmark(ifelse(x &lt; 0, x, 0),
 </code></pre>
 
 <pre><code>##   replications elapsed
-## 1            5   3.246
-## 2            5   0.198
+## 1            5   3.615
+## 2            5   0.203
 </code></pre>
 
 <h1>Profiling your code</h1>
@@ -445,35 +433,28 @@ hotPaths(pd1)
 </code></pre>
 
 <pre><code>##  path                  total.pct self.pct
-##  lr_slow               54.29      0.00   
-##  . %*% (&lt;text&gt;:2)      28.57     28.57   
-##  . t (&lt;text&gt;:3)        11.43      0.00   
-##  . . standardGeneric   11.43      0.00   
-##  . . . t               11.43      0.00   
-##  . . . . t.default     11.43     11.43   
-##  . solve (&lt;text&gt;:4)    10.00      0.00   
-##  . . standardGeneric   10.00      0.00   
-##  . . . solve           10.00      0.00   
-##  . . . . solve.default 10.00     10.00   
-##  . t (&lt;text&gt;:2)         4.29      0.00   
-##  . . standardGeneric    4.29      0.00   
-##  . . . t                4.29      0.00   
-##  . . . . t.default      4.29      4.29   
-##  lazyLoadDBfetch       45.71      0.00   
-##  . &lt;Anonymous&gt;         45.71      0.00   
-##  . . lazyLoadDBfetch   45.71     45.71
+##  lr_slow               100.00     0.00   
+##  . %*% (&lt;text&gt;:2)       60.61    60.61   
+##  . solve (&lt;text&gt;:4)     21.21     0.00   
+##  . . standardGeneric    21.21     0.00   
+##  . . . solve            21.21     0.00   
+##  . . . . solve.default  21.21    21.21   
+##  . t (&lt;text&gt;:2)          9.09     0.00   
+##  . . standardGeneric     9.09     0.00   
+##  . . . t                 9.09     0.00   
+##  . . . . t.default       9.09     9.09   
+##  . t (&lt;text&gt;:3)          9.09     0.00   
+##  . . standardGeneric     9.09     0.00   
+##  . . . t                 9.09     0.00   
+##  . . . . t.default       9.09     9.09
 </code></pre>
 
 <pre><code class="r">hotPaths(pd1, value = &#39;time&#39;)
 </code></pre>
 
 <pre><code>##  path                  total.time self.time
-##  lr_slow               0.76       0.00     
+##  lr_slow               0.66       0.00     
 ##  . %*% (&lt;text&gt;:2)      0.40       0.40     
-##  . t (&lt;text&gt;:3)        0.16       0.00     
-##  . . standardGeneric   0.16       0.00     
-##  . . . t               0.16       0.00     
-##  . . . . t.default     0.16       0.16     
 ##  . solve (&lt;text&gt;:4)    0.14       0.00     
 ##  . . standardGeneric   0.14       0.00     
 ##  . . . solve           0.14       0.00     
@@ -482,38 +463,45 @@ hotPaths(pd1)
 ##  . . standardGeneric   0.06       0.00     
 ##  . . . t               0.06       0.00     
 ##  . . . . t.default     0.06       0.06     
-##  lazyLoadDBfetch       0.64       0.00     
-##  . &lt;Anonymous&gt;         0.64       0.00     
-##  . . lazyLoadDBfetch   0.64       0.64
+##  . t (&lt;text&gt;:3)        0.06       0.00     
+##  . . standardGeneric   0.06       0.00     
+##  . . . t               0.06       0.00     
+##  . . . . t.default     0.06       0.06
 </code></pre>
 
 <pre><code class="r">pd1 &lt;- profileExpr(lr_medium(y, x))
 hotPaths(pd1)
 </code></pre>
 
-<pre><code>##  path                   total.pct self.pct
-##  lr_medium              100.00     0.00   
-##  . crossprod (&lt;text&gt;:9)  58.82     0.00   
-##  . . crossprod           58.82     0.00   
-##  . . . base::crossprod   58.82    58.82   
-##  . solve (&lt;text&gt;:11)     41.18     0.00   
-##  . . standardGeneric     41.18     0.00   
-##  . . . solve             41.18     0.00   
-##  . . . . solve.default   41.18    41.18
+<pre><code>##  path                    total.pct self.pct
+##  lr_medium               100.00     0.00   
+##  . crossprod (&lt;text&gt;:9)   58.82     0.00   
+##  . . crossprod            58.82     0.00   
+##  . . . base::crossprod    58.82    58.82   
+##  . solve (&lt;text&gt;:11)      35.29     0.00   
+##  . . standardGeneric      35.29     0.00   
+##  . . . solve              35.29     0.00   
+##  . . . . solve.default    35.29    35.29   
+##  . crossprod (&lt;text&gt;:10)   5.88     0.00   
+##  . . crossprod             5.88     0.00   
+##  . . . base::crossprod     5.88     5.88
 </code></pre>
 
 <pre><code class="r">hotPaths(pd1, value = &#39;time&#39;)
 </code></pre>
 
-<pre><code>##  path                   total.time self.time
-##  lr_medium              0.34       0.00     
-##  . crossprod (&lt;text&gt;:9) 0.20       0.00     
-##  . . crossprod          0.20       0.00     
-##  . . . base::crossprod  0.20       0.20     
-##  . solve (&lt;text&gt;:11)    0.14       0.00     
-##  . . standardGeneric    0.14       0.00     
-##  . . . solve            0.14       0.00     
-##  . . . . solve.default  0.14       0.14
+<pre><code>##  path                    total.time self.time
+##  lr_medium               0.34       0.00     
+##  . crossprod (&lt;text&gt;:9)  0.20       0.00     
+##  . . crossprod           0.20       0.00     
+##  . . . base::crossprod   0.20       0.20     
+##  . solve (&lt;text&gt;:11)     0.12       0.00     
+##  . . standardGeneric     0.12       0.00     
+##  . . . solve             0.12       0.00     
+##  . . . . solve.default   0.12       0.12     
+##  . crossprod (&lt;text&gt;:10) 0.02       0.00     
+##  . . crossprod           0.02       0.00     
+##  . . . base::crossprod   0.02       0.02
 </code></pre>
 
 <pre><code class="r">pd3 &lt;- profileExpr(lr_fast(y, x))
@@ -581,18 +569,18 @@ object.size(x)
 gc()
 </code></pre>
 
-<pre><code>##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-## Ncells   1518162  81.1    2637877  140.9   2637877  140.9
-## Vcells 111270362 849.0  180429712 1376.6 149866341 1143.4
+<pre><code>##             used  (Mb) gc trigger   (Mb)  max used  (Mb)
+## Ncells   1307512  69.9    2164898  115.7   2164898 115.7
+## Vcells 101417104 773.8  154478432 1178.6 111978051 854.4
 </code></pre>
 
 <pre><code class="r">rm(x)
 gc()
 </code></pre>
 
-<pre><code>##            used (Mb) gc trigger   (Mb)  max used   (Mb)
-## Ncells  1518171 81.1    2637877  140.9   2637877  140.9
-## Vcells 11270389 86.0  144343769 1101.3 149866341 1143.4
+<pre><code>##           used (Mb) gc trigger  (Mb)  max used  (Mb)
+## Ncells 1307446 69.9    2164898 115.7   2164898 115.7
+## Vcells 1417006 10.9  123582745 942.9 111978051 854.4
 </code></pre>
 
 <h1>Scripting</h1>

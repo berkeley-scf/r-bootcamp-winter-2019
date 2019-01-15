@@ -6,7 +6,7 @@
 # include any code here you don't want to show up in the document,
 # e.g. package and dataset loading
 if(!('modules' %in% unlist(strsplit(getwd(), split = '/')))) setwd('modules')
-gapminder <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
+gap <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'), stringsAsFactors = FALSE)
 ```
 
 # Matrices and Arrays
@@ -27,11 +27,11 @@ mat <- cbind(mat, 1:3)
 mat
 
 # Let's convert the gapminder dataframe to a matrix:
-gm_mat <- as.matrix(gapminder[ , c('lifeExp', 'gdpPercap')])
+gm_mat <- as.matrix(gap[ , c('lifeExp', 'gdpPercap')])
 head(gm_mat)
 
 # What do you think will happen?
-gm_mat <- as.matrix(gapminder)
+gm_mat <- as.matrix(gap)
 head(gm_mat)
 ```
 
@@ -51,9 +51,9 @@ rownames(mat) <- c('first', 'middle', 'last')
 mat
 attributes(mat)
 
-names(attributes(gapminder))
-attributes(gapminder)$names
-attributes(gapminder)$row.names[1:10]
+names(attributes(gap))
+attributes(gap)$names
+attributes(gap)$row.names[1:10]
 ```
 
 Now let's do a bit of manipulation and see if you can infer how R represents matrices internally.
@@ -138,18 +138,18 @@ myList
 
 # Logical vectors
 ```{r}
-gm2007 <- gapminder[gapminder$year == 2007, ]
+gap2007 <- gap[gap$year == 2007, ]
 
-wealthy <- gm2007$gdpPercap > 40000
-healthy <- gm2007$lifeExp > 75
+wealthy <- gap2007$gdpPercap > 40000
+healthy <- gap2007$lifeExp > 75
 
 head(wealthy)
 table(wealthy)
 
 # note the vectorized boolean arithmetic
-gm2007[wealthy & healthy, ]
-gm2007[wealthy | healthy, ]
-gm2007[wealthy & !healthy, ]
+gap2007[wealthy & healthy, ]
+gap2007[wealthy | healthy, ]
+gap2007[wealthy & !healthy, ]
 
 # what am I doing here?
 sum(healthy)
@@ -174,18 +174,18 @@ A review from Module 1...
 - Data frames are a functionality that both sets R aside from some languages (e.g., Matlab) and provides functionality similar to some statistical packages (e.g., Stata, SAS)
 
 ```{r}
-class(gapminder)
-head(gapminder)
-str(gapminder)
+class(gap)
+head(gap)
+str(gap)
 ```
 
 # Data frames are (special) lists!
 
 ```{r}
-is.list(gapminder)
-length(gapminder)
-gapminder[[3]][1:5]
-lapply(gapminder, class) 
+is.list(gap)
+length(gap)
+gap[[3]][1:5]
+lapply(gap, class) 
 ```
 
 `lapply()` is a function used on lists; it works here to apply the `class()` function to each element of the list, which in this case is each field/column.
@@ -193,10 +193,10 @@ lapply(gapminder, class)
 # But lists are also vectors!
 
 ```{r}
-length(gapminder)
-someFields <- gapminder[c(3,5)]
+length(gap)
+someFields <- gap[c(3,5)]
 head(someFields)
-identical(gapminder[c(3,5)], gapminder[ , c(3,5)])
+identical(gap[c(3,5)], gap[ , c(3,5)])
 ```
 
 In general the placement of commas in R is crucial, but here, two different operations give the same result because of the underlying structure of data frames.
@@ -205,10 +205,10 @@ In general the placement of commas in R is crucial, but here, two different oper
 - A factor is a special data type in R used for categorical data. In some cases it works like magic and in others it is incredibly frustrating. 
 
 ```{r fac}
-class(gapminder$continent)
-head(gapminder$continent) # What order are the factors in?
-levels(gapminder[["continent"]])  # note alternate way to get the variable
-summary(gapminder$continent)
+class(gap$continent)
+head(gap$continent) # What order are the factors in?
+levels(gap[["continent"]])  # note alternate way to get the variable
+summary(gap$continent)
 ```
 
 - What if we don't like the order these are in? Factor order is important for all kinds of things like plotting, analysis of variance, regression output, and more
@@ -221,12 +221,12 @@ summary(gapminder$continent)
 This example is a bit artificial as 'continent' doesn't really have a natural ordering.
 
 ```{r orderedfac, fig.cap = ""}
-gapminder$continent2 <- ordered(gapminder$continent, 
-     levels = levels(gapminder$continent)[c(2,1,3,4,5)])
+gap$continent2 <- ordered(gap$continent, 
+     levels = levels(gap$continent)[c(2,1,3,4,5)])
 
-head(gapminder$continent2)
-levels(gapminder$continent2)
-boxplot(lifeExp ~ continent2, data = gapminder)
+head(gap$continent2)
+levels(gap$continent2)
+boxplot(lifeExp ~ continent2, data = gap)
 ```
 
 # Reclassifying Factors
@@ -269,14 +269,14 @@ mat
 ```{r}
 vec[c(3, 5, 12:14)]
 vec[-c(3,5)]
-gapminder[c(2,4), 5]
-gapminder[c(2,4), 'lifeExp']
+gap[c(2,4), 5]
+gap[c(2,4), 'lifeExp']
 
 rowInd <- c(1, 3, 4)
 colInd <- c(2, 2, 1)
 elemInd <- cbind(rowInd, colInd)
 elemInd
-gapminder[elemInd]
+gap[elemInd]
 ```
 
 Note the last usage where we give it a 2-column matrix of indices
@@ -284,9 +284,9 @@ Note the last usage where we give it a 2-column matrix of indices
 2) by a vector of logicals
 
 ```{r}
-wealthy <- gapminder$gdpPercap > 50000
-gapminder$gdpPercap[wealthy]
-gapminder[wealth, ]
+wealthy <- gap$gdpPercap > 50000
+gap$gdpPercap[wealthy]
+gap[wealth, ]
 ```
 
 What happened in the last subsetting operation?
@@ -299,7 +299,7 @@ mat[c('a', 'd', 'a'), ]
 4) using *subset()*
 
 ```{r}
-subset(gapminder, gdpPercap > 50000)
+subset(gap, gdpPercap > 50000)
 ```
 
 5) using *dplyr* tools such as *filter()* and *select()* -- more in Module 6
@@ -328,7 +328,7 @@ paste(chars, collapse = ' ')  # paste together things from a vector
 
 strsplit("This is the R bootcamp", split = " ")
 
-countries <- as.character(gm2007$country)
+countries <- as.character(gap2007$country)
 substring(countries, 1, 3)
 tmp <- countries
 substring(tmp, 5, 10) <- "______"
@@ -407,7 +407,7 @@ The *read.table()* family of functions just skims the surface of things...
 
 4) Set all of the gdpPercap values greater than 50000 to NA.
 
-5) Consider the first row of the gapminder dataset, which has Afghanistan for 1952. How do I create a string "Afghanistan-1952" using `gapminder$country[1]` and `gapminder$year[1]`? 
+5) Consider the first row of the gapminder dataset, which has Afghanistan for 1952. How do I create a string "Afghanistan-1952" using `gap$country[1]` and `gap$year[1]`? 
 
 ### Using the ideas
 
