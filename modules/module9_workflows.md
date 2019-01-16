@@ -408,8 +408,8 @@ gc()
 
 ```
 ##             used  (Mb) gc trigger   (Mb)  max used  (Mb)
-## Ncells    434536  23.3     750400   40.1    750400  40.1
-## Vcells 100880592 769.7  153726852 1172.9 111235588 848.7
+## Ncells    434533  23.3     750400   40.1    750400  40.1
+## Vcells 100880601 769.7  153726864 1172.9 111235598 848.7
 ```
 
 ```r
@@ -419,8 +419,8 @@ gc()
 
 ```
 ##          used (Mb) gc trigger  (Mb)  max used  (Mb)
-## Ncells 434491 23.3     750400  40.1    750400  40.1
-## Vcells 880529  6.8  122981481 938.3 111235588 848.7
+## Ncells 434488 23.3     750400  40.1    750400  40.1
+## Vcells 880538  6.8  122981491 938.3 111235598 848.7
 ```
 
 # Scripting
@@ -565,4 +565,4 @@ Here are some useful articles talking about reproducibility.
 # Breakout
 
 Please fill out the feedback survey.
-[http://bit.ly/Rbootcamp2019](http://bit.ly/Rbootcamp2019)
+[http://bit.ly/RbootcampJan2019](http://bit.ly/RbootcampJan2019)
