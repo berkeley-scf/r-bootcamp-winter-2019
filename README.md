@@ -37,11 +37,9 @@ Course content is available through Github. Please download a copy of the course
 
   2) Alternatively, simply download a zip file containing all the content at https://github.com/berkeley-scf/r-bootcamp-winter-2019/archive/master.zip.
 
-Here is the [schedule for the main track of the bootcamp](https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/schedule/schedule.pdf). We will also offer a second track that allows those first encountering R or programming to have time for more intensive practice with the initial material. Here is the [schedule for the second track](https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/schedule/schedule-track2.pdf). After lunch on the first day you'll have the opportunity to decide whether you want to stay with the main track or attend the second track. You do NOT need to decide in advance.
+Here is the [schedule for the main track of the bootcamp](https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/schedule/schedule.pdf). We will also offer a second track that allows those first encountering R or programming to have time for more intensive practice with the initial material. Here is the [schedule for the second track](https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/schedule/schedule-track2.pdf). After lunch on the first day you'll have the opportunity to decide whether you want to stay with the main track or attend the second track. You do NOT need to decide in advance.
 
-We recommend that you take a look at the syllabus and the background module (https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/modules/module0_induction.html) in advance to get a sense for what we'll cover. And for those of you with absolutely no experience with R, it will help with your learning curve if you try to play around with R using the material in (https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/modules/module1_basics.html) beforehand.
-
-If you'd like a more relaxed introduction to R or simply to see the material from a different perspective, consider instead one of the D-Lab workshops on R (see dlab.berkeley.edu/training), in particular the workshop occurring starting August 14 (http://dlab.berkeley.edu/training/r-fundamentals-part-1-16).
+We recommend that you take a look at the syllabus and the background module (https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/modules/module0_induction.html) in advance to get a sense for what we'll cover. And for those of you with absolutely no experience with R, it will help with your learning curve if you try to play around with R using the material in (https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/modules/module1_basics.html) beforehand.
 
 For the presentation materials (including embedded demo code), see the html files in *modules*. The *_slides_* files have individual pages, while the other html files are one continuous page per module. To run the demo code, open the .Rmd file for the module in RStudio. You can then run individual chunks of code.
 
@@ -52,9 +50,9 @@ To install the software, please follow option #1 here, with option #2 as a fallb
 
   1) Install the following directly on your laptop:
   
-      - R [(details here)](https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/install/RandRStudioInstall.html)
-      - RStudio (optional but highly recommended) [(details here)](https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/install/RandRStudioInstall.html)
-      - Git (optional but recommended for obtaining course content) [(details here)](https://rawgit.com/berkeley-scf/r-bootcamp-winter-2019/master/install/gitInstall.html)
+      - R [(details here)](https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/install/RandRStudioInstall.html)
+      - RStudio (optional but highly recommended) [(details here)](https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/install/RandRStudioInstall.html)
+      - Git (optional but recommended for obtaining course content) [(details here)](https://htmlpreview.github.io/?https://github.com/berkeley-scf/r-bootcamp-winter-2019/blob/master/install/gitInstall.html)
   2) Please use your CalNet ID and password to login [here](https://datahub.berkeley.edu/user-redirect/rstudio). Once logged in, you should be in an RStudio session in the browser. Please then enter the command "setwd('r-bootcamp-winter-2019/modules')" in the lower left panel. To open the R Markdown files, go to the lower right panel, click on 'Files', then 'r-bootcamp-winter-2019', then 'modules' and finally click on the .Rmd file of interest. It will open in the upper left panel.
 
 Note that our ability to troubleshoot R or RStudio installed directly on your machine is limited (particularly in Windows). We'll try to help, but if we run into roadblocks, we'll direct you to the browser option.
