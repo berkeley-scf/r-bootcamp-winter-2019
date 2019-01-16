@@ -565,7 +565,7 @@ myList
 
 <pre><code class="r">gap2007 &lt;- gap[gap$year == 2007, ]
 
-wealthy &lt;- gap2007$gdpPercap &gt; 40000
+wealthy &lt;- gap2007$gdpPercap &gt; 35000
 healthy &lt;- gap2007$lifeExp &gt; 75
 
 head(wealthy)
@@ -579,19 +579,26 @@ head(wealthy)
 
 <pre><code>## wealthy
 ## FALSE  TRUE 
-##   137     5
+##   130    12
 </code></pre>
 
 <pre><code class="r"># note the vectorized boolean arithmetic
 gap2007[wealthy &amp; healthy, ]
 </code></pre>
 
-<pre><code>##            country year       pop continent lifeExp gdpPercap
-## 756        Ireland 2007   4109086    Europe  78.885  40676.00
-## 864         Kuwait 2007   2505559      Asia  77.588  47306.99
-## 1152        Norway 2007   4627926    Europe  80.196  49357.19
-## 1368     Singapore 2007   4553009      Asia  79.972  47143.18
-## 1620 United States 2007 301139947  Americas  78.242  42951.65
+<pre><code>##              country year       pop continent lifeExp gdpPercap
+## 84           Austria 2007   8199783    Europe  79.829  36126.49
+## 252           Canada 2007  33390141  Americas  80.653  36319.24
+## 420          Denmark 2007   5468120    Europe  78.332  35278.42
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
+## 696          Iceland 2007    301931    Europe  81.757  36180.79
+## 756          Ireland 2007   4109086    Europe  78.885  40676.00
+## 864           Kuwait 2007   2505559      Asia  77.588  47306.99
+## 1092     Netherlands 2007  16570613    Europe  79.762  36797.93
+## 1152          Norway 2007   4627926    Europe  80.196  49357.19
+## 1368       Singapore 2007   4553009      Asia  79.972  47143.18
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
+## 1620   United States 2007 301139947  Americas  78.242  42951.65
 </code></pre>
 
 <pre><code class="r">gap2007[wealthy | healthy, ]
@@ -674,10 +681,10 @@ sum(healthy)
 <pre><code>## [1] TRUE
 </code></pre>
 
-<pre><code class="r">identical(health | wealthy, as.logical(healthy + wealthy))
+<pre><code class="r">identical(healthy | wealthy, as.logical(healthy + wealthy))
 </code></pre>
 
-<pre><code>## Error in identical(health | wealthy, as.logical(healthy + wealthy)): object &#39;health&#39; not found
+<pre><code>## [1] TRUE
 </code></pre>
 
 <h1>Data frames</h1>
@@ -799,29 +806,32 @@ head(someFields)
 <li>A factor is a special data type in R used for categorical data. In some cases it works like magic and in others it is incredibly frustrating. </li>
 </ul>
 
-<pre><code class="r">class(gap$continent)
+<pre><code class="r">## let&#39;s read the Gapminder data in using the defaults for `read.csv`
+gap &lt;- read.csv(file.path(&#39;..&#39;, &#39;data&#39;, &#39;gapminder-FiveYearData.csv&#39;))
+class(gap$continent)
 </code></pre>
 
-<pre><code>## [1] &quot;character&quot;
+<pre><code>## [1] &quot;factor&quot;
 </code></pre>
 
 <pre><code class="r">head(gap$continent) # What order are the factors in?
 </code></pre>
 
-<pre><code>## [1] &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot;
+<pre><code>## [1] Asia Asia Asia Asia Asia Asia
+## Levels: Africa Americas Asia Europe Oceania
 </code></pre>
 
 <pre><code class="r">levels(gap[[&quot;continent&quot;]])  # note alternate way to get the variable
 </code></pre>
 
-<pre><code>## NULL
+<pre><code>## [1] &quot;Africa&quot;   &quot;Americas&quot; &quot;Asia&quot;     &quot;Europe&quot;   &quot;Oceania&quot;
 </code></pre>
 
 <pre><code class="r">summary(gap$continent)
 </code></pre>
 
-<pre><code>##    Length     Class      Mode 
-##      1704 character character
+<pre><code>##   Africa Americas     Asia   Europe  Oceania 
+##      624      300      396      360       24
 </code></pre>
 
 <ul>
@@ -844,21 +854,20 @@ head(someFields)
 head(gap$continent2)
 </code></pre>
 
-<pre><code>## [1] &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;
-## Levels:
+<pre><code>## [1] Asia Asia Asia Asia Asia Asia
+## Levels: Americas &lt; Africa &lt; Asia &lt; Europe &lt; Oceania
 </code></pre>
 
 <pre><code class="r">levels(gap$continent2)
 </code></pre>
 
-<pre><code>## character(0)
+<pre><code>## [1] &quot;Americas&quot; &quot;Africa&quot;   &quot;Asia&quot;     &quot;Europe&quot;   &quot;Oceania&quot;
 </code></pre>
 
 <pre><code class="r">boxplot(lifeExp ~ continent2, data = gap)
 </code></pre>
 
-<pre><code>## Error in boxplot.default(split(mf[[response]], mf[-response], drop = drop, : invalid first argument
-</code></pre>
+<p><img src="data:image/png;base64,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" alt=""/></p>
 
 <h1>Reclassifying Factors</h1>
 
@@ -924,28 +933,17 @@ score[&quot;advanced&quot;]  # look up by name
 
 <p>There are many ways to select subsets in R. The syntax below is useful for vectors, matrices, data frames, arrays and lists.</p>
 
-<pre><code class="r">vec &lt;- gm_2007$lifeExp
-</code></pre>
-
-<pre><code>## Error in eval(expr, envir, enclos): object &#39;gm_2007&#39; not found
-</code></pre>
-
-<pre><code class="r">mat &lt;- matrix(vec, 4, 5)
-</code></pre>
-
-<pre><code>## Warning in matrix(vec, 4, 5): data length [12] is not a sub-multiple or
-## multiple of the number of columns [5]
-</code></pre>
-
-<pre><code class="r">rownames(mat) &lt;- letters[1:4]
+<pre><code class="r">vec &lt;- gap2007$lifeExp
+mat &lt;- matrix(1:20, 4, 5)
+rownames(mat) &lt;- letters[1:4]
 mat
 </code></pre>
 
-<pre><code>##          [,1]       [,2]       [,3]        [,4]       [,5]
-## a -0.92232387         NA -0.7996107 -0.92232387         NA
-## b  1.46135921  2.2936687 -1.2270296  1.46135921  2.2936687
-## c          NA  0.4006243 -0.3640969          NA  0.4006243
-## d -0.04929972 -0.1753973 -0.7785697 -0.04929972 -0.1753973
+<pre><code>##   [,1] [,2] [,3] [,4] [,5]
+## a    1    5    9   13   17
+## b    2    6   10   14   18
+## c    3    7   11   15   19
+## d    4    8   12   16   20
 </code></pre>
 
 <p>1) by direct indexing</p>
@@ -953,14 +951,26 @@ mat
 <pre><code class="r">vec[c(3, 5, 12:14)]
 </code></pre>
 
-<pre><code>## [1]         NA         NA -0.7785697         NA         NA
+<pre><code>## [1] 72.301 75.320 65.554 74.852 50.728
 </code></pre>
 
 <pre><code class="r">vec[-c(3,5)]
 </code></pre>
 
-<pre><code>##  [1] -0.92232387  1.46135921 -0.04929972  2.29366872  0.40062427
-##  [6] -0.17539728 -0.79961066 -1.22702955 -0.36409692 -0.77856974
+<pre><code>##   [1] 43.828 76.423 42.731 81.235 79.829 75.635 64.062 79.441 56.728 65.554
+##  [11] 74.852 50.728 72.390 73.005 52.295 49.580 59.723 50.430 80.653 44.741
+##  [21] 50.651 78.553 72.961 72.889 65.152 46.462 55.322 78.782 48.328 75.748
+##  [31] 78.273 76.486 78.332 54.791 72.235 74.994 71.338 71.878 51.579 58.040
+##  [41] 52.947 79.313 80.657 56.735 59.448 79.406 60.022 79.483 70.259 56.007
+##  [51] 46.388 60.916 70.198 82.208 73.338 81.757 64.698 70.650 70.964 59.545
+##  [61] 78.885 80.745 80.546 72.567 82.603 72.535 54.110 67.297 78.623 77.588
+##  [71] 71.993 42.592 45.678 73.952 59.443 48.303 74.241 54.467 64.164 72.801
+##  [81] 76.195 66.803 74.543 71.164 42.082 62.069 52.906 63.785 79.762 80.204
+##  [91] 72.899 56.867 46.859 80.196 75.640 65.483 75.537 71.752 71.421 71.688
+## [101] 75.563 78.098 78.746 76.442 72.476 46.242 65.528 72.777 63.062 74.002
+## [111] 42.568 79.972 74.663 77.926 48.159 49.339 80.941 72.396 58.556 39.613
+## [121] 80.884 81.701 74.143 78.400 52.517 70.616 58.420 69.819 73.923 71.777
+## [131] 51.542 79.425 78.242 76.384 73.747 74.249 73.422 62.698 42.384 43.487
 </code></pre>
 
 <pre><code class="r">gap[c(2,4), 5]
@@ -1017,10 +1027,10 @@ gap$gdpPercap[wealthy]
 <pre><code class="r">mat[c(&#39;a&#39;, &#39;d&#39;, &#39;a&#39;), ]
 </code></pre>
 
-<pre><code>##          [,1]       [,2]       [,3]        [,4]       [,5]
-## a -0.92232387         NA -0.7996107 -0.92232387         NA
-## d -0.04929972 -0.1753973 -0.7785697 -0.04929972 -0.1753973
-## a -0.92232387         NA -0.7996107 -0.92232387         NA
+<pre><code>##   [,1] [,2] [,3] [,4] [,5]
+## a    1    5    9   13   17
+## d    4    8   12   16   20
+## a    1    5    9   13   17
 </code></pre>
 
 <p>4) using <em>subset()</em></p>
@@ -1029,12 +1039,12 @@ gap$gdpPercap[wealthy]
 </code></pre>
 
 <pre><code>##     country year     pop continent lifeExp gdpPercap continent2
-## 853  Kuwait 1952  160000      Asia  55.565 108382.35       &lt;NA&gt;
-## 854  Kuwait 1957  212846      Asia  58.033 113523.13       &lt;NA&gt;
-## 855  Kuwait 1962  358266      Asia  60.470  95458.11       &lt;NA&gt;
-## 856  Kuwait 1967  575003      Asia  64.624  80894.88       &lt;NA&gt;
-## 857  Kuwait 1972  841934      Asia  67.712 109347.87       &lt;NA&gt;
-## 858  Kuwait 1977 1140357      Asia  69.343  59265.48       &lt;NA&gt;
+## 853  Kuwait 1952  160000      Asia  55.565 108382.35       Asia
+## 854  Kuwait 1957  212846      Asia  58.033 113523.13       Asia
+## 855  Kuwait 1962  358266      Asia  60.470  95458.11       Asia
+## 856  Kuwait 1967  575003      Asia  64.624  80894.88       Asia
+## 857  Kuwait 1972  841934      Asia  67.712 109347.87       Asia
+## 858  Kuwait 1977 1140357      Asia  69.343  59265.48       Asia
 </code></pre>
 
 <p>5) using <em>dplyr</em> tools such as <em>filter()</em> and <em>select()</em> &ndash; more in Module 6</p>
@@ -1045,8 +1055,25 @@ gap$gdpPercap[wealthy]
 
 <pre><code class="r">vec &lt;- rnorm(20)
 vec[c(3, 5, 12:14)] &lt;- 1:5
-mat[2, 3:5] &lt;- rnorm(3)
+vec
+</code></pre>
+
+<pre><code>##  [1] -0.24645364 -0.72327265  1.00000000  0.61930627  2.00000000
+##  [6]  1.23373978  0.96579228 -0.42014574  1.34165244  1.07830055
+## [11] -1.33617991  3.00000000  4.00000000  5.00000000 -1.48592548
+## [16] -0.14253905  1.70293642 -1.20126297  0.05711837  1.90933386
+</code></pre>
+
+<pre><code class="r">mat[2, 3:5] &lt;- rnorm(3)
 mat[mat[,1] &gt; 0, ] &lt;- -Inf
+mat
+</code></pre>
+
+<pre><code>##   [,1] [,2] [,3] [,4] [,5]
+## a -Inf -Inf -Inf -Inf -Inf
+## b -Inf -Inf -Inf -Inf -Inf
+## c -Inf -Inf -Inf -Inf -Inf
+## d -Inf -Inf -Inf -Inf -Inf
 </code></pre>
 
 <h1>Strings</h1>
@@ -1106,80 +1133,19 @@ substring(countries, 1, 3)
 
 <pre><code class="r">tmp &lt;- countries
 substring(tmp, 5, 10) &lt;- &quot;______&quot;
-tmp
+tmp[1:20]
 </code></pre>
 
-<pre><code>##   [1] &quot;Afgh______n&quot;              &quot;Alba___&quot;                 
-##   [3] &quot;Alge___&quot;                  &quot;Ango__&quot;                  
-##   [5] &quot;Arge_____&quot;                &quot;Aust_____&quot;               
-##   [7] &quot;Aust___&quot;                  &quot;Bahr___&quot;                 
-##   [9] &quot;Bang______&quot;               &quot;Belg___&quot;                 
-##  [11] &quot;Beni_&quot;                    &quot;Boli___&quot;                 
-##  [13] &quot;Bosn______ Herzegovina&quot;   &quot;Bots____&quot;                
-##  [15] &quot;Braz__&quot;                   &quot;Bulg____&quot;                
-##  [17] &quot;Burk______so&quot;             &quot;Buru___&quot;                 
-##  [19] &quot;Camb____&quot;                 &quot;Came____&quot;                
-##  [21] &quot;Cana__&quot;                   &quot;Cent______rican Republic&quot;
-##  [23] &quot;Chad&quot;                     &quot;Chil_&quot;                   
-##  [25] &quot;Chin_&quot;                    &quot;Colo____&quot;                
-##  [27] &quot;Como___&quot;                  &quot;Cong______ Rep.&quot;         
-##  [29] &quot;Cong______&quot;               &quot;Cost______&quot;              
-##  [31] &quot;Cote______ire&quot;            &quot;Croa___&quot;                 
-##  [33] &quot;Cuba&quot;                     &quot;Czec______blic&quot;          
-##  [35] &quot;Denm___&quot;                  &quot;Djib____&quot;                
-##  [37] &quot;Domi______Republic&quot;       &quot;Ecua___&quot;                 
-##  [39] &quot;Egyp_&quot;                    &quot;El S______r&quot;             
-##  [41] &quot;Equa______ Guinea&quot;        &quot;Erit___&quot;                 
-##  [43] &quot;Ethi____&quot;                 &quot;Finl___&quot;                 
-##  [45] &quot;Fran__&quot;                   &quot;Gabo_&quot;                   
-##  [47] &quot;Gamb__&quot;                   &quot;Germ___&quot;                 
-##  [49] &quot;Ghan_&quot;                    &quot;Gree__&quot;                  
-##  [51] &quot;Guat_____&quot;                &quot;Guin__&quot;                  
-##  [53] &quot;Guin______sau&quot;            &quot;Hait_&quot;                   
-##  [55] &quot;Hond____&quot;                 &quot;Hong______China&quot;         
-##  [57] &quot;Hung___&quot;                  &quot;Icel___&quot;                 
-##  [59] &quot;Indi_&quot;                    &quot;Indo_____&quot;               
-##  [61] &quot;Iran&quot;                     &quot;Iraq&quot;                    
-##  [63] &quot;Irel___&quot;                  &quot;Isra__&quot;                  
-##  [65] &quot;Ital_&quot;                    &quot;Jama___&quot;                 
-##  [67] &quot;Japa_&quot;                    &quot;Jord__&quot;                  
-##  [69] &quot;Keny_&quot;                    &quot;Kore______ Rep.&quot;         
-##  [71] &quot;Kore______&quot;               &quot;Kuwa__&quot;                  
-##  [73] &quot;Leba___&quot;                  &quot;Leso___&quot;                 
-##  [75] &quot;Libe___&quot;                  &quot;Liby_&quot;                   
-##  [77] &quot;Mada______&quot;               &quot;Mala__&quot;                  
-##  [79] &quot;Mala____&quot;                 &quot;Mali&quot;                    
-##  [81] &quot;Maur______&quot;               &quot;Maur_____&quot;               
-##  [83] &quot;Mexi__&quot;                   &quot;Mong____&quot;                
-##  [85] &quot;Mont______&quot;               &quot;Moro___&quot;                 
-##  [87] &quot;Moza______&quot;               &quot;Myan___&quot;                 
-##  [89] &quot;Nami___&quot;                  &quot;Nepa_&quot;                   
-##  [91] &quot;Neth______s&quot;              &quot;New ______d&quot;             
-##  [93] &quot;Nica_____&quot;                &quot;Nige_&quot;                   
-##  [95] &quot;Nige___&quot;                  &quot;Norw__&quot;                  
-##  [97] &quot;Oman&quot;                     &quot;Paki____&quot;                
-##  [99] &quot;Pana__&quot;                   &quot;Para____&quot;                
-## [101] &quot;Peru&quot;                     &quot;Phil______s&quot;             
-## [103] &quot;Pola__&quot;                   &quot;Port____&quot;                
-## [105] &quot;Puer______o&quot;              &quot;Reun___&quot;                 
-## [107] &quot;Roma___&quot;                  &quot;Rwan__&quot;                  
-## [109] &quot;Sao ______nd Principe&quot;    &quot;Saud______ia&quot;            
-## [111] &quot;Sene___&quot;                  &quot;Serb__&quot;                  
-## [113] &quot;Sier______ne&quot;             &quot;Sing_____&quot;               
-## [115] &quot;Slov______ublic&quot;          &quot;Slov____&quot;                
-## [117] &quot;Soma___&quot;                  &quot;Sout______ca&quot;            
-## [119] &quot;Spai_&quot;                    &quot;Sri _____&quot;               
-## [121] &quot;Suda_&quot;                    &quot;Swaz_____&quot;               
-## [123] &quot;Swed__&quot;                   &quot;Swit______d&quot;             
-## [125] &quot;Syri_&quot;                    &quot;Taiw__&quot;                  
-## [127] &quot;Tanz____&quot;                 &quot;Thai____&quot;                
-## [129] &quot;Togo&quot;                     &quot;Trin______nd Tobago&quot;     
-## [131] &quot;Tuni___&quot;                  &quot;Turk__&quot;                  
-## [133] &quot;Ugan__&quot;                   &quot;Unit______gdom&quot;          
-## [135] &quot;Unit______tes&quot;            &quot;Urug___&quot;                 
-## [137] &quot;Vene_____&quot;                &quot;Viet___&quot;                 
-## [139] &quot;West______and Gaza&quot;       &quot;Yeme______&quot;              
-## [141] &quot;Zamb__&quot;                   &quot;Zimb____&quot;
+<pre><code>##  [1] &quot;Afgh______n&quot;            &quot;Alba___&quot;               
+##  [3] &quot;Alge___&quot;                &quot;Ango__&quot;                
+##  [5] &quot;Arge_____&quot;              &quot;Aust_____&quot;             
+##  [7] &quot;Aust___&quot;                &quot;Bahr___&quot;               
+##  [9] &quot;Bang______&quot;             &quot;Belg___&quot;               
+## [11] &quot;Beni_&quot;                  &quot;Boli___&quot;               
+## [13] &quot;Bosn______ Herzegovina&quot; &quot;Bots____&quot;              
+## [15] &quot;Braz__&quot;                 &quot;Bulg____&quot;              
+## [17] &quot;Burk______so&quot;           &quot;Buru___&quot;               
+## [19] &quot;Camb____&quot;               &quot;Came____&quot;
 </code></pre>
 
 <p>We can search for patterns in character vectors and replace patterns (both vectorized!)</p>

@@ -88,7 +88,7 @@ colSums(mat)
 ```
 
 ```
-## Error in base::colSums(x, na.rm = na.rm, dims = dims, ...): 'x' must be an array of at least two dimensions
+## Error in colSums(mat): 'x' must be an array of at least two dimensions
 ```
 
 ```r
@@ -118,11 +118,15 @@ buggyFun <- function(myDF) {
    return(sums)
 }
 
-buggyFun(air)
+buggyFun(gap)
 ```
 
 ```
-## Error in print(names(myDF)): object 'air' not found
+## [1] "country"   "year"      "pop"       "continent" "lifeExp"   "gdpPercap"
+```
+
+```
+## Error in rowSums(myDF): 'x' must be numeric
 ```
 
 ```r
@@ -404,8 +408,8 @@ gc()
 
 ```
 ##             used  (Mb) gc trigger   (Mb)  max used  (Mb)
-## Ncells   1307512  69.9    2164898  115.7   2164898 115.7
-## Vcells 101417104 773.8  154478432 1178.6 111978051 854.4
+## Ncells    434536  23.3     750400   40.1    750400  40.1
+## Vcells 100880592 769.7  153726852 1172.9 111235588 848.7
 ```
 
 ```r
@@ -414,9 +418,9 @@ gc()
 ```
 
 ```
-##           used (Mb) gc trigger  (Mb)  max used  (Mb)
-## Ncells 1307446 69.9    2164898 115.7   2164898 115.7
-## Vcells 1417006 10.9  123582745 942.9 111978051 854.4
+##          used (Mb) gc trigger  (Mb)  max used  (Mb)
+## Ncells 434491 23.3     750400  40.1    750400  40.1
+## Vcells 880529  6.8  122981481 938.3 111235588 848.7
 ```
 
 # Scripting
@@ -561,4 +565,4 @@ Here are some useful articles talking about reproducibility.
 # Breakout
 
 Please fill out the feedback survey.
-[ http://bit.ly/Rbootcamp2018]( http://bit.ly/Rbootcamp2018)
+[http://bit.ly/Rbootcamp2019](http://bit.ly/Rbootcamp2019)

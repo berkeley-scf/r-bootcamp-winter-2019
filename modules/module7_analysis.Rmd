@@ -59,8 +59,6 @@ names(reg)
 reg$coefficients
 # Examine regression degrees of freedom
 reg$df.residual
-# Examine regression fit (AIC)
-reg$aic
 # See the standard (diagnostic) plots for a regression
 plot(reg)
 ```

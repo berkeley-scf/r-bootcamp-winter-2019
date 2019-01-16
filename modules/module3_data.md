@@ -432,7 +432,7 @@ myList
 ```r
 gap2007 <- gap[gap$year == 2007, ]
 
-wealthy <- gap2007$gdpPercap > 40000
+wealthy <- gap2007$gdpPercap > 35000
 healthy <- gap2007$lifeExp > 75
 
 head(wealthy)
@@ -449,7 +449,7 @@ table(wealthy)
 ```
 ## wealthy
 ## FALSE  TRUE 
-##   137     5
+##   130    12
 ```
 
 ```r
@@ -458,12 +458,19 @@ gap2007[wealthy & healthy, ]
 ```
 
 ```
-##            country year       pop continent lifeExp gdpPercap
-## 756        Ireland 2007   4109086    Europe  78.885  40676.00
-## 864         Kuwait 2007   2505559      Asia  77.588  47306.99
-## 1152        Norway 2007   4627926    Europe  80.196  49357.19
-## 1368     Singapore 2007   4553009      Asia  79.972  47143.18
-## 1620 United States 2007 301139947  Americas  78.242  42951.65
+##              country year       pop continent lifeExp gdpPercap
+## 84           Austria 2007   8199783    Europe  79.829  36126.49
+## 252           Canada 2007  33390141  Americas  80.653  36319.24
+## 420          Denmark 2007   5468120    Europe  78.332  35278.42
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
+## 696          Iceland 2007    301931    Europe  81.757  36180.79
+## 756          Ireland 2007   4109086    Europe  78.885  40676.00
+## 864           Kuwait 2007   2505559      Asia  77.588  47306.99
+## 1092     Netherlands 2007  16570613    Europe  79.762  36797.93
+## 1152          Norway 2007   4627926    Europe  80.196  49357.19
+## 1368       Singapore 2007   4553009      Asia  79.972  47143.18
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
+## 1620   United States 2007 301139947  Americas  78.242  42951.65
 ```
 
 ```r
@@ -558,11 +565,11 @@ identical(healthy & wealthy, as.logical(healthy * wealthy))
 ```
 
 ```r
-identical(health | wealthy, as.logical(healthy + wealthy))
+identical(healthy | wealthy, as.logical(healthy + wealthy))
 ```
 
 ```
-## Error in identical(health | wealthy, as.logical(healthy + wealthy)): object 'health' not found
+## [1] TRUE
 ```
 
 # Data frames
@@ -704,11 +711,13 @@ In general the placement of commas in R is crucial, but here, two different oper
 
 
 ```r
+## let's read the Gapminder data in using the defaults for `read.csv`
+gap <- read.csv(file.path('..', 'data', 'gapminder-FiveYearData.csv'))
 class(gap$continent)
 ```
 
 ```
-## [1] "character"
+## [1] "factor"
 ```
 
 ```r
@@ -716,7 +725,8 @@ head(gap$continent) # What order are the factors in?
 ```
 
 ```
-## [1] "Asia" "Asia" "Asia" "Asia" "Asia" "Asia"
+## [1] Asia Asia Asia Asia Asia Asia
+## Levels: Africa Americas Asia Europe Oceania
 ```
 
 ```r
@@ -724,7 +734,7 @@ levels(gap[["continent"]])  # note alternate way to get the variable
 ```
 
 ```
-## NULL
+## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
 ```
 
 ```r
@@ -732,8 +742,8 @@ summary(gap$continent)
 ```
 
 ```
-##    Length     Class      Mode 
-##      1704 character character
+##   Africa Americas     Asia   Europe  Oceania 
+##      624      300      396      360       24
 ```
 
 - What if we don't like the order these are in? Factor order is important for all kinds of things like plotting, analysis of variance, regression output, and more
@@ -754,8 +764,8 @@ head(gap$continent2)
 ```
 
 ```
-## [1] <NA> <NA> <NA> <NA> <NA> <NA>
-## Levels:
+## [1] Asia Asia Asia Asia Asia Asia
+## Levels: Americas < Africa < Asia < Europe < Oceania
 ```
 
 ```r
@@ -763,16 +773,14 @@ levels(gap$continent2)
 ```
 
 ```
-## character(0)
+## [1] "Americas" "Africa"   "Asia"     "Europe"   "Oceania"
 ```
 
 ```r
 boxplot(lifeExp ~ continent2, data = gap)
 ```
 
-```
-## Error in boxplot.default(split(mf[[response]], mf[-response], drop = drop, : invalid first argument
-```
+![](figure/orderedfac-1.png)
 
 # Reclassifying Factors
 - Turning factors into other data types can be tricky. All factors have an underlying numeric structure.
@@ -849,33 +857,18 @@ There are many ways to select subsets in R. The syntax below is useful for vecto
 
 
 ```r
-vec <- gm_2007$lifeExp
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'gm_2007' not found
-```
-
-```r
-mat <- matrix(vec, 4, 5)
-```
-
-```
-## Warning in matrix(vec, 4, 5): data length [12] is not a sub-multiple or
-## multiple of the number of columns [5]
-```
-
-```r
+vec <- gap2007$lifeExp
+mat <- matrix(1:20, 4, 5)
 rownames(mat) <- letters[1:4]
 mat
 ```
 
 ```
-##          [,1]       [,2]       [,3]        [,4]       [,5]
-## a -0.92232387         NA -0.7996107 -0.92232387         NA
-## b  1.46135921  2.2936687 -1.2270296  1.46135921  2.2936687
-## c          NA  0.4006243 -0.3640969          NA  0.4006243
-## d -0.04929972 -0.1753973 -0.7785697 -0.04929972 -0.1753973
+##   [,1] [,2] [,3] [,4] [,5]
+## a    1    5    9   13   17
+## b    2    6   10   14   18
+## c    3    7   11   15   19
+## d    4    8   12   16   20
 ```
 1) by direct indexing
 
@@ -885,7 +878,7 @@ vec[c(3, 5, 12:14)]
 ```
 
 ```
-## [1]         NA         NA -0.7785697         NA         NA
+## [1] 72.301 75.320 65.554 74.852 50.728
 ```
 
 ```r
@@ -893,8 +886,20 @@ vec[-c(3,5)]
 ```
 
 ```
-##  [1] -0.92232387  1.46135921 -0.04929972  2.29366872  0.40062427
-##  [6] -0.17539728 -0.79961066 -1.22702955 -0.36409692 -0.77856974
+##   [1] 43.828 76.423 42.731 81.235 79.829 75.635 64.062 79.441 56.728 65.554
+##  [11] 74.852 50.728 72.390 73.005 52.295 49.580 59.723 50.430 80.653 44.741
+##  [21] 50.651 78.553 72.961 72.889 65.152 46.462 55.322 78.782 48.328 75.748
+##  [31] 78.273 76.486 78.332 54.791 72.235 74.994 71.338 71.878 51.579 58.040
+##  [41] 52.947 79.313 80.657 56.735 59.448 79.406 60.022 79.483 70.259 56.007
+##  [51] 46.388 60.916 70.198 82.208 73.338 81.757 64.698 70.650 70.964 59.545
+##  [61] 78.885 80.745 80.546 72.567 82.603 72.535 54.110 67.297 78.623 77.588
+##  [71] 71.993 42.592 45.678 73.952 59.443 48.303 74.241 54.467 64.164 72.801
+##  [81] 76.195 66.803 74.543 71.164 42.082 62.069 52.906 63.785 79.762 80.204
+##  [91] 72.899 56.867 46.859 80.196 75.640 65.483 75.537 71.752 71.421 71.688
+## [101] 75.563 78.098 78.746 76.442 72.476 46.242 65.528 72.777 63.062 74.002
+## [111] 42.568 79.972 74.663 77.926 48.159 49.339 80.941 72.396 58.556 39.613
+## [121] 80.884 81.701 74.143 78.400 52.517 70.616 58.420 69.819 73.923 71.777
+## [131] 51.542 79.425 78.242 76.384 73.747 74.249 73.422 62.698 42.384 43.487
 ```
 
 ```r
@@ -966,10 +971,10 @@ mat[c('a', 'd', 'a'), ]
 ```
 
 ```
-##          [,1]       [,2]       [,3]        [,4]       [,5]
-## a -0.92232387         NA -0.7996107 -0.92232387         NA
-## d -0.04929972 -0.1753973 -0.7785697 -0.04929972 -0.1753973
-## a -0.92232387         NA -0.7996107 -0.92232387         NA
+##   [,1] [,2] [,3] [,4] [,5]
+## a    1    5    9   13   17
+## d    4    8   12   16   20
+## a    1    5    9   13   17
 ```
 
 4) using *subset()*
@@ -981,12 +986,12 @@ subset(gap, gdpPercap > 50000)
 
 ```
 ##     country year     pop continent lifeExp gdpPercap continent2
-## 853  Kuwait 1952  160000      Asia  55.565 108382.35       <NA>
-## 854  Kuwait 1957  212846      Asia  58.033 113523.13       <NA>
-## 855  Kuwait 1962  358266      Asia  60.470  95458.11       <NA>
-## 856  Kuwait 1967  575003      Asia  64.624  80894.88       <NA>
-## 857  Kuwait 1972  841934      Asia  67.712 109347.87       <NA>
-## 858  Kuwait 1977 1140357      Asia  69.343  59265.48       <NA>
+## 853  Kuwait 1952  160000      Asia  55.565 108382.35       Asia
+## 854  Kuwait 1957  212846      Asia  58.033 113523.13       Asia
+## 855  Kuwait 1962  358266      Asia  60.470  95458.11       Asia
+## 856  Kuwait 1967  575003      Asia  64.624  80894.88       Asia
+## 857  Kuwait 1972  841934      Asia  67.712 109347.87       Asia
+## 858  Kuwait 1977 1140357      Asia  69.343  59265.48       Asia
 ```
 
 5) using *dplyr* tools such as *filter()* and *select()* -- more in Module 6
@@ -999,8 +1004,28 @@ We can assign into subsets by using similar syntax, as we saw with vectors.
 ```r
 vec <- rnorm(20)
 vec[c(3, 5, 12:14)] <- 1:5
+vec
+```
+
+```
+##  [1] -0.24645364 -0.72327265  1.00000000  0.61930627  2.00000000
+##  [6]  1.23373978  0.96579228 -0.42014574  1.34165244  1.07830055
+## [11] -1.33617991  3.00000000  4.00000000  5.00000000 -1.48592548
+## [16] -0.14253905  1.70293642 -1.20126297  0.05711837  1.90933386
+```
+
+```r
 mat[2, 3:5] <- rnorm(3)
 mat[mat[,1] > 0, ] <- -Inf
+mat
+```
+
+```
+##   [,1] [,2] [,3] [,4] [,5]
+## a -Inf -Inf -Inf -Inf -Inf
+## b -Inf -Inf -Inf -Inf -Inf
+## c -Inf -Inf -Inf -Inf -Inf
+## d -Inf -Inf -Inf -Inf -Inf
 ```
 
 # Strings
@@ -1074,81 +1099,20 @@ substring(countries, 1, 3)
 ```r
 tmp <- countries
 substring(tmp, 5, 10) <- "______"
-tmp
+tmp[1:20]
 ```
 
 ```
-##   [1] "Afgh______n"              "Alba___"                 
-##   [3] "Alge___"                  "Ango__"                  
-##   [5] "Arge_____"                "Aust_____"               
-##   [7] "Aust___"                  "Bahr___"                 
-##   [9] "Bang______"               "Belg___"                 
-##  [11] "Beni_"                    "Boli___"                 
-##  [13] "Bosn______ Herzegovina"   "Bots____"                
-##  [15] "Braz__"                   "Bulg____"                
-##  [17] "Burk______so"             "Buru___"                 
-##  [19] "Camb____"                 "Came____"                
-##  [21] "Cana__"                   "Cent______rican Republic"
-##  [23] "Chad"                     "Chil_"                   
-##  [25] "Chin_"                    "Colo____"                
-##  [27] "Como___"                  "Cong______ Rep."         
-##  [29] "Cong______"               "Cost______"              
-##  [31] "Cote______ire"            "Croa___"                 
-##  [33] "Cuba"                     "Czec______blic"          
-##  [35] "Denm___"                  "Djib____"                
-##  [37] "Domi______Republic"       "Ecua___"                 
-##  [39] "Egyp_"                    "El S______r"             
-##  [41] "Equa______ Guinea"        "Erit___"                 
-##  [43] "Ethi____"                 "Finl___"                 
-##  [45] "Fran__"                   "Gabo_"                   
-##  [47] "Gamb__"                   "Germ___"                 
-##  [49] "Ghan_"                    "Gree__"                  
-##  [51] "Guat_____"                "Guin__"                  
-##  [53] "Guin______sau"            "Hait_"                   
-##  [55] "Hond____"                 "Hong______China"         
-##  [57] "Hung___"                  "Icel___"                 
-##  [59] "Indi_"                    "Indo_____"               
-##  [61] "Iran"                     "Iraq"                    
-##  [63] "Irel___"                  "Isra__"                  
-##  [65] "Ital_"                    "Jama___"                 
-##  [67] "Japa_"                    "Jord__"                  
-##  [69] "Keny_"                    "Kore______ Rep."         
-##  [71] "Kore______"               "Kuwa__"                  
-##  [73] "Leba___"                  "Leso___"                 
-##  [75] "Libe___"                  "Liby_"                   
-##  [77] "Mada______"               "Mala__"                  
-##  [79] "Mala____"                 "Mali"                    
-##  [81] "Maur______"               "Maur_____"               
-##  [83] "Mexi__"                   "Mong____"                
-##  [85] "Mont______"               "Moro___"                 
-##  [87] "Moza______"               "Myan___"                 
-##  [89] "Nami___"                  "Nepa_"                   
-##  [91] "Neth______s"              "New ______d"             
-##  [93] "Nica_____"                "Nige_"                   
-##  [95] "Nige___"                  "Norw__"                  
-##  [97] "Oman"                     "Paki____"                
-##  [99] "Pana__"                   "Para____"                
-## [101] "Peru"                     "Phil______s"             
-## [103] "Pola__"                   "Port____"                
-## [105] "Puer______o"              "Reun___"                 
-## [107] "Roma___"                  "Rwan__"                  
-## [109] "Sao ______nd Principe"    "Saud______ia"            
-## [111] "Sene___"                  "Serb__"                  
-## [113] "Sier______ne"             "Sing_____"               
-## [115] "Slov______ublic"          "Slov____"                
-## [117] "Soma___"                  "Sout______ca"            
-## [119] "Spai_"                    "Sri _____"               
-## [121] "Suda_"                    "Swaz_____"               
-## [123] "Swed__"                   "Swit______d"             
-## [125] "Syri_"                    "Taiw__"                  
-## [127] "Tanz____"                 "Thai____"                
-## [129] "Togo"                     "Trin______nd Tobago"     
-## [131] "Tuni___"                  "Turk__"                  
-## [133] "Ugan__"                   "Unit______gdom"          
-## [135] "Unit______tes"            "Urug___"                 
-## [137] "Vene_____"                "Viet___"                 
-## [139] "West______and Gaza"       "Yeme______"              
-## [141] "Zamb__"                   "Zimb____"
+##  [1] "Afgh______n"            "Alba___"               
+##  [3] "Alge___"                "Ango__"                
+##  [5] "Arge_____"              "Aust_____"             
+##  [7] "Aust___"                "Bahr___"               
+##  [9] "Bang______"             "Belg___"               
+## [11] "Beni_"                  "Boli___"               
+## [13] "Bosn______ Herzegovina" "Bots____"              
+## [15] "Braz__"                 "Bulg____"              
+## [17] "Burk______so"           "Buru___"               
+## [19] "Camb____"               "Came____"
 ```
 We can search for patterns in character vectors and replace patterns (both vectorized!)
 

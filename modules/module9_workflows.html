@@ -289,7 +289,7 @@ dim(mat); print(mat)
 <pre><code class="r">colSums(mat)
 </code></pre>
 
-<pre><code>## Error in base::colSums(x, na.rm = na.rm, dims = dims, ...): &#39;x&#39; must be an array of at least two dimensions
+<pre><code>## Error in colSums(mat): &#39;x&#39; must be an array of at least two dimensions
 </code></pre>
 
 <pre><code class="r">mat &lt;- matrix(1:4, 2, 2)[1, , drop = FALSE]
@@ -315,10 +315,13 @@ will give you an idea of the power of these tools.</p>
    return(sums)
 }
 
-buggyFun(air)
+buggyFun(gap)
 </code></pre>
 
-<pre><code>## Error in print(names(myDF)): object &#39;air&#39; not found
+<pre><code>## [1] &quot;country&quot;   &quot;year&quot;      &quot;pop&quot;       &quot;continent&quot; &quot;lifeExp&quot;   &quot;gdpPercap&quot;
+</code></pre>
+
+<pre><code>## Error in rowSums(myDF): &#39;x&#39; must be numeric
 </code></pre>
 
 <pre><code class="r">if(FALSE) {
@@ -570,17 +573,17 @@ gc()
 </code></pre>
 
 <pre><code>##             used  (Mb) gc trigger   (Mb)  max used  (Mb)
-## Ncells   1307512  69.9    2164898  115.7   2164898 115.7
-## Vcells 101417104 773.8  154478432 1178.6 111978051 854.4
+## Ncells    434536  23.3     750400   40.1    750400  40.1
+## Vcells 100880592 769.7  153726852 1172.9 111235588 848.7
 </code></pre>
 
 <pre><code class="r">rm(x)
 gc()
 </code></pre>
 
-<pre><code>##           used (Mb) gc trigger  (Mb)  max used  (Mb)
-## Ncells 1307446 69.9    2164898 115.7   2164898 115.7
-## Vcells 1417006 10.9  123582745 942.9 111978051 854.4
+<pre><code>##          used (Mb) gc trigger  (Mb)  max used  (Mb)
+## Ncells 434491 23.3     750400  40.1    750400  40.1
+## Vcells 880529  6.8  122981481 938.3 111235588 848.7
 </code></pre>
 
 <h1>Scripting</h1>
@@ -742,7 +745,7 @@ complete set of instructions which generated the figures.</p>
 <h1>Breakout</h1>
 
 <p>Please fill out the feedback survey.
-<a href="http://bit.ly/Rbootcamp2018"> http://bit.ly/Rbootcamp2018</a></p>
+<a href="http://bit.ly/Rbootcamp2019">http://bit.ly/Rbootcamp2019</a></p>
 
 </body>
 

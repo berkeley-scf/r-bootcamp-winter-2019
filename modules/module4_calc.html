@@ -210,16 +210,12 @@ hr {
 
 <pre><code class="r">gdpTotal &lt;- gap$gdpPercap * gap$pop
 
-gdpSubset &lt;- gdp[1:10]
+gdpSubset &lt;- gap2007$gdpPercap[1:10]
+
+gdpSubset &gt;= 30000
 </code></pre>
 
-<pre><code>## Error in eval(expr, envir, enclos): object &#39;gdp&#39; not found
-</code></pre>
-
-<pre><code class="r">gdpSubset &gt;= 50000
-</code></pre>
-
-<pre><code>## Error in eval(expr, envir, enclos): object &#39;gdpSubset&#39; not found
+<pre><code>##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE
 </code></pre>
 
 <pre><code class="r">vec1 &lt;- rnorm(5)
@@ -254,7 +250,7 @@ identical(vec1, vec2)
 gdpSubset &gt;= 100000 | gdpSubset &lt;= 1000
 </code></pre>
 
-<pre><code>## Error in eval(expr, envir, enclos): object &#39;gdpSubset&#39; not found
+<pre><code>##  [1]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 </code></pre>
 
 <pre><code class="r">## using &#39;and&#39;
@@ -330,14 +326,14 @@ system.time(trunc &lt;- ifelse(vals &gt; 0, vals, 0))
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   0.148   0.012   0.159
+##   0.132   0.004   0.137
 </code></pre>
 
 <pre><code class="r">system.time(vals &lt;- vals * (vals &gt; 0))
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   0.008   0.000   0.005
+##   0.008   0.000   0.006
 </code></pre>
 
 <p><strong>Question</strong>: What am I doing with <code>vals * (vals &gt; 0)</code> ? What happens behind the scenes in R?</p>
@@ -346,22 +342,12 @@ system.time(trunc &lt;- ifelse(vals &gt; 0, vals, 0))
 
 <p>Lots of functions in R are vectorized, such as some we&#39;ve already used.</p>
 
-<pre><code class="r">tmp &lt;- as.character(air$year)
+<pre><code class="r">tmp &lt;- as.character(gap$year)
+gap$year2 &lt;- substring(tmp, 3, 4)
+head(gap$year2)
 </code></pre>
 
-<pre><code>## Error in eval(expr, envir, enclos): object &#39;air&#39; not found
-</code></pre>
-
-<pre><code class="r">gap$year2 &lt;- substring(tmp, 3, 4)
-</code></pre>
-
-<pre><code>## Error in substring(tmp, 3, 4): object &#39;tmp&#39; not found
-</code></pre>
-
-<pre><code class="r">head(gap$year2)
-</code></pre>
-
-<pre><code>## NULL
+<pre><code>## [1] &quot;52&quot; &quot;57&quot; &quot;62&quot; &quot;67&quot; &quot;72&quot; &quot;77&quot;
 </code></pre>
 
 <p>Question: Note the code above runs and the syntax is perfectly good R syntax, but in terms of what it does, there is a bug in it. See if you can see what it is.</p>
@@ -503,21 +489,7 @@ for(i in 1:n)
 
 <p>The same holds for using <code>rbind()</code>, <code>cbind()</code>, or adding to a list, one element at a time.</p>
 
-<p>This is both slow and unclear (in the sense that it appears the code has a bug, but it works):</p>
-
-<pre><code class="r">vals &lt;- 0
-n &lt;- 50000
-system.time({
-for(i in 1:n)
-      vals[i] &lt;- i
-})
-</code></pre>
-
-<pre><code>##    user  system elapsed 
-##   0.040   0.000   0.039
-</code></pre>
-
-<p><strong>Question</strong>: Thoughts on why these are so slow? Think about what R might be doing behind the scenes</p>
+<p><strong>Question</strong>: Thoughts on why this are so slow? Think about what R might be doing behind the scenes</p>
 
 <h1>The answer is to pre-allocate memory</h1>
 
@@ -533,7 +505,7 @@ for(i in 1:n)
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   0.032   0.000   0.033
+##   0.036   0.000   0.037
 </code></pre>
 
 <p>Here&#39;s how to pre-allocate an empty list: </p>
@@ -883,8 +855,6 @@ tbl
 <pre><code>## [1] TRUE
 </code></pre>
 
-<p><strong>Challenge</strong>: Can you figure out what <code>with()</code> does just by example? </p>
-
 <h1>Discretization</h1>
 
 <p>You may need to discretize a continuous variable [or a discrete variable with many levels], e.g., by life expectancy:</p>
@@ -919,7 +889,7 @@ length(subsets)
 <pre><code class="r">dim(subsets[[&#39;2007&#39;]])
 </code></pre>
 
-<pre><code>## [1] 142   6
+<pre><code>## [1] 142   7
 </code></pre>
 
 <pre><code class="r">par(mfrow = c(1,2))
@@ -1122,13 +1092,13 @@ ord[1:5]
 head(gm_ord)
 </code></pre>
 
-<pre><code>##              country year       pop continent lifeExp gdpPercap
-## 804            Japan 2007 127467972      Asia  82.603  31656.07
-## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
-## 696          Iceland 2007    301931    Europe  81.757  36180.79
-## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
-## 72         Australia 2007  20434176   Oceania  81.235  34435.37
-## 1428           Spain 2007  40448191    Europe  80.941  28821.06
+<pre><code>##              country year       pop continent lifeExp gdpPercap year2
+## 804            Japan 2007 127467972      Asia  82.603  31656.07    07
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98    07
+## 696          Iceland 2007    301931    Europe  81.757  36180.79    07
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42    07
+## 72         Australia 2007  20434176   Oceania  81.235  34435.37    07
+## 1428           Spain 2007  40448191    Europe  80.941  28821.06    07
 </code></pre>
 
 <p>You could of course write your own <em>sort</em> function that uses <code>order()</code>. More in Module 6.</p>
@@ -1162,13 +1132,13 @@ gap &lt;- gap[ , -which(names(gap) == &quot;continent&quot;)]
 <pre><code class="r">head(gap)
 </code></pre>
 
-<pre><code>##       country year      pop lifeExp gdpPercap
-## 1 Afghanistan 1952  8425333  28.801  779.4453
-## 2 Afghanistan 1957  9240934  30.332  820.8530
-## 3 Afghanistan 1962 10267083  31.997  853.1007
-## 4 Afghanistan 1967 11537966  34.020  836.1971
-## 5 Afghanistan 1972 13079460  36.088  739.9811
-## 6 Afghanistan 1977 14880372  38.438  786.1134
+<pre><code>##       country year      pop lifeExp gdpPercap year2
+## 1 Afghanistan 1952  8425333  28.801  779.4453    52
+## 2 Afghanistan 1957  9240934  30.332  820.8530    57
+## 3 Afghanistan 1962 10267083  31.997  853.1007    62
+## 4 Afghanistan 1967 11537966  34.020  836.1971    67
+## 5 Afghanistan 1972 13079460  36.088  739.9811    72
+## 6 Afghanistan 1977 14880372  38.438  786.1134    77
 </code></pre>
 
 <pre><code class="r">gap &lt;- merge(gap, c2c, by.x = &#39;country&#39;, by.y = &#39;country&#39;,
@@ -1177,13 +1147,13 @@ gap &lt;- gap[ , -which(names(gap) == &quot;continent&quot;)]
 dim(gapSave)
 </code></pre>
 
-<pre><code>## [1] 1704    6
+<pre><code>## [1] 1704    7
 </code></pre>
 
 <pre><code class="r">dim(gap)
 </code></pre>
 
-<pre><code>## [1] 1704    6
+<pre><code>## [1] 1704    7
 </code></pre>
 
 <pre><code class="r">identical(gapSave, gap)

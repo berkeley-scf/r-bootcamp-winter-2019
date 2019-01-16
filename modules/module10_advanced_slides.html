@@ -177,7 +177,7 @@ mod2$residuals[<span class="dv">1</span>:<span class="dv">20</span>] <span class
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predict</code></pre></div>
 <pre><code>## function (object, ...) 
 ## UseMethod(&quot;predict&quot;)
-## &lt;bytecode: 0x31a9778&gt;
+## &lt;bytecode: 0x3f92288&gt;
 ## &lt;environment: namespace:stats&gt;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># predict.glm</span></code></pre></div>
 <p>When <code>predict()</code> is called on a GLM object, it first calls the generic <code>predict()</code>, which then recognizes that the first argument is of the class <em>glm</em> and immediately calls the right class-specific method, <code>predict.glm()</code> in this case.</p>
@@ -415,14 +415,14 @@ for(i in <span class="dv">1</span>:nVals) {
    results[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(tmp)
 }
 results</code></pre></div>
-<pre><code>## [1] -1.3915588  0.8259994  0.6297070</code></pre>
+<pre><code>## [1] 0.09193066 1.42754480 0.43739682</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varName</code></pre></div>
 <pre><code>## [1] &quot;x3&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp</code></pre></div>
-<pre><code>##  [1] 0.55089250 0.50756410 0.24900725 0.62677858 0.82471610 0.91894675
-##  [7] 0.87920546 0.84295661 0.07744592 0.99767171 0.99439075 0.86413991
-## [13] 0.06147607 0.81533943 0.91332589 0.24083864 0.11760057 0.35094561
-## [19] 0.85848173 0.90241575</code></pre>
+<pre><code>##  [1] 0.91413196 0.18219800 0.03775990 0.57419209 0.86703917 0.41722077
+##  [7] 0.07282539 0.77871248 0.23715320 0.68243956 0.50849566 0.71843011
+## [13] 0.82165122 0.07052786 0.13641674 0.23968824 0.23063951 0.31671435
+## [19] 0.30081917 0.64088095</code></pre>
 <p>Or suppose you needed to create &quot;x1&quot;, &quot;x2&quot;, &quot;x3&quot;, automatically.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nVals &lt;-<span class="st"> </span><span class="dv">3</span>
 results &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, nVals)
@@ -431,8 +431,8 @@ for(i in <span class="dv">1</span>:nVals) {
    <span class="kw">assign</span>(varName, <span class="kw">rnorm</span>(<span class="dv">10</span>))
 }
 x2</code></pre></div>
-<pre><code>##  [1] -1.4863458  1.2642560 -1.9662952  0.5274268 -0.1987055  0.2961828
-##  [7] -0.6414562  1.4037027  0.6701089 -0.7574894</code></pre>
+<pre><code>##  [1]  0.07503303  0.47161939  0.72127465 -0.09493804 -0.81219412
+##  [6]  0.14464608  0.19921223  0.34408247 -0.80658785 -1.26768078</code></pre>
 <p>Can you think of any uses of this ability for R to self-generate?</p>
 </div>
 <div id="file-encodings" class="slide section level1">
@@ -488,19 +488,19 @@ db &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(<span class="
 
 ## metadata
 <span class="kw">dbListTables</span>(db)</code></pre></div>
-<pre><code>## character(0)</code></pre>
+<pre><code>## [1] &quot;answers&quot;          &quot;maxRepByQuestion&quot; &quot;questions&quot;       
+## [4] &quot;questionsAugment&quot; &quot;questions_tags&quot;   &quot;users&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbListFields</span>(db, <span class="st">&quot;questions&quot;</span>)</code></pre></div>
-<pre><code>## Error in result_create(conn@ptr, statement): no such table: questions</code></pre>
+<pre><code>## [1] &quot;questionid&quot;   &quot;creationdate&quot; &quot;score&quot;        &quot;viewcount&quot;   
+## [5] &quot;title&quot;        &quot;ownerid&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## simple filter operation
 popular &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(db, <span class="st">&quot;select * from questions </span>
-<span class="st">   where viewcount &gt; 10000&quot;</span>)</code></pre></div>
-<pre><code>## Error in result_create(conn@ptr, statement): no such table: questions</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## a join followed by a filter operation
+<span class="st">   where viewcount &gt; 10000&quot;</span>)
+## a join followed by a filter operation
 popularR &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(db, <span class="st">&quot;select * from questions join questions_tags</span>
 <span class="st">   on questions.questionid = questions_tags.questionid</span>
 <span class="st">   where viewcount &gt; 10000 and</span>
 <span class="st">   tag = 'r'&quot;</span>)</code></pre></div>
-<pre><code>## Error in result_create(conn@ptr, statement): no such table: questions</code></pre>
 </div>
 <div id="computer-architecture" class="slide section level1">
 <h1>Computer architecture</h1>
@@ -863,6 +863,7 @@ out2[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <li>Use <code>foreach</code> with <em>doMPI</em> as the back-end. You'll need <em>MPI</em> and <em>Rmpi</em> installed on all machines.</li>
 <li>Use <code>foreach</code> with <em>doSNOW</em> as the backend and start a cluster of type &quot;SOCK&quot; to avoid needing MPI/Rmpi.</li>
 <li>Use sockets to make a cluster in R and then use <code>parLapply()</code>, <code>parSapply()</code>, <code>mclapply()</code>, etc.</li>
+<li>Use the <em>future</em> package.</li>
 </ol>
 <p>See my <a href="https://github.com/berkeley-scf/tutorial-parallel-distributed">tutorial on distributed computing</a> for syntax and more details.</p>
 </div>

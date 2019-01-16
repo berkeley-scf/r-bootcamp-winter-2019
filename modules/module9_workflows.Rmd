@@ -95,7 +95,7 @@ buggyFun <- function(myDF) {
    return(sums)
 }
 
-buggyFun(air)
+buggyFun(gap)
 
 if(FALSE) {
   traceback()
@@ -357,4 +357,4 @@ Here are some useful articles talking about reproducibility.
 # Breakout
 
 Please fill out the feedback survey.
-[ http://bit.ly/Rbootcamp2018]( http://bit.ly/Rbootcamp2018)
+[http://bit.ly/Rbootcamp2019](http://bit.ly/Rbootcamp2019)

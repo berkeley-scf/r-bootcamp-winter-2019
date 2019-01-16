@@ -81,15 +81,6 @@ reg$df.residual
 ```
 
 ```r
-# Examine regression fit (AIC)
-reg$aic
-```
-
-```
-## NULL
-```
-
-```r
 # See the standard (diagnostic) plots for a regression
 plot(reg)
 ```

@@ -211,30 +211,24 @@ methods(predict)
 
 ```
 ##  [1] predict.ar*                predict.Arima*            
-##  [3] predict.arima0*            predict.bam               
-##  [5] predict.bs*                predict.bSpline*          
-##  [7] predict.fastTps            predict.gam               
-##  [9] predict.glm                predict.glmmPQL*          
-## [11] predict.gls*               predict.gnls*             
-## [13] predict.HoltWinters*       predict.interp.surface    
-## [15] predict.jam*               predict.Krig              
-## [17] predict.lda*               predict.lm                
-## [19] predict.lme*               predict.lmList*           
-## [21] predict.lmList4*           predict.loess*            
-## [23] predict.lqs*               predict.mca*              
-## [25] predict.merMod*            predict.mKrig             
-## [27] predict.mlm*               predict.nbSpline*         
-## [29] predict.nlme*              predict.nls*              
-## [31] predict.npolySpline*       predict.ns*               
-## [33] predict.pbSpline*          predict.polr*             
-## [35] predict.poly*              predict.polySpline*       
-## [37] predict.ppolySpline*       predict.ppr*              
-## [39] predict.prcomp*            predict.princomp*         
-## [41] predict.qda*               predict.qsreg             
-## [43] predict.rlm*               predict.smooth.spline*    
-## [45] predict.smooth.spline.fit* predict.sreg              
-## [47] predict.StructTS*          predict.surface           
-## [49] predict.surface.default    predict.Tps               
+##  [3] predict.arima0*            predict.bs*               
+##  [5] predict.bSpline*           predict.glm               
+##  [7] predict.glmmPQL*           predict.gls*              
+##  [9] predict.gnls*              predict.HoltWinters*      
+## [11] predict.lda*               predict.lm                
+## [13] predict.lme*               predict.lmList*           
+## [15] predict.lmList4*           predict.loess*            
+## [17] predict.lqs*               predict.mca*              
+## [19] predict.merMod*            predict.mlm*              
+## [21] predict.nbSpline*          predict.nlme*             
+## [23] predict.nls*               predict.npolySpline*      
+## [25] predict.ns*                predict.pbSpline*         
+## [27] predict.polr*              predict.poly*             
+## [29] predict.polySpline*        predict.ppolySpline*      
+## [31] predict.ppr*               predict.prcomp*           
+## [33] predict.princomp*          predict.qda*              
+## [35] predict.rlm*               predict.smooth.spline*    
+## [37] predict.smooth.spline.fit* predict.StructTS*         
 ## see '?methods' for accessing help and source code
 ```
 
@@ -245,7 +239,7 @@ predict
 ```
 ## function (object, ...) 
 ## UseMethod("predict")
-## <bytecode: 0x31a9778>
+## <bytecode: 0x3f92288>
 ## <environment: namespace:stats>
 ```
 
@@ -836,7 +830,8 @@ dbListTables(db)
 ```
 
 ```
-## character(0)
+## [1] "answers"          "maxRepByQuestion" "questions"       
+## [4] "questionsAugment" "questions_tags"   "users"
 ```
 
 ```r
@@ -844,29 +839,19 @@ dbListFields(db, "questions")
 ```
 
 ```
-## Error in result_create(conn@ptr, statement): no such table: questions
+## [1] "questionid"   "creationdate" "score"        "viewcount"   
+## [5] "title"        "ownerid"
 ```
 
 ```r
 ## simple filter operation
 popular <- dbGetQuery(db, "select * from questions 
    where viewcount > 10000")
-```
-
-```
-## Error in result_create(conn@ptr, statement): no such table: questions
-```
-
-```r
 ## a join followed by a filter operation
 popularR <- dbGetQuery(db, "select * from questions join questions_tags
    on questions.questionid = questions_tags.questionid
    where viewcount > 10000 and
    tag = 'r'")
-```
-
-```
-## Error in result_create(conn@ptr, statement): no such table: questions
 ```
 
 # Computer architecture
@@ -1299,6 +1284,7 @@ If you have access to multiple machines within a networked environment, such as 
 1. Use `foreach` with *doMPI* as the back-end. You'll need *MPI* and *Rmpi* installed on all machines.
 2. Use `foreach` with *doSNOW* as the backend and start a cluster of type "SOCK" to avoid needing MPI/Rmpi. 
 3. Use sockets to make a cluster in R and then use `parLapply()`, `parSapply()`, `mclapply()`, etc.
+4. Use the *future* package.
 
 See my [tutorial on distributed computing](https://github.com/berkeley-scf/tutorial-parallel-distributed) for syntax and more details. 
 

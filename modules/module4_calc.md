@@ -12,19 +12,13 @@ At the core of R is the idea of doing calculations on entire vectors.
 ```r
 gdpTotal <- gap$gdpPercap * gap$pop
 
-gdpSubset <- gdp[1:10]
+gdpSubset <- gap2007$gdpPercap[1:10]
+
+gdpSubset >= 30000
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'gdp' not found
-```
-
-```r
-gdpSubset >= 50000
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'gdpSubset' not found
+##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE
 ```
 
 ```r
@@ -69,7 +63,7 @@ gdpSubset >= 100000 | gdpSubset <= 1000
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'gdpSubset' not found
+##  [1]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
 ```r
@@ -160,7 +154,7 @@ system.time(trunc <- ifelse(vals > 0, vals, 0))
 
 ```
 ##    user  system elapsed 
-##   0.148   0.012   0.159
+##   0.132   0.004   0.137
 ```
 
 ```r
@@ -169,7 +163,7 @@ system.time(vals <- vals * (vals > 0))
 
 ```
 ##    user  system elapsed 
-##   0.008   0.000   0.005
+##   0.008   0.000   0.006
 ```
 
 **Question**: What am I doing with `vals * (vals > 0)` ? What happens behind the scenes in R?
@@ -180,27 +174,13 @@ Lots of functions in R are vectorized, such as some we've already used.
 
 
 ```r
-tmp <- as.character(air$year)
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'air' not found
-```
-
-```r
+tmp <- as.character(gap$year)
 gap$year2 <- substring(tmp, 3, 4)
-```
-
-```
-## Error in substring(tmp, 3, 4): object 'tmp' not found
-```
-
-```r
 head(gap$year2)
 ```
 
 ```
-## NULL
+## [1] "52" "57" "62" "67" "72" "77"
 ```
 
 Question: Note the code above runs and the syntax is perfectly good R syntax, but in terms of what it does, there is a bug in it. See if you can see what it is.
@@ -368,23 +348,8 @@ for(i in 1:n)
 
 The same holds for using `rbind()`, `cbind()`, or adding to a list, one element at a time.
 
-This is both slow and unclear (in the sense that it appears the code has a bug, but it works):
 
-```r
-vals <- 0
-n <- 50000
-system.time({
-for(i in 1:n)
-      vals[i] <- i
-})
-```
-
-```
-##    user  system elapsed 
-##   0.040   0.000   0.039
-```
-
-**Question**: Thoughts on why these are so slow? Think about what R might be doing behind the scenes
+**Question**: Thoughts on why this are so slow? Think about what R might be doing behind the scenes
 
 # The answer is to pre-allocate memory
 
@@ -403,7 +368,7 @@ for(i in 1:n)
 
 ```
 ##    user  system elapsed 
-##   0.032   0.000   0.033
+##   0.036   0.000   0.037
 ```
 
 Here's how to pre-allocate an empty list: 
@@ -769,7 +734,6 @@ all(rowSums(tbl) == 12)
 ## [1] TRUE
 ```
 
-**Challenge**: Can you figure out what `with()` does just by example? 
 
 # Discretization
 
@@ -811,7 +775,7 @@ dim(subsets[['2007']])
 ```
 
 ```
-## [1] 142   6
+## [1] 142   7
 ```
 
 ```r
@@ -822,7 +786,7 @@ plot(lifeExp ~ gdpPercap, data = subsets[['2007']], main = '2007')
 abline(h = 0, col = 'grey')
 ```
 
-![](figure/unnamed-chunk-18-1.png)
+![](figure/unnamed-chunk-17-1.png)
 
 Obviously, we'd want to iterate to improve that plot given the outlier.
 
@@ -1035,13 +999,13 @@ head(gm_ord)
 ```
 
 ```
-##              country year       pop continent lifeExp gdpPercap
-## 804            Japan 2007 127467972      Asia  82.603  31656.07
-## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
-## 696          Iceland 2007    301931    Europe  81.757  36180.79
-## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
-## 72         Australia 2007  20434176   Oceania  81.235  34435.37
-## 1428           Spain 2007  40448191    Europe  80.941  28821.06
+##              country year       pop continent lifeExp gdpPercap year2
+## 804            Japan 2007 127467972      Asia  82.603  31656.07    07
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98    07
+## 696          Iceland 2007    301931    Europe  81.757  36180.79    07
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42    07
+## 72         Australia 2007  20434176   Oceania  81.235  34435.37    07
+## 1428           Spain 2007  40448191    Europe  80.941  28821.06    07
 ```
 
 You could of course write your own *sort* function that uses `order()`. More in Module 6.
@@ -1082,13 +1046,13 @@ head(gap)
 ```
 
 ```
-##       country year      pop lifeExp gdpPercap
-## 1 Afghanistan 1952  8425333  28.801  779.4453
-## 2 Afghanistan 1957  9240934  30.332  820.8530
-## 3 Afghanistan 1962 10267083  31.997  853.1007
-## 4 Afghanistan 1967 11537966  34.020  836.1971
-## 5 Afghanistan 1972 13079460  36.088  739.9811
-## 6 Afghanistan 1977 14880372  38.438  786.1134
+##       country year      pop lifeExp gdpPercap year2
+## 1 Afghanistan 1952  8425333  28.801  779.4453    52
+## 2 Afghanistan 1957  9240934  30.332  820.8530    57
+## 3 Afghanistan 1962 10267083  31.997  853.1007    62
+## 4 Afghanistan 1967 11537966  34.020  836.1971    67
+## 5 Afghanistan 1972 13079460  36.088  739.9811    72
+## 6 Afghanistan 1977 14880372  38.438  786.1134    77
 ```
 
 ```r
@@ -1099,7 +1063,7 @@ dim(gapSave)
 ```
 
 ```
-## [1] 1704    6
+## [1] 1704    7
 ```
 
 ```r
@@ -1107,7 +1071,7 @@ dim(gap)
 ```
 
 ```
-## [1] 1704    6
+## [1] 1704    7
 ```
 
 ```r

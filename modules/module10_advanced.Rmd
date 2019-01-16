@@ -572,6 +572,7 @@ If you have access to multiple machines within a networked environment, such as 
 1. Use `foreach` with *doMPI* as the back-end. You'll need *MPI* and *Rmpi* installed on all machines.
 2. Use `foreach` with *doSNOW* as the backend and start a cluster of type "SOCK" to avoid needing MPI/Rmpi. 
 3. Use sockets to make a cluster in R and then use `parLapply()`, `parSapply()`, `mclapply()`, etc.
+4. Use the *future* package.
 
 See my [tutorial on distributed computing](https://github.com/berkeley-scf/tutorial-parallel-distributed) for syntax and more details. 
 

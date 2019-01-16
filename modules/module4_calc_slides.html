@@ -61,14 +61,14 @@ January 2019, UC Berkeley
 <p>At the core of R is the idea of doing calculations on entire vectors.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdpTotal &lt;-<span class="st"> </span>gap$gdpPercap *<span class="st"> </span>gap$pop
 
-gdpSubset &lt;-<span class="st"> </span>gdp[<span class="dv">1</span>:<span class="dv">10</span>]</code></pre></div>
-<pre><code>## Error in eval(expr, envir, enclos): object 'gdp' not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdpSubset &gt;=<span class="st"> </span><span class="dv">50000</span></code></pre></div>
-<pre><code>## Error in eval(expr, envir, enclos): object 'gdpSubset' not found</code></pre>
+gdpSubset &lt;-<span class="st"> </span>gap2007$gdpPercap[<span class="dv">1</span>:<span class="dv">10</span>]
+
+gdpSubset &gt;=<span class="st"> </span><span class="dv">30000</span></code></pre></div>
+<pre><code>##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec1 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">5</span>)
 vec2 &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">5</span>)
 vec1 &gt;<span class="st"> </span>vec2</code></pre></div>
-<pre><code>## [1] FALSE  TRUE FALSE FALSE  TRUE</code></pre>
+<pre><code>## [1]  TRUE FALSE FALSE FALSE FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec1 ==<span class="st"> </span>vec2</code></pre></div>
 <pre><code>## [1] FALSE FALSE FALSE FALSE FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec1 !=<span class="st"> </span>vec2</code></pre></div>
@@ -79,7 +79,7 @@ vec1 =<span class="st"> </span>vec2
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## using 'or'
 gdpSubset &gt;=<span class="st"> </span><span class="dv">100000</span> |<span class="st"> </span>gdpSubset &lt;=<span class="st"> </span><span class="dv">1000</span></code></pre></div>
-<pre><code>## Error in eval(expr, envir, enclos): object 'gdpSubset' not found</code></pre>
+<pre><code>##  [1]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## using 'and'
 gap$gdpPercap[<span class="dv">1</span>:<span class="dv">10</span>] &gt;=<span class="st"> </span><span class="dv">100000</span> &amp;<span class="st"> </span>gap$continent[<span class="dv">1</span>:<span class="dv">10</span>] ==<span class="st"> &quot;Asia&quot;</span></code></pre></div>
 <pre><code>##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
@@ -88,17 +88,17 @@ gap$gdpPercap[<span class="dv">1</span>:<span class="dv">10</span>] &gt;=<span c
 vec3 &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">3</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
 vec5 &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">5</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
 vec10</code></pre></div>
-<pre><code>##  [1] 9 4 6 5 5 5 4 8 5 4</code></pre>
+<pre><code>##  [1] 1 8 1 3 5 8 1 8 4 6</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec3</code></pre></div>
-<pre><code>## [1] 7 9 1</code></pre>
+<pre><code>## [1]  5  4 10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec5</code></pre></div>
-<pre><code>## [1] 4 4 6 8 1</code></pre>
+<pre><code>## [1] 10  1  5  5 10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec10 +<span class="st"> </span>vec5</code></pre></div>
-<pre><code>##  [1] 13  8 12 13  6  9  8 14 13  5</code></pre>
+<pre><code>##  [1] 11  9  6  8 15 18  2 13  9 16</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec10 +<span class="st"> </span>vec3</code></pre></div>
 <pre><code>## Warning in vec10 + vec3: longer object length is not a multiple of shorter
 ## object length</code></pre>
-<pre><code>##  [1] 16 13  7 12 14  6 11 17  6 11</code></pre>
+<pre><code>##  [1]  6 12 11  8  9 18  6 12 14 11</code></pre>
 <p><strong>Question</strong>: Tell me what's going on. What choices were made by the R developers?</p>
 </div>
 <div id="vectorized-calculations" class="slide section level1">
@@ -118,19 +118,17 @@ chi2_df1000 &lt;-<span class="st"> </span><span class="kw">sum</span>(chi2vals)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vals &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="fl">1e6</span>)
 <span class="kw">system.time</span>(trunc &lt;-<span class="st"> </span><span class="kw">ifelse</span>(vals &gt;<span class="st"> </span><span class="dv">0</span>, vals, <span class="dv">0</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.228   0.020   0.246</code></pre>
+##   0.244   0.008   0.248</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(vals &lt;-<span class="st"> </span>vals *<span class="st"> </span>(vals &gt;<span class="st"> </span><span class="dv">0</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.004   0.000   0.005</code></pre>
+##   0.004   0.000   0.004</code></pre>
 <p><strong>Question</strong>: What am I doing with <code>vals * (vals &gt; 0)</code> ? What happens behind the scenes in R?</p>
 <p>If you use a trick like this, having a comment in your code is a good idea.</p>
 <p>Lots of functions in R are vectorized, such as some we've already used.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp &lt;-<span class="st"> </span><span class="kw">as.character</span>(air$year)</code></pre></div>
-<pre><code>## Error in eval(expr, envir, enclos): object 'air' not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap$year2 &lt;-<span class="st"> </span><span class="kw">substring</span>(tmp, <span class="dv">3</span>, <span class="dv">4</span>)</code></pre></div>
-<pre><code>## Error in substring(tmp, 3, 4): object 'tmp' not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gap$year2)</code></pre></div>
-<pre><code>## NULL</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp &lt;-<span class="st"> </span><span class="kw">as.character</span>(gap$year)
+gap$year2 &lt;-<span class="st"> </span><span class="kw">substring</span>(tmp, <span class="dv">3</span>, <span class="dv">4</span>)
+<span class="kw">head</span>(gap$year2)</code></pre></div>
+<pre><code>## [1] &quot;52&quot; &quot;57&quot; &quot;62&quot; &quot;67&quot; &quot;72&quot; &quot;77&quot;</code></pre>
 <p>Question: Note the code above runs and the syntax is perfectly good R syntax, but in terms of what it does, there is a bug in it. See if you can see what it is.</p>
 </div>
 <div id="linear-algebra" class="slide section level1">
@@ -223,16 +221,7 @@ for(i in <span class="dv">1</span>:n)
 <pre><code>##    user  system elapsed 
 ##   2.892   0.008   2.900</code></pre>
 <p>The same holds for using <code>rbind()</code>, <code>cbind()</code>, or adding to a list, one element at a time.</p>
-<p>This is both slow and unclear (in the sense that it appears the code has a bug, but it works):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vals &lt;-<span class="st"> </span><span class="dv">0</span>
-n &lt;-<span class="st"> </span><span class="dv">50000</span>
-<span class="kw">system.time</span>({
-for(i in <span class="dv">1</span>:n)
-      vals[i] &lt;-<span class="st"> </span>i
-})</code></pre></div>
-<pre><code>##    user  system elapsed 
-##   0.040   0.000   0.039</code></pre>
-<p><strong>Question</strong>: Thoughts on why these are so slow? Think about what R might be doing behind the scenes</p>
+<p><strong>Question</strong>: Thoughts on why this are so slow? Think about what R might be doing behind the scenes</p>
 </div>
 <div id="the-answer-is-to-pre-allocate-memory" class="slide section level1">
 <h1>The answer is to pre-allocate memory</h1>
@@ -245,7 +234,7 @@ for(i in <span class="dv">1</span>:n)
       vals[i] &lt;-<span class="st"> </span>i
 })</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.036   0.000   0.034</code></pre>
+##   0.036   0.000   0.037</code></pre>
 <p>Here's how to pre-allocate an empty list:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vals &lt;-<span class="st"> </span><span class="kw">list</span>(); <span class="kw">length</span>(vals) &lt;-<span class="st"> </span>n
 <span class="kw">head</span>(vals)</code></pre></div>
@@ -556,7 +545,6 @@ tbl</code></pre></div>
 ##                       12</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all</span>(<span class="kw">rowSums</span>(tbl) ==<span class="st"> </span><span class="dv">12</span>)</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<p><strong>Challenge</strong>: Can you figure out what <code>with()</code> does just by example?</p>
 </div>
 <div id="discretization" class="slide section level1">
 <h1>Discretization</h1>
@@ -580,7 +568,7 @@ tbl &lt;-<span class="st"> </span><span class="kw">table</span>(gap2007$continen
 <span class="kw">length</span>(subsets)</code></pre></div>
 <pre><code>## [1] 12</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(subsets[[<span class="st">'2007'</span>]])</code></pre></div>
-<pre><code>## [1] 142   6</code></pre>
+<pre><code>## [1] 142   7</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
 <span class="kw">plot</span>(lifeExp ~<span class="st"> </span>gdpPercap, <span class="dt">data =</span> subsets[[<span class="st">'1952'</span>]], <span class="dt">main =</span> <span class="st">'1952'</span>)
 <span class="kw">abline</span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">col =</span> <span class="st">'grey'</span>)
@@ -748,13 +736,13 @@ ord[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <pre><code>## [1]  804  672  696 1488   72</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gm_ord &lt;-<span class="st"> </span>gap[ord, ]
 <span class="kw">head</span>(gm_ord)</code></pre></div>
-<pre><code>##              country year       pop continent lifeExp gdpPercap
-## 804            Japan 2007 127467972      Asia  82.603  31656.07
-## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98
-## 696          Iceland 2007    301931    Europe  81.757  36180.79
-## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42
-## 72         Australia 2007  20434176   Oceania  81.235  34435.37
-## 1428           Spain 2007  40448191    Europe  80.941  28821.06</code></pre>
+<pre><code>##              country year       pop continent lifeExp gdpPercap year2
+## 804            Japan 2007 127467972      Asia  82.603  31656.07    07
+## 672  Hong Kong China 2007   6980412      Asia  82.208  39724.98    07
+## 696          Iceland 2007    301931    Europe  81.757  36180.79    07
+## 1488     Switzerland 2007   7554661    Europe  81.701  37506.42    07
+## 72         Australia 2007  20434176   Oceania  81.235  34435.37    07
+## 1428           Spain 2007  40448191    Europe  80.941  28821.06    07</code></pre>
 <p>You could of course write your own <em>sort</em> function that uses <code>order()</code>. More in Module 6.</p>
 </div>
 <div id="merging-data" class="slide section level1">
@@ -775,20 +763,20 @@ gap &lt;-<span class="st"> </span>gap[ , -<span class="kw">which</span>(<span cl
 ## 49   Argentina  Americas
 ## 61   Australia   Oceania</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gap)</code></pre></div>
-<pre><code>##       country year      pop lifeExp gdpPercap
-## 1 Afghanistan 1952  8425333  28.801  779.4453
-## 2 Afghanistan 1957  9240934  30.332  820.8530
-## 3 Afghanistan 1962 10267083  31.997  853.1007
-## 4 Afghanistan 1967 11537966  34.020  836.1971
-## 5 Afghanistan 1972 13079460  36.088  739.9811
-## 6 Afghanistan 1977 14880372  38.438  786.1134</code></pre>
+<pre><code>##       country year      pop lifeExp gdpPercap year2
+## 1 Afghanistan 1952  8425333  28.801  779.4453    52
+## 2 Afghanistan 1957  9240934  30.332  820.8530    57
+## 3 Afghanistan 1962 10267083  31.997  853.1007    62
+## 4 Afghanistan 1967 11537966  34.020  836.1971    67
+## 5 Afghanistan 1972 13079460  36.088  739.9811    72
+## 6 Afghanistan 1977 14880372  38.438  786.1134    77</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap &lt;-<span class="st"> </span><span class="kw">merge</span>(gap, c2c, <span class="dt">by.x =</span> <span class="st">'country'</span>, <span class="dt">by.y =</span> <span class="st">'country'</span>,
                    <span class="dt">all.x =</span> <span class="ot">TRUE</span>, <span class="dt">all.y =</span> <span class="ot">FALSE</span>)
 
 <span class="kw">dim</span>(gapSave)</code></pre></div>
-<pre><code>## [1] 1704    6</code></pre>
+<pre><code>## [1] 1704    7</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(gap)</code></pre></div>
-<pre><code>## [1] 1704    6</code></pre>
+<pre><code>## [1] 1704    7</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">identical</span>(gapSave, gap)</code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">identical</span>(gapSave, gap[ , <span class="kw">names</span>(gapSave)])</code></pre></div>

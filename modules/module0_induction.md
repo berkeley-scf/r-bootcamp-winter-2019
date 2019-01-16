@@ -172,3 +172,9 @@ The building blocks of scientific computing include:
 - Some of this material was drawn from [Jared Knowles R bootcamp](http://jaredknowles.com/r-bootcamp/url).
 - Contributions from Kellie Ottoboni, Nima Hejazi, Rochelle Terman, Chris Krogslund, and Jarrod Millman. Thank you!!!
 - You are free to use, modify and redistribute any of this material with or without attribution, but if you use chunks of material, I'd appreciate a call-out.
+
+# Thanks!  
+
+* To Evan, Nima, and Miyabi.
+* To Jon Stiles and D-Lab for sponsorship and logistical support.
+* To the Statewide Database/School of Law for hosting/co-sponsoring.

@@ -569,24 +569,67 @@ Until now, we've been using the nicely formatted original gapminder data set. Th
 
 
 ```r
-gap_wide <- read.csv("../data/gap_wide.csv", stringsAsFactors = FALSE)
-```
-
-```
-## Warning in file(file, "rt"): cannot open file '../data/gap_wide.csv': No
-## such file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
+gap_wide <- read.csv("../data/gapminder_wide.csv", stringsAsFactors = FALSE)
 head(gap_wide)
 ```
 
 ```
-## Error in head(gap_wide): object 'gap_wide' not found
+##   continent      country gdpPercap_1952 gdpPercap_1957 gdpPercap_1962
+## 1    Africa      Algeria      2449.0082      3013.9760      2550.8169
+## 2    Africa       Angola      3520.6103      3827.9405      4269.2767
+## 3    Africa        Benin      1062.7522       959.6011       949.4991
+## 4    Africa     Botswana       851.2411       918.2325       983.6540
+## 5    Africa Burkina Faso       543.2552       617.1835       722.5120
+## 6    Africa      Burundi       339.2965       379.5646       355.2032
+##   gdpPercap_1967 gdpPercap_1972 gdpPercap_1977 gdpPercap_1982
+## 1      3246.9918      4182.6638      4910.4168      5745.1602
+## 2      5522.7764      5473.2880      3008.6474      2756.9537
+## 3      1035.8314      1085.7969      1029.1613      1277.8976
+## 4      1214.7093      2263.6111      3214.8578      4551.1421
+## 5       794.8266       854.7360       743.3870       807.1986
+## 6       412.9775       464.0995       556.1033       559.6032
+##   gdpPercap_1987 gdpPercap_1992 gdpPercap_1997 gdpPercap_2002
+## 1      5681.3585      5023.2166      4797.2951      5288.0404
+## 2      2430.2083      2627.8457      2277.1409      2773.2873
+## 3      1225.8560      1191.2077      1232.9753      1372.8779
+## 4      6205.8839      7954.1116      8647.1423     11003.6051
+## 5       912.0631       931.7528       946.2950      1037.6452
+## 6       621.8188       631.6999       463.1151       446.4035
+##   gdpPercap_2007 lifeExp_1952 lifeExp_1957 lifeExp_1962 lifeExp_1967
+## 1      6223.3675       43.077       45.685       48.303       51.407
+## 2      4797.2313       30.015       31.999       34.000       35.985
+## 3      1441.2849       38.223       40.358       42.618       44.885
+## 4     12569.8518       47.622       49.618       51.520       53.298
+## 5      1217.0330       31.975       34.906       37.814       40.697
+## 6       430.0707       39.031       40.533       42.045       43.548
+##   lifeExp_1972 lifeExp_1977 lifeExp_1982 lifeExp_1987 lifeExp_1992
+## 1       54.518       58.014       61.368       65.799       67.744
+## 2       37.928       39.483       39.942       39.906       40.647
+## 3       47.014       49.190       50.904       52.337       53.919
+## 4       56.024       59.319       61.484       63.622       62.745
+## 5       43.591       46.137       48.122       49.557       50.260
+## 6       44.057       45.910       47.471       48.211       44.736
+##   lifeExp_1997 lifeExp_2002 lifeExp_2007 pop_1952 pop_1957 pop_1962
+## 1       69.152       70.994       72.301  9279525 10270856 11000948
+## 2       40.963       41.003       42.731  4232095  4561361  4826015
+## 3       54.777       54.406       56.728  1738315  1925173  2151895
+## 4       52.556       46.634       50.728   442308   474639   512764
+## 5       50.324       50.650       52.295  4469979  4713416  4919632
+## 6       45.326       47.360       49.580  2445618  2667518  2961915
+##   pop_1967 pop_1972 pop_1977 pop_1982 pop_1987 pop_1992 pop_1997 pop_2002
+## 1 12760499 14760787 17152804 20033753 23254956 26298373 29072015 31287142
+## 2  5247469  5894858  6162675  7016384  7874230  8735988  9875024 10866106
+## 3  2427334  2761407  3168267  3641603  4243788  4981671  6066080  7026113
+## 4   553541   619351   781472   970347  1151184  1342614  1536536  1630347
+## 5  5127935  5433886  5889574  6634596  7586551  8878303 10352843 12251209
+## 6  3330989  3529983  3834415  4580410  5126023  5809236  6121610  7021078
+##   pop_2007
+## 1 33333216
+## 2 12420476
+## 3  8078314
+## 4  1639131
+## 5 14326203
+## 6  8390505
 ```
 
 The first step towards getting our nice intermediate data format is to first convert from the wide to the long format.
@@ -596,18 +639,17 @@ The function `gather()` will 'gather' the observation variables into a single va
 ```r
 gap_long <- gap_wide %>%
     gather(obstype_year, obs_values, 3:38)
-```
-
-```
-## Error in eval(lhs, parent, parent): object 'gap_wide' not found
-```
-
-```r
 head(gap_long)
 ```
 
 ```
-## Error in head(gap_long): object 'gap_long' not found
+##   continent      country   obstype_year obs_values
+## 1    Africa      Algeria gdpPercap_1952  2449.0082
+## 2    Africa       Angola gdpPercap_1952  3520.6103
+## 3    Africa        Benin gdpPercap_1952  1062.7522
+## 4    Africa     Botswana gdpPercap_1952   851.2411
+## 5    Africa Burkina Faso gdpPercap_1952   543.2552
+## 6    Africa      Burundi gdpPercap_1952   339.2965
 ```
 
 Notice that we put 3 arguments into the `gather()` function:
@@ -640,36 +682,34 @@ For instance, here we do the same gather operation with (1) the `starts_with` fu
 gap_long <- gap_wide %>%
     gather(obstype_year, obs_values, starts_with('pop'),
            starts_with('lifeExp'), starts_with('gdpPercap'))
-```
-
-```
-## Error in eval(lhs, parent, parent): object 'gap_wide' not found
-```
-
-```r
 head(gap_long)
 ```
 
 ```
-## Error in head(gap_long): object 'gap_long' not found
+##   continent      country obstype_year obs_values
+## 1    Africa      Algeria     pop_1952    9279525
+## 2    Africa       Angola     pop_1952    4232095
+## 3    Africa        Benin     pop_1952    1738315
+## 4    Africa     Botswana     pop_1952     442308
+## 5    Africa Burkina Faso     pop_1952    4469979
+## 6    Africa      Burundi     pop_1952    2445618
 ```
 
 ```r
 # with the - operator
 gap_long <- gap_wide %>%
   gather(obstype_year, obs_values, -continent, -country)
-```
-
-```
-## Error in eval(lhs, parent, parent): object 'gap_wide' not found
-```
-
-```r
 head(gap_long)
 ```
 
 ```
-## Error in head(gap_long): object 'gap_long' not found
+##   continent      country   obstype_year obs_values
+## 1    Africa      Algeria gdpPercap_1952  2449.0082
+## 2    Africa       Angola gdpPercap_1952  3520.6103
+## 3    Africa        Benin gdpPercap_1952  1062.7522
+## 4    Africa     Botswana gdpPercap_1952   851.2411
+## 5    Africa Burkina Faso gdpPercap_1952   543.2552
+## 6    Africa      Burundi gdpPercap_1952   339.2965
 ```
 
 However you choose to do it, notice that the output collapses all of the measure variables into two columns: one containing new ID variable, the other containing the observation value for that row.
@@ -685,18 +725,17 @@ We can use the `separate()` function to split the character strings into multipl
 gap_long_sep <- gap_long %>%
   separate(obstype_year, into = c('obs_type','year'), sep = "_") %>%
   mutate(year = as.integer(year))
-```
-
-```
-## Error in eval(lhs, parent, parent): object 'gap_long' not found
-```
-
-```r
 head(gap_long_sep)
 ```
 
 ```
-## Error in head(gap_long_sep): object 'gap_long_sep' not found
+##   continent      country  obs_type year obs_values
+## 1    Africa      Algeria gdpPercap 1952  2449.0082
+## 2    Africa       Angola gdpPercap 1952  3520.6103
+## 3    Africa        Benin gdpPercap 1952  1062.7522
+## 4    Africa     Botswana gdpPercap 1952   851.2411
+## 5    Africa Burkina Faso gdpPercap 1952   543.2552
+## 6    Africa      Burundi gdpPercap 1952   339.2965
 ```
 
 If you didn't use `tidyr` to do this, you'd have to use the `strsplit` function and use multiple lines of code to replace the column in `gap_long` with two new columns. This solution is much cleaner.
@@ -709,18 +748,17 @@ The opposite of `gather()` is `spread()`. It spreads our observation variables b
 ```r
 gap_medium <- gap_long_sep %>%
   spread(obs_type, obs_values)
-```
-
-```
-## Error in eval(lhs, parent, parent): object 'gap_long_sep' not found
-```
-
-```r
 head(gap_medium)
 ```
 
 ```
-## Error in head(gap_medium): object 'gap_medium' not found
+##   continent country year gdpPercap lifeExp      pop
+## 1    Africa Algeria 1952  2449.008  43.077  9279525
+## 2    Africa Algeria 1957  3013.976  45.685 10270856
+## 3    Africa Algeria 1962  2550.817  48.303 11000948
+## 4    Africa Algeria 1967  3246.992  51.407 12760499
+## 5    Africa Algeria 1972  4182.664  54.518 14760787
+## 6    Africa Algeria 1977  4910.417  58.014 17152804
 ```
 
 All we need is some quick fixes to make this dataset identical to the original `gap` dataset:
@@ -732,7 +770,13 @@ head(gap_medium)
 ```
 
 ```
-## Error in head(gap_medium): object 'gap_medium' not found
+##   continent country year gdpPercap lifeExp      pop
+## 1    Africa Algeria 1952  2449.008  43.077  9279525
+## 2    Africa Algeria 1957  3013.976  45.685 10270856
+## 3    Africa Algeria 1962  2550.817  48.303 11000948
+## 4    Africa Algeria 1967  3246.992  51.407 12760499
+## 5    Africa Algeria 1972  4182.664  54.518 14760787
+## 6    Africa Algeria 1977  4910.417  58.014 17152804
 ```
 
 ```r
@@ -752,36 +796,34 @@ head(gap)
 ```r
 # rearrange columns
 gap_medium <- gap_medium[,names(gap)]
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'gap_medium' not found
-```
-
-```r
 head(gap_medium)
 ```
 
 ```
-## Error in head(gap_medium): object 'gap_medium' not found
+##   country year      pop continent lifeExp gdpPercap
+## 1 Algeria 1952  9279525    Africa  43.077  2449.008
+## 2 Algeria 1957 10270856    Africa  45.685  3013.976
+## 3 Algeria 1962 11000948    Africa  48.303  2550.817
+## 4 Algeria 1967 12760499    Africa  51.407  3246.992
+## 5 Algeria 1972 14760787    Africa  54.518  4182.664
+## 6 Algeria 1977 17152804    Africa  58.014  4910.417
 ```
 
 ```r
 # arrange by country, continent, and year
 gap_medium <- gap_medium %>%
   arrange(country,continent,year)
-```
-
-```
-## Error in eval(lhs, parent, parent): object 'gap_medium' not found
-```
-
-```r
 head(gap_medium)
 ```
 
 ```
-## Error in head(gap_medium): object 'gap_medium' not found
+##       country year      pop continent lifeExp gdpPercap
+## 1 Afghanistan 1952  8425333      Asia  28.801  779.4453
+## 2 Afghanistan 1957  9240934      Asia  30.332  820.8530
+## 3 Afghanistan 1962 10267083      Asia  31.997  853.1007
+## 4 Afghanistan 1967 11537966      Asia  34.020  836.1971
+## 5 Afghanistan 1972 13079460      Asia  36.088  739.9811
+## 6 Afghanistan 1977 14880372      Asia  38.438  786.1134
 ```
 
 # Extra Resources

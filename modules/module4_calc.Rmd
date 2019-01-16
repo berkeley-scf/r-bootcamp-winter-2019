@@ -19,9 +19,9 @@ At the core of R is the idea of doing calculations on entire vectors.
 ```{r}
 gdpTotal <- gap$gdpPercap * gap$pop
 
-gdpSubset <- gdp[1:10]
+gdpSubset <- gap2007$gdpPercap[1:10]
 
-gdpSubset >= 50000
+gdpSubset >= 30000
 
 vec1 <- rnorm(5)
 vec2 <- rnorm(5)
@@ -85,7 +85,7 @@ If you use a trick like this, having a comment in your code is a good idea.
 Lots of functions in R are vectorized, such as some we've already used.
 
 ```{r}
-tmp <- as.character(air$year)
+tmp <- as.character(gap$year)
 gap$year2 <- substring(tmp, 3, 4)
 head(gap$year2)
 ```
@@ -157,17 +157,8 @@ for(i in 1:n)
 
 The same holds for using `rbind()`, `cbind()`, or adding to a list, one element at a time.
 
-This is both slow and unclear (in the sense that it appears the code has a bug, but it works):
-```{r cache=TRUE}
-vals <- 0
-n <- 50000
-system.time({
-for(i in 1:n)
-      vals[i] <- i
-})
-```
 
-**Question**: Thoughts on why these are so slow? Think about what R might be doing behind the scenes
+**Question**: Thoughts on why this are so slow? Think about what R might be doing behind the scenes
 
 # The answer is to pre-allocate memory
 
@@ -242,7 +233,6 @@ rowSums(tbl)
 all(rowSums(tbl) == 12)
 ```
 
-**Challenge**: Can you figure out what `with()` does just by example? 
 
 # Discretization
 

@@ -368,7 +368,7 @@ library(tidyr)
 Until now, we've been using the nicely formatted original gapminder data set. This data set is not quite wide and not quite long -- it's something in the middle, but "real" data (i.e., our own research data) will never be so well organized. Here let's start with the wide format version of the gapminder data set.
 
 ```{r}
-gap_wide <- read.csv("../data/gap_wide.csv", stringsAsFactors = FALSE)
+gap_wide <- read.csv("../data/gapminder_wide.csv", stringsAsFactors = FALSE)
 head(gap_wide)
 ```
 
