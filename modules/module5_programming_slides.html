@@ -145,17 +145,17 @@ while (yrIdx &lt;=<span class="st"> </span><span class="kw">length</span>(years)
 <p>Here's a simple example to illustrate the syntax. Note that the <em>then</em> is implicit.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1</span>)
 val</code></pre></div>
-<pre><code>## [1] -0.1108818</code></pre>
+<pre><code>## [1] 1.323744</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">if (val &lt;<span class="st"> </span><span class="dv">0</span>) {
   <span class="kw">print</span>(<span class="st">&quot;val is negative&quot;</span>)
 } else {
   <span class="kw">print</span>(<span class="st">&quot;val is positive&quot;</span>)
 }</code></pre></div>
-<pre><code>## [1] &quot;val is negative&quot;</code></pre>
+<pre><code>## [1] &quot;val is positive&quot;</code></pre>
 <p>We can chain together <code>if</code> statements as follows.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1</span>)
 val</code></pre></div>
-<pre><code>## [1] -0.01711114</code></pre>
+<pre><code>## [1] 0.2987292</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">if (val &lt;<span class="st"> </span>-<span class="dv">1</span>) {
   <span class="kw">print</span>(<span class="st">&quot;val is more than one standard deviation below the mean.&quot;</span>)
 } else if (<span class="kw">abs</span>(val) &lt;=<span class="st"> </span><span class="dv">1</span>) {
@@ -166,7 +166,7 @@ val</code></pre></div>
 <pre><code>## [1] &quot;val is within one standard deviation of the mean.&quot;</code></pre>
 <p>In general, the <code>{</code> brackets are only needed if you have multiple R expressions, but R will complain when an <code>else</code> starts a line of code, so generally using the <code>{</code> is good practice. That said, this <em>works just fine</em>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">if (val &lt;<span class="st"> </span><span class="dv">0</span>) <span class="kw">print</span>(<span class="st">&quot;val is negative&quot;</span>) else <span class="kw">print</span>(<span class="st">&quot;val is positive&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;val is negative&quot;</code></pre>
+<pre><code>## [1] &quot;val is positive&quot;</code></pre>
 </div>
 <div id="the-condition-in-an-if-statement" class="slide section level1">
 <h1>The condition in an if statement</h1>
@@ -289,8 +289,8 @@ ord[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
     <span class="kw">return</span>(sorted)
 }
 
-<span class="kw">identical</span>(gm_ordered, <span class="kw">colSort</span>(gap, <span class="st">&quot;year&quot;</span>, <span class="st">&quot;lifeExp&quot;</span>))</code></pre></div>
-<pre><code>## Error in identical(gm_ordered, colSort(gap, &quot;year&quot;, &quot;lifeExp&quot;)): object 'gm_ordered' not found</code></pre>
+<span class="kw">identical</span>(gm_ord, <span class="kw">colSort</span>(gap, <span class="st">&quot;year&quot;</span>, <span class="st">&quot;lifeExp&quot;</span>))</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
 <p>Of course this is somewhat limited in that it is specific to sorting based on two columns. We'd usually want to extend this to be more general, but it's usually good to start with something concrete and more limited in generality and then generalize once you are sure it works.</p>
 </div>
 <div id="function-arguments" class="slide section level1">
@@ -388,11 +388,11 @@ f &lt;-<span class="st"> </span>function(y) {
 <p>And what about indexing?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">runif</span>(<span class="dv">100</span>), <span class="dv">10</span>)
 x[ , <span class="dv">2</span>]</code></pre></div>
-<pre><code>##  [1] 0.7240642 0.8730188 0.8151180 0.1813840 0.4349531 0.7154026 0.4038512
-##  [8] 0.1564054 0.8105060 0.5436116</code></pre>
+<pre><code>##  [1] 0.81716146 0.70990146 0.75807699 0.80284516 0.06879650 0.03819288
+##  [7] 0.54856449 0.63846015 0.14428850 0.81187006</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="st">'['</span>(x , , <span class="dv">2</span>)</code></pre></div>
-<pre><code>##  [1] 0.7240642 0.8730188 0.8151180 0.1813840 0.4349531 0.7154026 0.4038512
-##  [8] 0.1564054 0.8105060 0.5436116</code></pre>
+<pre><code>##  [1] 0.81716146 0.70990146 0.75807699 0.80284516 0.06879650 0.03819288
+##  [7] 0.54856449 0.63846015 0.14428850 0.81187006</code></pre>
 <p>Also yes!</p>
 <p>This holds more generally - one can investigate and see the same thing in terms of a <code>for</code> loop.</p>
 <h3 id="what-does-the-1st-principle-mean">What does the 1st principle mean?</h3>

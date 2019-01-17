@@ -330,7 +330,7 @@ implicit.</p>
 val
 </code></pre>
 
-<pre><code>## [1] 0.08880645
+<pre><code>## [1] -0.8090417
 </code></pre>
 
 <pre><code class="r">if (val &lt; 0) {
@@ -340,7 +340,7 @@ val
 }
 </code></pre>
 
-<pre><code>## [1] &quot;val is positive&quot;
+<pre><code>## [1] &quot;val is negative&quot;
 </code></pre>
 
 <p>We can chain together <code>if</code> statements as follows.</p>
@@ -349,7 +349,7 @@ val
 val
 </code></pre>
 
-<pre><code>## [1] -0.6805233
+<pre><code>## [1] -2.176067
 </code></pre>
 
 <pre><code class="r">if (val &lt; -1) {
@@ -361,7 +361,7 @@ val
 }
 </code></pre>
 
-<pre><code>## [1] &quot;val is within one standard deviation of the mean.&quot;
+<pre><code>## [1] &quot;val is more than one standard deviation below the mean.&quot;
 </code></pre>
 
 <p>In general, the <code>{</code> brackets are only needed if you have multiple R expressions,
@@ -564,10 +564,10 @@ we can apply it to other <code>data.frame</code>s (or matrices)?</p>
     return(sorted)
 }
 
-identical(gm_ordered, colSort(gap, &quot;year&quot;, &quot;lifeExp&quot;))
+identical(gm_ord, colSort(gap, &quot;year&quot;, &quot;lifeExp&quot;))
 </code></pre>
 
-<pre><code>## Error in identical(gm_ordered, colSort(gap, &quot;year&quot;, &quot;lifeExp&quot;)): object &#39;gm_ordered&#39; not found
+<pre><code>## [1] TRUE
 </code></pre>
 
 <p>Of course this is somewhat limited in that it is specific to sorting based on
@@ -747,15 +747,15 @@ talk</a></p></li>
 x[ , 2]
 </code></pre>
 
-<pre><code>##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
-##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
+<pre><code>##  [1] 0.54260974 0.08999638 0.61474906 0.53036170 0.57480613 0.65651141
+##  [7] 0.10486756 0.14655922 0.34221389 0.07186988
 </code></pre>
 
 <pre><code class="r">&#39;[&#39;(x , , 2)
 </code></pre>
 
-<pre><code>##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
-##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
+<pre><code>##  [1] 0.54260974 0.08999638 0.61474906 0.53036170 0.57480613 0.65651141
+##  [7] 0.10486756 0.14655922 0.34221389 0.07186988
 </code></pre>
 
 <p>Also yes!</p>

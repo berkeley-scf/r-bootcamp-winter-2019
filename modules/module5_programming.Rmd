@@ -264,7 +264,7 @@ colSort <- function(data, col1, col2) {
     return(sorted)
 }
 
-identical(gm_ordered, colSort(gap, "year", "lifeExp"))
+identical(gm_ord, colSort(gap, "year", "lifeExp"))
 ```
 
 Of course this is somewhat limited in that it is specific to sorting based on

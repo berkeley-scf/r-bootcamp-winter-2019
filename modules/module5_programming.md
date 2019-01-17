@@ -151,7 +151,7 @@ val
 ```
 
 ```
-## [1] 0.08880645
+## [1] -0.8090417
 ```
 
 ```r
@@ -163,7 +163,7 @@ if (val < 0) {
 ```
 
 ```
-## [1] "val is positive"
+## [1] "val is negative"
 ```
 
 We can chain together `if` statements as follows.
@@ -175,7 +175,7 @@ val
 ```
 
 ```
-## [1] -0.6805233
+## [1] -2.176067
 ```
 
 ```r
@@ -189,7 +189,7 @@ if (val < -1) {
 ```
 
 ```
-## [1] "val is within one standard deviation of the mean."
+## [1] "val is more than one standard deviation below the mean."
 ```
 
 In general, the `{` brackets are only needed if you have multiple R expressions,
@@ -422,11 +422,11 @@ colSort <- function(data, col1, col2) {
     return(sorted)
 }
 
-identical(gm_ordered, colSort(gap, "year", "lifeExp"))
+identical(gm_ord, colSort(gap, "year", "lifeExp"))
 ```
 
 ```
-## Error in identical(gm_ordered, colSort(gap, "year", "lifeExp")): object 'gm_ordered' not found
+## [1] TRUE
 ```
 
 Of course this is somewhat limited in that it is specific to sorting based on
@@ -622,8 +622,8 @@ x[ , 2]
 ```
 
 ```
-##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
-##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
+##  [1] 0.54260974 0.08999638 0.61474906 0.53036170 0.57480613 0.65651141
+##  [7] 0.10486756 0.14655922 0.34221389 0.07186988
 ```
 
 ```r
@@ -631,8 +631,8 @@ x[ , 2]
 ```
 
 ```
-##  [1] 0.44480059 0.02187871 0.36245432 0.10173963 0.17743229 0.16069217
-##  [7] 0.11326050 0.55409727 0.50719247 0.86796179
+##  [1] 0.54260974 0.08999638 0.61474906 0.53036170 0.57480613 0.65651141
+##  [7] 0.10486756 0.14655922 0.34221389 0.07186988
 ```
 
 Also yes!

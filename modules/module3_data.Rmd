@@ -288,7 +288,7 @@ Note the last usage where we give it a 2-column matrix of indices
 ```{r}
 wealthy <- gap$gdpPercap > 50000
 gap$gdpPercap[wealthy]
-gap[wealth, ]
+gap[wealthy, ]
 ```
 
 What happened in the last subsetting operation?

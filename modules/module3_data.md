@@ -955,11 +955,17 @@ gap$gdpPercap[wealthy]
 ```
 
 ```r
-gap[wealth, ]
+gap[wealthy, ]
 ```
 
 ```
-## Error in `[.data.frame`(gap, wealth, ): object 'wealth' not found
+##     country year     pop continent lifeExp gdpPercap continent2
+## 853  Kuwait 1952  160000      Asia  55.565 108382.35       Asia
+## 854  Kuwait 1957  212846      Asia  58.033 113523.13       Asia
+## 855  Kuwait 1962  358266      Asia  60.470  95458.11       Asia
+## 856  Kuwait 1967  575003      Asia  64.624  80894.88       Asia
+## 857  Kuwait 1972  841934      Asia  67.712 109347.87       Asia
+## 858  Kuwait 1977 1140357      Asia  69.343  59265.48       Asia
 ```
 
 What happened in the last subsetting operation?
@@ -1320,7 +1326,7 @@ The *read.table()* family of functions just skims the surface of things...
 
 3) Count the number of gdpPercap values greater than 50000 in the gapminder dataset.
 
-4) Set all of the gdpPercap values greater than 50000 to NA.
+4) Set all of the gdpPercap values greater than 50000 to NA. You should probably first copy the `gap` object and work on the copy so that the dataset is unchanged (or just read the data into R again afterwards to get a clean copy).
 
 5) Consider the first row of the gapminder dataset, which has Afghanistan for 1952. How do I create a string "Afghanistan-1952" using `gap$country[1]` and `gap$year[1]`? 
 
