@@ -25,7 +25,7 @@ round(x, digits = 0)
 ## 3 ##
 EurosPerDollar <- 1.1  
 gdpPercap_euro <- gap$gdpPercap * EurosPerDollar
-c(gdpPerCap_euro[1], gap$gdpPercap[1])
+c(gdpPercap_euro[1], gap$gdpPercap[1])
 
 ## 4 ##
 big <- gap$gdpPercap * gap$pop > 1e12 
@@ -36,8 +36,8 @@ head(big)
 
 ## 5 ##
 big <- gap$gdpPercap * gap$pop > 1e12 
-big_gm <- gm[big, ]
-head(big_gm)
+big_gap <- gap[big, ]
+head(big_gap)
 
 ## 6 ##
 gdp_cens <- gap$gdpPercap
@@ -65,7 +65,7 @@ plot(gap2007$lifeExp ~ gap2007$gdpPercap, col = gap2007$color,
 mod <- lm(lifeExp ~ log(gdpPercap), data = gap)
 summ <- summary(mod)
 r2 <- summ$r.squared
-rse <- summ$sigma
+sigError <- summ$sigma
 ```
 
 
@@ -76,8 +76,7 @@ gap2007$color[gap2007$continent == 'Asia'] <- "red"
 plot(gap2007$lifeExp ~ gap2007$gdpPercap, col = gap2007$color, 
                      main = 'Life expectancy by GDP, highlighting Asia',
                      cex = 0.7, las = 1)
-legend("bottomright", legend = c('Asia', 'all other'), col = c('red', 'blue'), cex = 0.7,
-  pch = 1)
+legend("bottomright", legend = c('Asia', 'all other'), col = c('red', 'blue'), cex = 0.7, pch = 1)
 ```
 
 
@@ -137,8 +136,9 @@ gap[ nrow(gap) , ]
 ## 3 ##
 sum(gap$gdpPercap > 50000)
 
-## 4 ## 
-gap$gdpPercap[ gap$gdpPercap > 50000 ] <- NA
+## 4 ##
+gap2 <- gap
+gap2$gdpPercap[ gap2$gdpPercap > 50000 ] <- NA
 
 ## 5 ##
 paste(gap$country[1], gap$year[1], sep = "-")
@@ -167,8 +167,10 @@ class(attributes(gap))
 ```{r, advanced3}
 
 ## 11 ##
+head(gap)
 nm <- paste(gap$continent, gap$country, gap$year, sep = "-")
 attributes(gap)$row.names <- nm
+head(gap)
 ```
 
 # Module 4: Calculations
@@ -191,7 +193,7 @@ names(gap)
 # logical indicating which = 'continent'
 names(gap) == "continent"
 # index of the continent column
-which(names(gap) == "continent"
+which(names(gap) == "continent")
 # exclude that column
 gap[ , -which(names(gap) == "continent")] 
 
@@ -218,7 +220,7 @@ pop <- aggregate(gap$pop, by = list(year = gap$year),
                  FUN = sum)
 
 ## 9 ##
-gap2 <- merge(gap, pop, carriers, by.x = 'year',
+gap2 <- merge(gap, pop, by.x = 'year',
                     by.y = 'year', all.x = TRUE, all.y = FALSE)
 plot(gap2$x, gap2$lifeExp)
 
@@ -393,7 +395,11 @@ for(i in seq_len(nBoot)) {
       vals[i] <- mean(gap$lifeExp[smp], na.rm = TRUE)
 }
 hist(vals)
-se <- sd(vals)
+
+## bootstrap based standard error (s.d. of sampling distribution)
+se_boot <- sd(vals)
+
+## standard error using usual sigma/sqrt(n) calculation
 n <- sum(!is.na(gap$lifeExp))
 se_norm <- sd(gap$lifeExp, na.rm = TRUE) / sqrt(n)
 
@@ -417,11 +423,11 @@ plot(mod)
 
 ## 7 ##
 library(dplyr)
-gm2 <- gap %>%
+gap2 <- gap %>%
   mutate(sign = ifelse(lifeExp > 60, 1, 0))
 
 reg_logit <- glm(sign ~ log(gdpPercap) + log(pop),
-                family = binomial(link = "logit"), data = gm2)
+                family = binomial(link = "logit"), data = gap2)
 
 ## 8 ## 
 nFolds <- 10
@@ -432,7 +438,7 @@ fold_size[nFolds] <- n - (nFolds - 1)*fold_size[1]
 fold <- rep(1:nFolds, times = fold_size)
 table(fold)
 set.seed(1)
-gap$Fold <- sample(fold, replace = TRUE)
+gap$fold <- sample(fold, replace = TRUE)
 
 ## 9 ##
 n <- 100
