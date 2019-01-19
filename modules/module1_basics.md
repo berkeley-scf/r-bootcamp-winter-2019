@@ -28,7 +28,7 @@
 ```
 
 ```
-## [1] 7.566254
+## [1] 7.083669
 ```
 
 ```r
@@ -212,7 +212,7 @@ devs
 ```
 
 ```
-## [1]  1.7604693  1.1289703 -0.4925867 -1.3464236  1.2158977
+## [1] -0.11096668 -1.68883106 -0.07280801 -0.16963038 -0.40958947
 ```
 
 ```r
@@ -361,8 +361,8 @@ vals[1:8]
 ```
 
 ```
-## [1] 0.0000000 0.0000000 0.0000000 0.4581328 0.4578595 0.0000000 0.0000000
-## [8] 1.0026109
+## [1] 0.0000000 0.0000000 0.7404734 0.0000000 0.9405735 0.0000000 0.6079135
+## [8] 0.0000000
 ```
 
 ```r
@@ -401,7 +401,7 @@ vec1 > vec2
 ```
 
 ```
-## [1] FALSE  TRUE FALSE  TRUE FALSE
+## [1] FALSE  TRUE  TRUE FALSE  TRUE
 ```
 
 ```r
@@ -462,7 +462,7 @@ median
 ```
 ## function (x, na.rm = FALSE, ...) 
 ## UseMethod("median")
-## <bytecode: 0x32a1ed8>
+## <bytecode: 0x3d4cf30>
 ## <environment: namespace:stats>
 ```
 
@@ -805,7 +805,7 @@ In general, your answers to any questions should involve writing code to manipul
 
 7) Make a histogram of the life expectancy values for the year 2007.  Explore the effect of changing the number of bins in the histogram using the 'breaks' argument.
 
-8) Subset the data to those for the year 2007. Plot life expectancy against GDP per capita. Add a title to the plot. Now plot so that data for Asia are in one color and those for all other countries are in another color, usingflights to Chicago are in one color and those for all other continents are in another, using the 'col' argument. 
+8) Subset the data to those for the year 2007. Plot life expectancy against GDP per capita. Add a title to the plot. Now plot so that data for Asia are in one color and those for all other countries are in another color and those for all other continents are in another, using the 'col' argument. Hint: 'col' can take a vector of colors such as "black","red","black", ...
 
 
 ### Advanced

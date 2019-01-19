@@ -335,7 +335,7 @@ In general, your answers to any questions should involve writing code to manipul
 
 7) Make a histogram of the life expectancy values for the year 2007.  Explore the effect of changing the number of bins in the histogram using the 'breaks' argument.
 
-8) Subset the data to those for the year 2007. Plot life expectancy against GDP per capita. Add a title to the plot. Now plot so that data for Asia are in one color and those for all other countries are in another color, usingflights to Chicago are in one color and those for all other continents are in another, using the 'col' argument. 
+8) Subset the data to those for the year 2007. Plot life expectancy against GDP per capita. Add a title to the plot. Now plot so that data for Asia are in one color and those for all other countries are in another color and those for all other continents are in another, using the 'col' argument. Hint: 'col' can take a vector of colors such as "black","red","black", ...
 
 
 ### Advanced
