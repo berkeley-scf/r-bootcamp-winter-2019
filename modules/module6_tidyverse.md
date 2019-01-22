@@ -346,7 +346,7 @@ head(gdp_pop_bycontinents_byyear)
 
 # `dplyr::mutate`
 
-What if we wanted to add these values to our original data frame instead of creating a new object? For this, we can use the `mutate()` function, which is similar to `summarize()` except it creates new variables to the same data frame that you pass into it.
+What if we wanted to add these values to our original data frame instead of creating a new object? For this, we can use the `mutate()` function, which is similar to `summarize()` except it creates new variables in the same data frame that you pass into it.
 
 
 ```r
@@ -374,7 +374,7 @@ head(gap_with_extra_vars)
 ## #   sd_pop <dbl>
 ```
 
-We can use also use `mutate()` to create new variables prior to (or even after) summarizing information.
+We can use also use `mutate()` to create new variables prior to (or even after) summarizing information. Note that `mutate()` does not need to operate on grouped data and it can do element-wise transformations.
 
 
 ```r
@@ -403,6 +403,17 @@ head(gdp_pop_bycontinents_byyear)
 ## 6 Africa     1977          2586.        4142. 8328097. 11585184.
 ## # ... with 2 more variables: mean_gdp_billion <dbl>, sd_gdp_billion <dbl>
 ```
+
+# `mutate` vs. `summarize`
+
+It can be confusing to decide whether to use `mutate` or `summarize`. The key distinction is whether you want the output to have one row for each group or one row for each row in the original data frame:
+
+  - `mutate`: creates new columns with as many rows as the original data frame
+  - `summarize`: creates a dataframe with as many rows as groups
+
+Note that if you use an aggregation function such as `mean()` within `mutate()` without using `groupby()`, you'll simply do the summary over all the rows of the input dataframe.
+
+And if you use an aggregation function such as `mean()` within `summarize()` without using `groupby()`, you'll simply create an output dataframe with one row (i.e., the whole input dataframe is a single group).
 
 # `dplyr::arrange`
 

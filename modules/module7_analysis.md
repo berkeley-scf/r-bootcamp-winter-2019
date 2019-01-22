@@ -488,9 +488,7 @@ One workhorse is `gam()` in the *mgcv* package.
 
 # GAM in action
 
-Let's consider month in the airline dataset.
-
-Any hypotheses about the relationship of delays with month and time of day?
+Do we think there should be a linear relationship of life expectancy with GDP and year?
 
 
 ```r

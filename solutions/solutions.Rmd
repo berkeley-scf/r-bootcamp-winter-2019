@@ -48,8 +48,8 @@ plot(gap$lifeExp ~ gdp_cens)
 ## 7 ##
 gap2007 <- gap[gap$year == 2007, ]
 hist(gap2007$lifeExp)
-hist(gap2007$lifeExp, nclass = 5)
-hist(gap2007$lifeExp, nclass = 25)
+hist(gap2007$lifeExp, breaks = 5)
+hist(gap2007$lifeExp, breaks = 25)
 
 ## 8 ##
 gap2007 <- gap[gap$year == 2007, ]

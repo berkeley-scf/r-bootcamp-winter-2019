@@ -55,8 +55,8 @@ Finally, let's subset the data to gold medal counts for the US, for easier plott
 
 ```{r}
 usa_gold_medals <-  medal_counts %>%
-  dplyr::filter(Medal == "Gold") %>%
-  dplyr::filter(NOC == "USA")
+  filter(Medal == "Gold") %>%
+  filter(NOC == "USA")
 ```
 
 # Base graphics
@@ -213,8 +213,8 @@ ggplot(usa_gold_medals, aes(x = Year, y = count)) + geom_bar(stat = "identity")
 ```{r, fig.cap = "", fig.show = "hold"}
 # This combines the subsetting and plotting into one step
 medal_counts %>%
-  dplyr::filter(Medal == "Gold") %>%
-  dplyr::filter(NOC == "USA") %>%
+  filter(Medal == "Gold") %>%
+  filter(NOC == "USA") %>%
   ggplot(aes(x = Year, y = count)) + geom_line()
 ```
 
@@ -224,7 +224,7 @@ Compare:
 
 ```{r, fig.cap = ""}
 usa_all_medals <- medal_counts %>%
-  dplyr::filter(NOC == "USA")
+  filter(NOC == "USA")
 
 # ggplot2 call
 ggplot(data = usa_all_medals, aes(x = Year, y = count)) +
@@ -233,7 +233,7 @@ ggplot(data = usa_all_medals, aes(x = Year, y = count)) +
 
 ```{r, fig.cap = ""}
 usa_all_medals_untidy <- medal_counts_wide %>%
-  dplyr::filter(NOC == "USA")
+  filter(NOC == "USA")
 
 # Base graphics call
 plot(usa_all_medals_untidy$Year, usa_all_medals_untidy$Gold, col = "green",
@@ -280,7 +280,7 @@ bar plots:
 # note that the conversion to 'double' is because the median
 # calculation had an error with 'count' is stored as integer
 median_gold_medals <- medal_counts %>%
-  dplyr::filter(Medal == "Gold") %>%
+  filter(Medal == "Gold") %>%
   mutate(count = as.double(count)) %>%
   group_by(NOC) %>%
   summarise(med = median(count))
@@ -301,7 +301,7 @@ ggplot(data = medal_counts_wide, aes(x = factor(Year), y = Gold)) +
 ```{r, fig.cap=" ", warning=FALSE, fig.show = "hold"}
 # Subset the data to North America countries for easier viewing
 northern_hem <- medal_counts_wide %>%
-  dplyr::filter(NOC %in% c("USA",
+  filter(NOC %in% c("USA",
                            "CAN", # Canada
                            "CUB", # Cuba
                            "MEX")) # Mexico

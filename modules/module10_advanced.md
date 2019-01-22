@@ -239,7 +239,7 @@ predict
 ```
 ## function (object, ...) 
 ## UseMethod("predict")
-## <bytecode: 0x3f92288>
+## <bytecode: 0x3912288>
 ## <environment: namespace:stats>
 ```
 
